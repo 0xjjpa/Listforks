@@ -27,7 +27,7 @@ class DemoController extends Controller
      */
     public function helloAction($name)
     {
-        return array('name' => $name);
+        return array('name' => 'Edit');
     }
 
     /**
