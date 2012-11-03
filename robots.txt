@@ -3,3 +3,28 @@
 # For more information, please see http://www.w3.org/TR/html4/appendix/notes.html#h-B.4.1.1
 # WebMatrix 2.0
 
+# To use the project with the Vagrant Machine (for 64 bit machines)
+# follow this code: 
+# https://gist.github.com/3996572
+
+# In case you are not using a Vagrant Machine, can't use a 64 bit or 
+# don't have any at your disposal, just clone the repository of the project.
+
+# git clone git@git.pagodabox.com:massive-malia.git symfony
+
+# Please don't mix or add this repository to the UBC-CPSC 410 one. 
+
+# From there, you can push changes to the dev branch. I can stress enough how important is 
+# to use a branching model, so I'm going to describe it again. From the terminal
+
+# $ git checkout dev
+   ....  do all changes
+# $ git add <files>
+# $ git commit -m 
+# $ git push
+
+# You can see the changes on the dev branch here: 
+# http://massive-malia.pagodabox.com/app_dev.php
+ 
+# Please don't modify anything in the master branch, as it won't even show up. Since we are using a dev branch, 
+# feature branchs won't work for persons that are not using vagrant. Otherwise, use the following model:
