@@ -1,17 +1,17 @@
 <?php
 
-namespace Acme\DemokBundle\EventListener;
+namespace Acme\ListsForkBundle\EventListener;
 
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-use Acme\DemoBundle\Twig\Extension\DemoExtension;
+use Acme\ListsForkBundle\Twig\Extension\ListsForkExtension;
 
 class ControllerListener
 {
     protected $extension;
 
-    public function __construct(DemoExtension $extension)
+    public function __construct(ListsForkExtension $extension)
     {
         $this->extension = $extension;
     }
