@@ -49,7 +49,7 @@ class AccountController extends Controller
 
     /**
      * @Route("/hello", defaults={"name"="World"}),
-     * @Route("/hello/{name}", name="_ListForks_secured_hello")
+     * @Route("/hello/{name}", name="_ListForks_account_hello")
      * @Template()
      */
     public function helloAction($name)
@@ -58,7 +58,7 @@ class AccountController extends Controller
     }
 
     /**
-     * @Route("/hello/admin/{name}", name="_ListForks_secured_hello_admin")
+     * @Route("/hello/admin/{name}", name="_ListForks_account_hello_admin")
      * @Secure(roles="ROLE_ADMIN")
      * @Template()
      */

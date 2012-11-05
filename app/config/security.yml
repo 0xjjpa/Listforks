@@ -23,20 +23,20 @@ security:
             security: false
 
         login:
-            pattern:  ^/demo/secured/login$
+            pattern:  ^/listforks/account/login$
             security: false
 
         secured_area:
-            pattern:    ^/demo/secured/
+            pattern:    ^/listforks/account/
             form_login:
-                check_path: /demo/secured/login_check
-                login_path: /demo/secured/login
+                check_path: /listforks/account/login_check
+                login_path: /listforks/account/login
             logout:
-                path:   /demo/secured/logout
-                target: /demo/
+                path:   /listforks/account/logout
+                target: /listforks/
             #anonymous: ~
             #http_basic:
-            #    realm: "Secured Demo Area"
+            #    realm: "account forklists Area"
 
     access_control:
         #- { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
