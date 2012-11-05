@@ -13,7 +13,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 class ListController extends Controller
 {
     /**
-     * @Route("/", name="_ListForks")
+     * @Route("/", name="_ListForks_home")
      * @Template()
      */
     public function indexAction()

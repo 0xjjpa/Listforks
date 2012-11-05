@@ -1,3 +1,20 @@
+
+_ListForks_home:
+    resource: "@AcmeListForksBundle/Controller/ListForksController.php"
+    type:     annotation
+    prefix:   /listforks
+    
+_ListForks_account:
+    resource: "@AcmeListForksBundle/Controller/AccountController.php"
+    type:     annotation
+    prefix:   /account
+
+_ListForks_search:
+    resource: "@AcmeListForksBundle/Controller/SearchController.php"
+    type:     annotation
+    prefix:   /search
+
+
 _welcome:
     pattern:  /
     defaults: { _controller: AcmeDemoBundle:Welcome:index }
@@ -25,5 +42,9 @@ _configurator:
 
 _main:
     resource: routing.yml
+
+
+
+
 
 
