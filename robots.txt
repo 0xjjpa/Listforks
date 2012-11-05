@@ -17,6 +17,7 @@
 # From there, you can push changes to the dev branch. I can stress enough how important is 
 # to use a branching model, so I'm going to describe it again. From the terminal
 
+
 # $ git checkout dev
    ....  do all changes
 # $ git add <files>
