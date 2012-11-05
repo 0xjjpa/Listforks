@@ -3,7 +3,7 @@ _welcome:
     defaults: { _controller: AcmeListForksBundle:Search:index }
 
 _ListForks_account:
-    resource: "@AcmeListForksBundle/Controller/SecuredController.php"
+    resource: "@AcmeListForksBundle/Controller/AccountController.php"
     type:     annotation
 
 _ListForks:
