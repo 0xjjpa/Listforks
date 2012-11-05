@@ -1,0 +1,20 @@
+use the following urls
+
+______________________________
+listforks/lists/
+listforks/lists/create
+listforks/lists/delete
+listforks/lists/update
+
+______________________________
+listforks/account/
+listforks/account/create
+listforks/account/delete
+listforks/account/update
+
+listforks/account/login
+listforks/account/logout
+
+______________________________
+listforks/search/
+

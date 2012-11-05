@@ -22,19 +22,30 @@ class ListController extends Controller
     }
 
     /**
-     * @Route("/hello/{name}", name="_ListForks_hello")
+     * @Route("/hello/{name}", name="_ListForks_create")
      * @Template()
      */
-    public function helloAction($name)
+    public function createAction($name)
+    {
+        return array('name' => $name);
+    }
+
+
+
+    /**
+     * @Route("/hello/{name}", name="_ListForks_update")
+     * @Template()
+     */
+    public function updateAction($name)
     {
         return array('name' => $name);
     }
 
     /**
-     * @Route("/contact", name="_ListForks_contact")
+     * @Route("/contact", name="_ListForks_delete")
      * @Template()
      */
-    public function contactAction()
+    public function deleteAction()
     {
         $form = $this->get('form.factory')->create(new ContactType());
 
