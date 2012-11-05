@@ -13,6 +13,6 @@ class SearchController extends Controller
          * or @Template annotation as demonstrated in ListForksController.
          *
          */
-        return $this->render('AcmeListForksBundle:Welcome:index.html.twig');
+        return $this->render('AcmeListForksBundle:Search:index.html.twig');
     }
 }

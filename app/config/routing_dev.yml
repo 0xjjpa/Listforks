@@ -1,36 +1,15 @@
-_home:
-    pattern:  /
-    defaults: { _controller: AcmelistforksBundle:ListForks:index }
-
-
-_ListForks_home:
-    resource: "@AcmeListForksBundle/Controller/ListForksController.php"
-    type:     annotation
-    prefix:   /listforks
-    
-_ListForks_account:
-    resource: "@AcmeListForksBundle/Controller/AccountController.php"
-    type:     annotation
-    prefix:   /account
-
-_ListForks_search:
-    resource: "@AcmeListForksBundle/Controller/SearchController.php"
-    type:     annotation
-    prefix:   /search
-
-
 _welcome:
     pattern:  /
-    defaults: { _controller: AcmeDemoBundle:Welcome:index }
+    defaults: { _controller: AcmeListForksBundle:Search:index }
 
-_demo_secured:
-    resource: "@AcmeDemoBundle/Controller/SecuredController.php"
+_ListForks_account:
+    resource: "@AcmeListForksBundle/Controller/SecuredController.php"
     type:     annotation
 
-_demo:
-    resource: "@AcmeDemoBundle/Controller/DemoController.php"
+_ListForks:
+    resource: "@AcmeListForksBundle/Controller/ListForksController.php"
     type:     annotation
-    prefix:   /demo
+    prefix:   /ListForks
 
 _wdt:
     resource: "@WebProfilerBundle/Resources/config/routing/wdt.xml"
