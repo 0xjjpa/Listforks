@@ -1,3 +1,7 @@
+_home:
+    pattern:  /
+    defaults: { _controller: AcmelistforksBundle:ListForks:index }
+
 
 _ListForks_home:
     resource: "@AcmeListForksBundle/Controller/ListForksController.php"
