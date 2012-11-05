@@ -1,0 +1,15 @@
+{% extends "AcmeListForksBundle::layout.html.twig" %}
+
+{% block title "ListForks - template" %}
+
+{% block content_header '' %}
+
+{% block content %}
+    <h1>ListForks demos</h1>
+<h1>This thing is working ! ! ! </h1>
+    <ul id="demo-list">
+        <li><a href="{{ path('_demo_hello', {'name': 'World'}) }}">Hello World</a></li>
+        <li><a href="{{ path('_demo_secured_hello', {'name': 'World'}) }}">Access the secured area</a> <a href="{{ path('_demo_login') }}">Go to the login page</a></li>
+        {# <li><a href="{{ path('_demo_contact') }}">Send a Message</a></li> #}
+    </ul>
+{% endblock %}
