@@ -2,6 +2,10 @@ _welcome:
     pattern:  /
     defaults: { _controller: AcmeListForksBundle:Search:index }
 
+_ListForks_home
+    resource: "@AcmeListForksBundle/Controller/ListForksController.php"
+    type:     annotation
+
 _ListForks_account:
     resource: "@AcmeListForksBundle/Controller/AccountController.php"
     type:     annotation
