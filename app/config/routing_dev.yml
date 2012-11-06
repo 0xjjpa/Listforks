@@ -1,15 +1,21 @@
-_welcome:
+_default:
     pattern:  /
-    defaults: { _controller: AcmeDemoBundle:Welcome:index }
+    defaults: { _controller: ListForksBundle:Default:index }
 
-_ListForks_account:
-    resource: "@AcmeListForksBundle/Controller/AccountController.php"
+_account:
+    resource: "@ListForksBundle/Controller/AccountController.php"
     type:     annotation
+    prefix:   /account
 
-_ListForks:
-    resource: "@AcmeListForksBundle/Controller/ListForksController.php"
+_list:
+    resource: "@ListForksBundle/Controller/ListController.php"
     type:     annotation
-    prefix:   /ListForks
+    prefix:   /list
+
+_search:
+    resource: "@ListForksBundle/Controller/SearchController.php"
+    type:     annotation
+    prefix:   /search
 
 _wdt:
     resource: "@WebProfilerBundle/Resources/config/routing/wdt.xml"
