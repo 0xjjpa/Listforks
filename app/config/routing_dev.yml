@@ -2,11 +2,6 @@ _default:
     pattern:  /
     defaults: { _controller: ListForksBundle:Default:index }
 
-
-_ListForks_home
-    resource: "@AcmeListForksBundle/Controller/ListForksController.php"
-    type:     annotation
-
 _account:
     resource: "@ListForksBundle/Controller/AccountController.php"
     type:     annotation
