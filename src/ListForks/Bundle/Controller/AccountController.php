@@ -55,4 +55,22 @@ class AccountController extends Controller
     {
         return new Response('Account View');
     }
+
+    /**
+     * @Route("/login", name="_account_login")
+     * @Template()
+     */
+    public function loginAction()
+    {
+        return new Response('Account Login');
+    }
+
+    /**
+     * @Route("/logout", name="_account_logout")
+     * @Template()
+     */
+    public function logoutAction()
+    {
+        return new Response('Account Logout');
+    }
 }
