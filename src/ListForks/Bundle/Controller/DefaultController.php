@@ -8,6 +8,6 @@ class DefaultController extends Controller
 {
     public function indexAction()
     {
-        return $this->render('ListForksBundle:Default:index.html.twig');
+        return new Response('Welcome to ListForks!');
     }
 }
