@@ -1,7 +1,7 @@
 _listindex:
     resource: "@ListForksBundle/Controller/ListController.php"
     type:     annotation
-    prefix:   /
+    pattern:   /
 
 _account:
     resource: "@ListForksBundle/Controller/AccountController.php"
