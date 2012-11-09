@@ -1,4 +1,4 @@
-_list_index:
+_listindex:
     resource: "@ListForksBundle/Controller/ListController.php"
     type:     annotation
     prefix:   /
