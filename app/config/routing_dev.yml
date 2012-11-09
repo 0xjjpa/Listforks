@@ -1,6 +1,6 @@
-_default:
+_list_index:
     pattern:   /
-    defaults: { _controller: AcmeListForksBundle:List:index }
+    defaults: { _controller: ListForksBundle:List:index }
     
 _account:
     resource: "@ListForksBundle/Controller/AccountController.php"
