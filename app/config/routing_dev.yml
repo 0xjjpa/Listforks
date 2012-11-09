@@ -1,9 +1,7 @@
-_listindex:
+_default:
     pattern:   /
     defaults: { _controller: AcmeListForksBundle:List:index }
     
-
-
 _account:
     resource: "@ListForksBundle/Controller/AccountController.php"
     type:     annotation
