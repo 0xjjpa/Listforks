@@ -17,8 +17,19 @@ class SearchController extends Controller
      */
     public function indexAction()
     {
-        return $this->render('ListForksBundle:List:index.html.twig');
+        return $this->render('ListForksBundle:Search:index.html.twig');
     }
+
+
+    /**
+     * @Route("/search", name="_search_results")
+     * @Template()
+     */
+    public function searchAction()
+    {
+        return $this->render('ListForksBundle:Search:results.html.twig');
+    }
+
 
     /**
      * @Route("/keyword", name="_search_keyword")
@@ -26,7 +37,7 @@ class SearchController extends Controller
      */
     public function keywordAction()
     {
-        return $this->render('ListForksBundle:List:index.html.twig');
+        return $this->render('ListForksBundle:Search:results.html.twig');
     }
 
     /**
@@ -35,7 +46,7 @@ class SearchController extends Controller
      */
     public function locationAction()
     {
-        return $this->render('ListForksBundle:List:index.html.twig');
+        return $this->render('ListForksBundle:Search:results.html.twig');
     }
 
     /**
@@ -44,6 +55,6 @@ class SearchController extends Controller
      */
     public function tagAction()
     {
-        return $this->render('ListForksBundle:List:index.html.twig');
+        return $this->render('ListForksBundle:Search:results.html.twig');
     }
 }

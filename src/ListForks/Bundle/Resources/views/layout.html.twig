@@ -9,35 +9,16 @@
  
 
         <div id="symfony-wrapper">
-            <div id="symfony-header">
-                
-                <form id="symfony-search" method="GET" action="http://symfony.com/search">
-                    <label for="symfony-search-field"><span>Search on Symfony Website</span></label>
-                    <input name="q" id="symfony-search-field" type="search" placeholder="Search on Symfony website" class="medium_txt" />
-                    <input type="submit" class="symfony-button-grey" value="OK" />
-                </form>
-            </div>
+            
 
            
                 <div class="flash-message">
-                    <em>Notice</em>:
+                    <em> This is message from the view</em>:
                 </div>
 
-                <ul id="menu">
-                        <li><a href="">Demo Home</a></li>
-
-                </ul>
-
-                <div style="clear: both"></div>
-           
-
-            <div class="symfony-content">
-                
-            </div>
 
            
-                <h2>Code behind this page</h2>
-                <div class="symfony-content">hello</div>
+               
             
         </div>
 
@@ -49,8 +30,34 @@
             <br /><br /><br />
             <hr />
             <p>navigation during development</p>
-            <a href="../list/index" >List:Index</a>
-            <a href="../account" >Account:Index</a>
+            <div style="display: inline-block; width: 200px;" >
+            <ul>
+                <li><h3>List Controller</h3></li>
+                <li>List -> <a href="../list" >index</a></li>
+                <li>List -> <a href="../list/create" >create</a></li>
+                <li>List -> <a href="../list/edit" >edit</a></li>
+            </ul>
+            </div>
+
+            <div style="display: inline-block; width: 200px;" >
+            <ul>
+                <li><h3>Account Controller</h3></li>
+                <li>Account -> <a href="../account" > index</a></li>
+                <li>Account -> <a href="../account/create" > create </a></li>
+                <li>Account -> <a href="../account/edit" > edit</a></li>
+            </ul>
+            </div>
+
+
+            <div style="display: inline-block; width: 200px;" >
+            <ul>
+                <li><h3>Search Controller</h3></li>
+                <li>Search -> <a href="../search" >index</a></li>
+                <li>Search -> <a href="../search/search" >search</a></li>
+                <li></li>
+            </ul>
+            </div>
+            
         </nav>
     </body>
 </html>

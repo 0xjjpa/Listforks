@@ -12,7 +12,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 class ListController extends Controller
 {
 	/**
-     * @Route("/index", name="_list_index")
+     * @Route("/", name="_list_index")
      * @Template()
      */
     public function indexAction()
@@ -26,7 +26,7 @@ class ListController extends Controller
      */
     public function createAction()
     {
-        return $this->render('ListForksBundle:List:index.html.twig');
+        return $this->render('ListForksBundle:List:create.html.twig');
     }
 
     /**
@@ -44,7 +44,7 @@ class ListController extends Controller
      */
     public function editAction()
     {
-        return $this->render('ListForksBundle:List:index.html.twig');
+        return $this->render('ListForksBundle:List:edit.html.twig');
     }
 
     /**

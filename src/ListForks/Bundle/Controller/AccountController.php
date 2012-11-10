@@ -17,8 +17,7 @@ class AccountController extends Controller
      */
     public function indexAction()
     {
-
-        return $this->render('ListForksBundle:List:index.html.twig');
+        return $this->render('ListForksBundle:Account:index.html.twig');
     }
 
     /**
@@ -27,7 +26,7 @@ class AccountController extends Controller
      */
     public function createAction()
     {
-        return $this->render('ListForksBundle:List:index.html.twig');
+        return $this->render('ListForksBundle:Account:index.html.twig');
     }
 
     /**
@@ -36,7 +35,7 @@ class AccountController extends Controller
      */
     public function deleteAction()
     {
-        return $this->render('ListForksBundle:List:index.html.twig');
+        return $this->render('ListForksBundle:Account:index.html.twig');
     }
 
     /**
@@ -45,7 +44,7 @@ class AccountController extends Controller
      */
     public function editAction()
     {
-        return $this->render('ListForksBundle:List:index.html.twig');
+        return $this->render('ListForksBundle:Account:index.html.twig');
     }
 
     /**
@@ -54,7 +53,7 @@ class AccountController extends Controller
      */
     public function viewAction()
     {
-        return $this->render('ListForksBundle:List:index.html.twig');
+        return $this->render('ListForksBundle:Account:index.html.twig');
     }
 
     /**
@@ -63,7 +62,7 @@ class AccountController extends Controller
      */
     public function loginAction()
     {
-        return $this->render('ListForksBundle:List:index.html.twig');
+        return $this->render('ListForksBundle:Account:index.html.twig');
     }
 
     /**
@@ -72,6 +71,6 @@ class AccountController extends Controller
      */
     public function logoutAction()
     {
-        return $this->render('ListForksBundle:List:index.html.twig');
+        return $this->render('ListForksBundle:Account:index.html.twig');
     }
 }
