@@ -17,7 +17,7 @@ class ListController extends Controller
      */
     public function indexAction()
     {
-        return new Response('List Index');
+        return $this->render('ListForksBundle:Default:index.html.twig');
     }
 
     /**
