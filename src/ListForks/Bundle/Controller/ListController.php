@@ -11,6 +11,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 class ListController extends Controller
 {
+
 	/**
      * @Route("/", name="_list_index")
      * @Template()

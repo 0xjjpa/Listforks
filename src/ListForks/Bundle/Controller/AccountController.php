@@ -47,6 +47,7 @@ class AccountController extends Controller
         return $this->render('ListForksBundle:Account:index.html.twig');
     }
 
+
     /**
      * @Route("/view", name="_account_view")
      * @Template()

@@ -21,6 +21,7 @@ class SearchController extends Controller
     }
 
 
+
     /**
      * @Route("/search", name="_search_results")
      * @Template()
