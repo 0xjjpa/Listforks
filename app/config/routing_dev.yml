@@ -1,14 +1,8 @@
 _list_index:
-<<<<<<< HEAD
     resource: "@ListForksBundle/Controller/ListController.php"
     type:     annotation
     prefix:   /list/index
     
-=======
-    pattern:   /
-    defaults: { _controller: ListForksBundle:List:index }
-
->>>>>>> bfbb4b37dd6c4a5b4d9711df566a4b274dcf28e7
 _account:
     resource: "@ListForksBundle/Controller/AccountController.php"
     type:     annotation
