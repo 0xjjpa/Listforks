@@ -1,6 +1,7 @@
 _list_index:
-    pattern:   /
-    defaults: { _controller: ListForksBundle:List:index }
+    resource: "@ListForksBundle/Controller/ListController.php"
+    type:     annotation
+    prefix:   /list/index
     
 _account:
     resource: "@ListForksBundle/Controller/AccountController.php"

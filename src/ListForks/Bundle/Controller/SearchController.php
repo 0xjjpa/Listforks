@@ -17,7 +17,7 @@ class SearchController extends Controller
      */
     public function indexAction()
     {
-        return new Response('Search Index');
+        return $this->render('ListForksBundle:List:index.html.twig');
     }
 
     /**
@@ -26,7 +26,7 @@ class SearchController extends Controller
      */
     public function keywordAction()
     {
-        return new Response('Search By Keyword');
+        return $this->render('ListForksBundle:List:index.html.twig');
     }
 
     /**
@@ -35,7 +35,7 @@ class SearchController extends Controller
      */
     public function locationAction()
     {
-        return new Response('Search By Location');
+        return $this->render('ListForksBundle:List:index.html.twig');
     }
 
     /**
@@ -44,6 +44,6 @@ class SearchController extends Controller
      */
     public function tagAction()
     {
-        return new Response('Search By Tag');
+        return $this->render('ListForksBundle:List:index.html.twig');
     }
 }

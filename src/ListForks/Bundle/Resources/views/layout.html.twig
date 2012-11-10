@@ -2,16 +2,15 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <title>{% block title %}Demo Bundle{% endblock %}</title>
-        <link rel="icon" sizes="16x16" href="{{ asset('favicon.ico') }}" />
-        <link rel="stylesheet" href="{{ asset('bundles/acmedemo/css/demo.css') }}" />
+        <title></title>
+        
     </head>
     <body>
+ 
+
         <div id="symfony-wrapper">
             <div id="symfony-header">
-                <a href="{{ path('_default') }}">
-                    <img src="{{ asset('bundles/acmedemo/images/logo.gif') }}" alt="Symfony logo" />
-                </a>
+                
                 <form id="symfony-search" method="GET" action="http://symfony.com/search">
                     <label for="symfony-search-field"><span>Search on Symfony Website</span></label>
                     <input name="q" id="symfony-search-field" type="search" placeholder="Search on Symfony website" class="medium_txt" />
@@ -19,31 +18,39 @@
                 </form>
             </div>
 
-            {% for flashMessage in app.session.flashbag.get('notice') %}
+           
                 <div class="flash-message">
-                    <em>Notice</em>: {{ flashMessage }}
+                    <em>Notice</em>:
                 </div>
-            {% endfor %}
 
-            {% block content_header %}
                 <ul id="menu">
-                    {% block content_header_more %}
-                        <li><a href="{{ path('_demo') }}">Demo Home</a></li>
-                    {% endblock %}
+                        <li><a href="">Demo Home</a></li>
+
                 </ul>
 
                 <div style="clear: both"></div>
-            {% endblock %}
+           
 
             <div class="symfony-content">
-                {% block content %}
-                {% endblock %}
+                
             </div>
 
-            {% if code is defined %}
+           
                 <h2>Code behind this page</h2>
-                <div class="symfony-content">{{ code|raw }}</div>
-            {% endif %}
+                <div class="symfony-content">hello</div>
+            
         </div>
+
+
+
+
+        
+        <nav>
+            <br /><br /><br />
+            <hr />
+            <p>navigation during development</p>
+            <a href="../list/index" >List:Index</a>
+            <a href="../account" >Account:Index</a>
+        </nav>
     </body>
 </html>
