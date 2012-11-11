@@ -26,7 +26,7 @@ class AccountController extends Controller
      */
     public function createAction()
     {
-        return $this->render('ListForksBundle:Account:index.html.twig');
+        return $this->render('ListForksBundle:Account:create.html.twig');
     }
 
     /**
@@ -44,7 +44,7 @@ class AccountController extends Controller
      */
     public function editAction()
     {
-        return $this->render('ListForksBundle:Account:index.html.twig');
+        return $this->render('ListForksBundle:Account:edit.html.twig');
     }
 
 
