@@ -1,10 +1,14 @@
-{% extends 'ListForksBundle::layout.html.twig' %}
-
 {% block title %} {% endblock %}
 
 
 {% block body %}
     <h3> hello from account create view</h3>
+
+    <form action="{{ path('_account_create') }}" method="post" {{ form_enctype(form) }}>
+	{{ form_widget(form) }}
+
+	<input type="submit" />
+	</form>
 {% endblock %}
 
 
@@ -12,3 +16,4 @@
 {% block footer %} 
              {% include 'ListForksBundle:Footer:footer.html.twig' %}  
 {% endblock %}
+
