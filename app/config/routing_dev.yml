@@ -1,3 +1,17 @@
+_index:
+    pattern: /
+    defaults: { _controller: ListForksBundle:Account:index }
+
+_login:
+    pattern: /account/login
+    defaults: { _controller: ListForksBundle:Security:login }
+
+_login_check:
+    pattern: /account/login_check
+
+_logout:
+    pattern: /account/logout
+
 _account:
     resource: "@ListForksBundle/Controller/AccountController.php"
     type:     annotation
