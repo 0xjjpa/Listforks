@@ -35,43 +35,10 @@
 
         
       {% block footer %} 
-                
+             {% include 'ListForksBundle:Footer:footer.html.twig' %}          
       {% endblock %}
         
 
-        
-        <nav>
-            <br /><br /><br />
-            <hr />
-            <p>navigation during development</p>
-            <div style="display: inline-block; width: 200px;" >
-            <ul>
-                <li><h3>List Controller</h3></li>
-                <li>List -> <a href="../list" >index</a></li>
-                <li>List -> <a href="../list/create" >create</a></li>
-                <li>List -> <a href="../list/edit" >edit</a></li>
-            </ul>
-            </div>
-
-            <div style="display: inline-block; width: 200px;" >
-            <ul>
-                <li><h3>Account Controller</h3></li>
-                <li>Account -> <a href="../account" > index</a></li>
-                <li>Account -> <a href="../account/create" > create </a></li>
-                <li>Account -> <a href="../account/edit" > edit</a></li>
-            </ul>
-            </div>
-
-
-            <div style="display: inline-block; width: 200px;" >
-            <ul>
-                <li><h3>Search Controller</h3></li>
-                <li>Search -> <a href="../search" >index</a></li>
-                <li>Search -> <a href="../search/search" >search</a></li>
-                <li></li>
-            </ul>
-            </div>
-            
-        </nav>
+   
     </body>
 </html>
