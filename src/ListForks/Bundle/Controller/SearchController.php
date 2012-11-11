@@ -17,7 +17,27 @@ class SearchController extends Controller
      */
     public function indexAction()
     {
-        return $this->render('ListForksBundle:Search:index.html.twig');
+        $request = $this->get('request');
+
+        // when search form is submited via post
+        if ($request->getMethod() == 'POST') {
+      
+
+
+
+            // Need to do something with the data here
+        }
+
+        // when requesting to get the search page
+        if ($request->getMethod() == 'GET') {
+      
+
+            return $this->render('ListForksBundle:Search:index.html.twig');
+
+            // Need to do something with the data here
+        }
+
+        
     }
 
 

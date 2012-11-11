@@ -26,7 +26,26 @@ class AccountController extends Controller
      */
     public function createAction()
     {
-        return $this->render('ListForksBundle:Account:create.html.twig');
+        $request = $this->get('request');
+
+        // when create form is submited via post
+        if ($request->getMethod() == 'POST') {
+      
+
+
+
+            // Need to do something with the data here
+        }
+
+        // when requesting to get the create from
+        if ($request->getMethod() == 'GET') {
+      
+
+            return $this->render('ListForksBundle:Account:create.html.twig');
+
+            // Need to do something with the data here
+        }
+        
     }
 
     /**
@@ -35,6 +54,17 @@ class AccountController extends Controller
      */
     public function deleteAction()
     {
+        $request = $this->get('request');
+
+        // we dont allow delete through get method
+        if ($request->getMethod() == 'POST') {
+      
+
+
+
+            // Need to do something with the data here
+        }
+
         return $this->render('ListForksBundle:Account:index.html.twig');
     }
 
@@ -44,17 +74,27 @@ class AccountController extends Controller
      */
     public function editAction()
     {
-        return $this->render('ListForksBundle:Account:edit.html.twig');
-    }
+
+        $request = $this->get('request');
+
+        // when edit form is submited via post
+        if ($request->getMethod() == 'POST') {
+      
 
 
-    /**
-     * @Route("/view", name="_account_view")
-     * @Template()
-     */
-    public function viewAction()
-    {
-        return $this->render('ListForksBundle:Account:index.html.twig');
+
+            // Need to do something with the data here
+        }
+
+        // when requesting to get the edit from
+        if ($request->getMethod() == 'GET') {
+      
+
+            return $this->render('ListForksBundle:Account:edit.html.twig');
+
+            // Need to do something with the data here
+        }
+        
     }
 
     /**
@@ -63,7 +103,31 @@ class AccountController extends Controller
      */
     public function loginAction()
     {
-        return $this->render('ListForksBundle:Account:login.html.twig');
+        $request = $this->get('request');
+
+        // when login form is submited via post
+        if ($request->getMethod() == 'POST') {
+      
+
+
+
+            // Need to do something with the data here
+
+            // after login forward to the first page
+            return $this->redirect("../list");
+        }
+
+        // when requesting to get the login from
+        if ($request->getMethod() == 'GET') {
+      
+
+            // get the login page. if we decide to show 
+            // this on the first page then this can return the same view or can be a redirect
+            return $this->render('ListForksBundle:Account:login.html.twig');
+
+            // Need to do something with the data here
+        }
+        
     }
 
     /**
@@ -72,6 +136,22 @@ class AccountController extends Controller
      */
     public function logoutAction()
     {
-        return $this->render('ListForksBundle:Account:index.html.twig');
+        $request = $this->get('request');
+
+        // when log out form is submited via post
+        if ($request->getMethod() == 'POST') {
+      
+
+
+            // after logout redirect to the first page
+            return $this->redirect("../list");
+
+
+            // Need to do something with the data here
+        }
+
+        return $this->redirect("../list");
+
+        
     }
 }

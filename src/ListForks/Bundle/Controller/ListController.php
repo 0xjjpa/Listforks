@@ -55,6 +55,17 @@ class ListController extends Controller
      */
     public function deleteAction()
     {
+        $request = $this->get('request');
+        
+        // we dont allow delete via get
+        if ($request->getMethod() == 'POST') {
+      
+
+
+
+            // Need to do something with the data here
+        }
+
         return $this->render('ListForksBundle:List:index.html.twig');
     }
 
@@ -64,15 +75,24 @@ class ListController extends Controller
      */
     public function editAction()
     {
-        return $this->render('ListForksBundle:List:edit.html.twig');
-    }
+        $request = $this->get('request');
 
-    /**
-     * @Route("/view", name="_list_view")
-     * @Template()
-     */
-    public function viewAction()
-    {
-        return $this->render('ListForksBundle:List:index.html.twig');
+        // when edit from is submited via post
+        if ($request->getMethod() == 'POST') {
+      
+
+
+
+            // Need to do something with the data here
+        }
+
+        // returns the edit form
+        if ($request->getMethod() == 'GET') {
+      
+
+            return $this->render('ListForksBundle:List:edit.html.twig');
+
+            // Need to do something with the data here
+        }
     }
 }
