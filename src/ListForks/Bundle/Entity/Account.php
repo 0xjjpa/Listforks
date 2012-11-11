@@ -3,6 +3,7 @@
 namespace ListForks\Bundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * ListForks\Bundle\Entity\Account
@@ -10,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table()
  * @ORM\Entity
  */
-class Account
+class Account implements UserInterface
 {
     /**
      * @var integer $id
@@ -22,19 +23,46 @@ class Account
     private $id;
 
     /**
+     * @var string $username
+     *
+     * @ORM\Column(name="username", type="string", unique=true, length=20)
+     */
+    private $username;
+
+    /**
      * @var string $email
      *
-     * @ORM\Column(name="email", type="string", length=255, unique=true)
+     * @ORM\Column(name="email", type="string", unique=true, length=20)
      */
     private $email;
 
     /**
+     * @var string $salt
+     *
+     * @ORM\Column(name="salt", type="string", length=32)
+     */
+    private $salt;
+
+    /**
      * @var string $password
      *
-     * @ORM\Column(name="password", type="string")
+     * @ORM\Column(name="password", type="string", length=40)
      */
     private $password;
 
+    /**
+     * @var boolean $isActive
+     *
+     * @ORM\Column(name="isActive", type="boolean")
+     */
+    private $isActive;
+
+
+    public function __construct()
+    {
+        $this->isActive = true;
+        $this->salt = md5(uniqid(null, true));
+    }
 
     /**
      * Get id
@@ -44,6 +72,29 @@ class Account
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Set username
+     *
+     * @param string $username
+     * @return Account
+     */
+    public function setUsername($username)
+    {
+        $this->username = $username;
+    
+        return $this;
+    }
+
+    /**
+     * Get username
+     *
+     * @return string 
+     */
+    public function getUsername()
+    {
+        return $this->username;
     }
 
     /**
@@ -70,6 +121,29 @@ class Account
     }
 
     /**
+     * Set salt
+     *
+     * @param string $salt
+     * @return Account
+     */
+    public function setSalt($salt)
+    {
+        $this->salt = $salt;
+    
+        return $this;
+    }
+
+    /**
+     * Get salt
+     *
+     * @return string 
+     */
+    public function getSalt()
+    {
+        return $this->salt;
+    }
+
+    /**
      * Set password
      *
      * @param string $password
@@ -91,4 +165,48 @@ class Account
     {
         return $this->password;
     }
+
+    /**
+     * Set isActive
+     *
+     * @param boolean $isActive
+     * @return Account
+     */
+    public function setIsActive($isActive)
+    {
+        $this->isActive = $isActive;
+    
+        return $this;
+    }
+
+    /**
+     * Get isActive
+     *
+     * @return boolean 
+     */
+    public function getIsActive()
+    {
+        return $this->isActive;
+    }
+
+    /**
+     * Get roles
+     *
+     *
+     */
+    public function getRoles()
+    {
+        return array('ROLE_USER');
+    }
+
+    /**
+     * Erase credentials
+     *
+     *
+     */
+    public function eraseCredentials()
+    {
+
+    }
+
 }
