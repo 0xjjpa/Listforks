@@ -2,8 +2,12 @@
 
 namespace ListForks\Bundle\Controller;
 
+use ListForks\Bundle\Entity\Account;
+use ListForks\Bundle\Form\Type\AccountType;
+
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 
 // these import the "@Route" and "@Template" annotations
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -24,28 +28,33 @@ class AccountController extends Controller
      * @Route("/create", name="_account_create")
      * @Template()
      */
-    public function createAction()
+    public function createAction(Request $request)
     {
-        $request = $this->get('request');
+        $account = new Account();
 
-        // when create form is submited via post
-        if ($request->getMethod() == 'POST') {
-      
+        $form = $this->createForm(new AccountType(), $account);
 
+            if( $request->getMethod() == 'POST' )
+            {
+                $form->bindRequest($request);
 
+                if( $form->isValid() )
+                {
+                    $factory = $this->get('security.encoder_factory');
+                    $encoder = $factory->getEncoder($account);
 
-            // Need to do something with the data here
-        }
+                    $password = $encoder->encodePassword($account->getPassword(), $account->getSalt());
+                    $account->setPassword($password);
 
-        // when requesting to get the create from
-        if ($request->getMethod() == 'GET') {
-      
+                    $em = $this->getDoctrine()->getManager();
+                    $em->persist($account);
+                    $em->flush();
 
-            return $this->render('ListForksBundle:Account:create.html.twig');
+                    return $this->redirect($this->generateUrl('_login'));
+                }
+            }
 
-            // Need to do something with the data here
-        }
-        
+        return $this->render('ListForksBundle:Account:create.html.twig', array('form' => $form->createView()));
     }
 
     /**
@@ -97,61 +106,4 @@ class AccountController extends Controller
         
     }
 
-    /**
-     * @Route("/login", name="_account_login")
-     * @Template()
-     */
-    public function loginAction()
-    {
-        $request = $this->get('request');
-
-        // when login form is submited via post
-        if ($request->getMethod() == 'POST') {
-      
-
-
-
-            // Need to do something with the data here
-
-            // after login forward to the first page
-            return $this->redirect("../list");
-        }
-
-        // when requesting to get the login from
-        if ($request->getMethod() == 'GET') {
-      
-
-            // get the login page. if we decide to show 
-            // this on the first page then this can return the same view or can be a redirect
-            return $this->render('ListForksBundle:Account:login.html.twig');
-
-            // Need to do something with the data here
-        }
-        
-    }
-
-    /**
-     * @Route("/logout", name="_account_logout")
-     * @Template()
-     */
-    public function logoutAction()
-    {
-        $request = $this->get('request');
-
-        // when log out form is submited via post
-        if ($request->getMethod() == 'POST') {
-      
-
-
-            // after logout redirect to the first page
-            return $this->redirect("../list");
-
-
-            // Need to do something with the data here
-        }
-
-        return $this->redirect("../list");
-
-        
-    }
 }
