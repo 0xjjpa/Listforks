@@ -1,10 +1,15 @@
 {# src/ListForks/Bundle/Resources/views/Security/login.html.twig #}
-{# Login Template provided by Symfony #}
+
+{% block title %} {% endblock %}
+
+
+{% block body %}
 
 {% if error %}
 	<div> {{ error.message }} </div>
 {% endif %}
 
+{# Login Template provided by Symfony #}
 
 <form action="{{ path('_login_check') }}" method="post">
 	<label for="username"> Username: </label>
@@ -15,3 +20,11 @@
 
 	<button type="submit"> Login </button>
 </form>
+
+{% endblock %}
+
+
+
+{% block footer %} 
+             {% include 'ListForksBundle:Footer:footer.html.twig' %}  
+{% endblock %}
