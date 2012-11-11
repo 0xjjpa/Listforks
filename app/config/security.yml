@@ -4,13 +4,19 @@ jms_security_extra:
 
 security:
     encoders:
-        Symfony\Component\Security\Core\User\User: plaintext
+        ListForks\Bundle\Entity\Account:
+            algorithm:  sha1
+            iterations: 1
+            encode_as_base64: false
+        # Symfony\Component\Security\Core\User\User: plaintext
 
     role_hierarchy:
         ROLE_ADMIN:       ROLE_USER
         ROLE_SUPER_ADMIN: [ROLE_USER, ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
 
     providers:
+        user_db:
+            entity: { class: ListForksBundle:Account, property: username }
         in_memory:
             memory:
                 users:
@@ -23,21 +29,28 @@ security:
             security: false
 
         login:
-            pattern:  ^/listforks/account/login$
+            pattern:  ^/account/login$
+            security: false
+
+        create:
+            pattern:  ^/account/create$
             security: false
 
         secured_area:
-            pattern:    ^/listforks/account/
+            pattern:    ^/
             form_login:
-                check_path: /listforks/account/login_check
-                login_path: /listforks/account/login
+                check_path: /account/login_check
+                login_path: /account/login
             logout:
-                path:   /listforks/account/logout
-                target: /listforks/
+                path:   /account/logout
+                target: /account/login
+            provider: user_db
             #anonymous: ~
             #http_basic:
-            #    realm: "account forklists Area"
+            #    realm: "Secured Demo Area"
 
     access_control:
-        #- { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+        - { path: ^/account/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/account/create, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/, roles: ROLE_USER }
         #- { path: ^/_internal/secure, roles: IS_AUTHENTICATED_ANONYMOUSLY, ip: 127.0.0.1 }
