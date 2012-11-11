@@ -25,20 +25,28 @@ class ListController extends Controller
      * @Route("/create", name="_list_create")
      * @Template()
      */
-    public function createAction( )
+    public function createAction()
     {
 
-        $product = new Product();
-        $product->setName('A Foo Bar');
-        $product->setPrice('19.99');
-        $product->setDescription('Lorem ipsum dolor');
+        $request = $this->get('request');
 
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($product);
-        $em->flush();
+        if ($request->getMethod() == 'POST') {
+      
 
 
-        return $this->render('ListForksBundle:List:create.html.twig');
+
+            // Need to do something with the data here
+        }
+
+        if ($request->getMethod() == 'GET') {
+      
+
+            return $this->render('ListForksBundle:List:create.html.twig');
+
+            // Need to do something with the data here
+        }
+
+        
     }
 
     /**

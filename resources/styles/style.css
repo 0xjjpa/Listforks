@@ -1,0 +1,141 @@
+
+ /************************************************************************************
+RESET
+*************************************************************************************/
+html, body, div, span, applet, object, iframe,h1, h2, h3, h4, h5, h6, p, blockquote, pre,a, abbr, acronym, address, big, cite, code,del, dfn, em, img, ins, kbd, q, s, samp,small, strike, strong, sub, sup, tt, var,b, u, i, center,dl, dt, dd, ol, ul, li,fieldset, form, label, legend,table, caption, tbody, tfoot, thead, tr, th, td,article, aside, canvas, details, embed,figure, figcaption, footer, header, hgroup,menu, nav, output, ruby, section, summary,time, mark, audio, video {
+        margin: 0;
+        padding: 0;
+    border: 0;
+        font-size: 100%;
+        font: inherit;
+        vertical-align: baseline;
+    color: #ecf4f5;
+}
+
+/* set html5 elements to block */
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section { 
+    display: block;
+}
+
+/************************************************************************************
+GENERAL STYLING
+*************************************************************************************/
+body {
+    background: #56a244 url(../../../resources/images/listforks-bg.jpg) no-repeat top center fixed;
+    background-size: cover;
+}
+a {
+        color: #00a37f;
+        text-decoration: none;
+        outline: none;
+}
+a:hover {
+        text-decoration: underline;
+}
+p {
+        padding: 0;
+    font-family: 'Fenix', serif;
+    color: #ecf4f5;
+    font-size: 24px;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 1);
+}
+/* headings */
+h1, h2, h3, h4, h5, h6 {
+    font-size: 50px;
+        color: #ecf4f5;
+    font-family: 'Montserrat Alternates', sans-serif;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 1);
+}
+h2 a {text-decoration: none;}
+h2 a:hover {border-bottom: 1px dotted #ecf4f5;}
+/************************************************************************************
+CONTENT
+*************************************************************************************/
+#rightcontent {
+    position:relative;
+    float:right;
+    display:block;
+        width: 530px;
+    right: 50px;
+    top: 130px;
+}
+button.signup {
+    text-shadow: -1px -1px 0 #B91414;
+    color:white;
+    float: left;
+    border-left: 0;
+    border-right: 0;
+    margin: 6px auto auto auto;
+    width: 300px;
+    height: 44px;
+    line-height: 10px;
+    font-size: 22px;
+    text-align: center;
+    padding:none;
+    border: 2px solid rgba(235,243,244,.5); /* stroke */
+    -moz-border-radius: 36px;
+    -webkit-border-radius: 36px;
+    border-radius: 36px; /* border radius */
+    -moz-background-clip: padding;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box; /* prevents bg color from leaking outside the border */
+    background-color: #e15961; /* layer fill content */
+    -moz-box-shadow: inset 0 1px 2px rgba(255,255,255,.5); /* inner shadow */
+    -webkit-box-shadow: inset 0 1px 2px rgba(255,255,255,.5); /* inner shadow */
+    box-shadow: inset 0 1px 2px rgba(255,255,255,.5); /* inner shadow */
+}
+  button.signup:hover {
+    background-color: #e96a71;
+}
+  button.signup:active {
+    background-color: #d05057;
+}
+
+/************************************************************************************
+HEADER
+*************************************************************************************/
+#header {
+        position: relative;
+        height: 44px;
+}
+
+/* site logo */
+#site-logo {
+        position: absolute;
+        left: 20px;
+    top: 20px;
+}
+/************************************************************************************
+LOGIN NAV
+*************************************************************************************/
+#main-nav {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        z-index: 100;
+}
+#main-nav li {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        float: right;
+        position: relative;
+}
+#main-nav li:first-child {
+        margin-left: 10px;
+}
+#main-nav a {
+    font-family: 'Fenix', serif;
+    color: #ecf4f5;
+    font-size: 24px;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 1);
+        display: block;
+        padding: 14px 15px;
+        text-decoration: none;
+}
+#main-nav a:hover {
+    color: #8bf8ad;
+}

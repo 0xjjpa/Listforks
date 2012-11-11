@@ -63,7 +63,7 @@ class AccountController extends Controller
      */
     public function loginAction()
     {
-        return $this->render('ListForksBundle:Account:index.html.twig');
+        return $this->render('ListForksBundle:Account:login.html.twig');
     }
 
     /**
