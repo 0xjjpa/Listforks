@@ -50,17 +50,9 @@ class Account implements UserInterface
      */
     private $password;
 
-    /**
-     * @var boolean $isActive
-     *
-     * @ORM\Column(name="isActive", type="boolean")
-     */
-    private $isActive;
-
 
     public function __construct()
     {
-        $this->isActive = true;
         $this->salt = md5(uniqid(null, true));
     }
 
@@ -164,29 +156,6 @@ class Account implements UserInterface
     public function getPassword()
     {
         return $this->password;
-    }
-
-    /**
-     * Set isActive
-     *
-     * @param boolean $isActive
-     * @return Account
-     */
-    public function setIsActive($isActive)
-    {
-        $this->isActive = $isActive;
-    
-        return $this;
-    }
-
-    /**
-     * Get isActive
-     *
-     * @return boolean 
-     */
-    public function getIsActive()
-    {
-        return $this->isActive;
     }
 
     /**
