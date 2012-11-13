@@ -4,6 +4,7 @@ namespace ListForks\Bundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class AccountType extends AbstractType
 {
@@ -19,8 +20,9 @@ class AccountType extends AbstractType
 		return 'account';
 	}
 
-	public function getDefaultOptions(array $options)
+	public function getDefaultOptions(OptionsResolverInterface $resolver)
 	{
-		return array('data_class' => 'ListForks\Bundle\Entity\Account');
+		$resolver->setDefaults(
+			array('data_class' => 'ListForks\Bundle\Entity\Account'));
 	}
 }
