@@ -139,14 +139,8 @@ class AccountController extends Controller
             }
         }
 
-        // when requesting to get the edit from
-        if ($request->getMethod() == 'GET') {
-      
-            return $this->render('ListForksBundle:Account:index.html.twig', array('form' => $form->createView()));
-
-            // Need to do something with the data here
-        }
-        
+        return $this->render('ListForksBundle:Account:index.html.twig', array('form' => $form->createView()));
+    
     }
 
 }
