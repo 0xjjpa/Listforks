@@ -169,6 +169,9 @@ class Profile
      */
     public function __construct()
     {
+        $this->first_name = '';
+        $this->last_name = '';
+        $this->location = '';
         $this->subscriptions = new \Doctrine\Common\Collections\ArrayCollection();
         $this->preferences = new \Doctrine\Common\Collections\ArrayCollection();
     }
