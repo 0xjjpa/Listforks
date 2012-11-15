@@ -3,10 +3,10 @@
 namespace ListForks\Bundle\Controller;
 
 use ListForks\Bundle\Entity\Account;
-use ListForks\Bundle\Entity\Profile;
+use ListForks\Bundle\Entity\User;
 
 use ListForks\Bundle\Form\Type\AccountType;
-use ListForks\Bundle\Form\Type\ProfileType;
+use ListForks\Bundle\Form\Type\UserType;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Form;
@@ -31,18 +31,25 @@ class AccountController extends Controller
     {
         $account = $this->get('security.context')->getToken()->getUser();
 
-        $profile = $this->getDoctrine()
-            ->getRepository('ListForksBundle:Profile')
+        $user = $this->getDoctrine()
+            ->getRepository('ListForksBundle:User')
             ->findOneByAccount($account);
 
-        $form = $this->createForm(new ProfileType(), $profile);
+        $form = $this->createForm(new UserType(), $user);
 
             if( $request->getMethod() == 'POST' )
             {
                 $this->forward('ListForksBundle:Account:edit', array('form' => $form));
             }
 
-        return $this->render('ListForksBundle:Account:index.html.twig', array('form' => $form->createView()));
+        $response = new Response(json_encode(array(
+            'account_id' => $account->getId(),
+            'username' => $account->getUsername(),
+            'email' => $account->getEmail())));
+
+        // return $this->render('ListForksBundle:Account:index.html.twig', array('form' => $form->createView()));
+
+        return $response;
     }
 
     /**
@@ -67,12 +74,12 @@ class AccountController extends Controller
                     $password = $encoder->encodePassword($account->getPassword(), $account->getSalt());
                     $account->setPassword($password);
 
-                    $profile = new Profile();
-                    $profile->setAccount($account);
+                    $user = new User();
+                    $user->setAccount($account);
 
                     $em = $this->getDoctrine()->getManager();
                     $em->persist($account);
-                    $em->persist($profile);
+                    $em->persist($user);
                     $em->flush();
 
                     return $this->redirect($this->generateUrl('_login'));
@@ -120,9 +127,9 @@ class AccountController extends Controller
 
             if( $form->isValid() )
             {
-                $profile = $form->getData();
+                $user = $form->getData();
 
-                $account = $profile->getAccount();
+                $account = $user->getAccount();
 
                 $factory = $this->get('security.encoder_factory');
                 $encoder = $factory->getEncoder($account);
