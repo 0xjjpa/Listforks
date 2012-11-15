@@ -23,15 +23,15 @@ class Subscription
 
     /**
      *
-     * @ORM\ManyToOne(targetEntity="ForkList", inversedBy="subscriptions")
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="subscriptions")
      */
-    private $forklist;
+    private $user;
 
     /**
      *
-     * @ORM\ManyToOne(targetEntity="Profile", inversedBy="subscriptions")
+     * @ORM\ManyToOne(targetEntity="ForkList", inversedBy="subscriptions")
      */
-    private $profile;
+    private $forklist;
 
 
     /**
@@ -45,9 +45,32 @@ class Subscription
     }
 
     /**
+     * Set user
+     *
+     * @param \ListForks\Bundle\Entity\User $user
+     * @return Subscription
+     */
+    public function setUser(\ListForks\Bundle\Entity\User $user = null)
+    {
+        $this->user = $user;
+    
+        return $this;
+    }
+
+    /**
+     * Get user
+     *
+     * @return \ListForks\Bundle\Entity\User 
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
      * Set forklist
      *
-     * @param ListForks\Bundle\Entity\ForkList $forklist
+     * @param \ListForks\Bundle\Entity\ForkList $forklist
      * @return Subscription
      */
     public function setForklist(\ListForks\Bundle\Entity\ForkList $forklist = null)
@@ -60,33 +83,10 @@ class Subscription
     /**
      * Get forklist
      *
-     * @return ListForks\Bundle\Entity\ForkList 
+     * @return \ListForks\Bundle\Entity\ForkList 
      */
     public function getForklist()
     {
         return $this->forklist;
-    }
-
-    /**
-     * Set profile
-     *
-     * @param ListForks\Bundle\Entity\Profile $profile
-     * @return Subscription
-     */
-    public function setProfile(\ListForks\Bundle\Entity\Profile $profile = null)
-    {
-        $this->profile = $profile;
-    
-        return $this;
-    }
-
-    /**
-     * Get profile
-     *
-     * @return ListForks\Bundle\Entity\Profile 
-     */
-    public function getProfile()
-    {
-        return $this->profile;
     }
 }

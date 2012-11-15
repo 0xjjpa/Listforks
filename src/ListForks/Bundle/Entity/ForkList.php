@@ -58,6 +58,12 @@ class ForkList
 
     /**
      *
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="forklists")
+     */
+    private $user;
+
+    /**
+     *
      * @ORM\OneToMany(targetEntity="Item", mappedBy="forklist")
      */
     private $items;
@@ -194,6 +200,7 @@ class ForkList
         return $this->rating;
     }
     
+
     /**
      * Constructor
      */
@@ -204,9 +211,32 @@ class ForkList
     }
     
     /**
+     * Set user
+     *
+     * @param \ListForks\Bundle\Entity\User $user
+     * @return ForkList
+     */
+    public function setUser(\ListForks\Bundle\Entity\User $user = null)
+    {
+        $this->user = $user;
+    
+        return $this;
+    }
+
+    /**
+     * Get user
+     *
+     * @return \ListForks\Bundle\Entity\User 
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
      * Add items
      *
-     * @param ListForks\Bundle\Entity\Item $items
+     * @param \ListForks\Bundle\Entity\Item $items
      * @return ForkList
      */
     public function addItem(\ListForks\Bundle\Entity\Item $items)
@@ -219,7 +249,7 @@ class ForkList
     /**
      * Remove items
      *
-     * @param ListForks\Bundle\Entity\Item $items
+     * @param \ListForks\Bundle\Entity\Item $items
      */
     public function removeItem(\ListForks\Bundle\Entity\Item $items)
     {
@@ -229,7 +259,7 @@ class ForkList
     /**
      * Get items
      *
-     * @return Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection 
      */
     public function getItems()
     {
@@ -239,7 +269,7 @@ class ForkList
     /**
      * Add subscriptions
      *
-     * @param ListForks\Bundle\Entity\Subscription $subscriptions
+     * @param \ListForks\Bundle\Entity\Subscription $subscriptions
      * @return ForkList
      */
     public function addSubscription(\ListForks\Bundle\Entity\Subscription $subscriptions)
@@ -252,7 +282,7 @@ class ForkList
     /**
      * Remove subscriptions
      *
-     * @param ListForks\Bundle\Entity\Subscription $subscriptions
+     * @param \ListForks\Bundle\Entity\Subscription $subscriptions
      */
     public function removeSubscription(\ListForks\Bundle\Entity\Subscription $subscriptions)
     {
@@ -262,7 +292,7 @@ class ForkList
     /**
      * Get subscriptions
      *
-     * @return Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection 
      */
     public function getSubscriptions()
     {

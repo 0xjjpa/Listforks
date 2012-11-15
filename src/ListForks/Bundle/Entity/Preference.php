@@ -44,9 +44,9 @@ class Preference
 
     /**
      *
-     * @ORM\ManyToOne(targetEntity="Profile", inversedBy="preferences")
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="preferences")
      */
-    private $profile;
+    private $user;
 
 
     /**
@@ -129,25 +129,25 @@ class Preference
     }
 
     /**
-     * Set profile
+     * Set user
      *
-     * @param ListForks\Bundle\Entity\Profile $profile
+     * @param \ListForks\Bundle\Entity\User $user
      * @return Preference
      */
-    public function setProfile(\ListForks\Bundle\Entity\Profile $profile = null)
+    public function setUser(\ListForks\Bundle\Entity\User $user = null)
     {
-        $this->profile = $profile;
+        $this->user = $user;
     
         return $this;
     }
 
     /**
-     * Get profile
+     * Get user
      *
-     * @return ListForks\Bundle\Entity\Profile 
+     * @return \ListForks\Bundle\Entity\User 
      */
-    public function getProfile()
+    public function getUser()
     {
-        return $this->profile;
+        return $this->user;
     }
 }
