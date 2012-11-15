@@ -5,15 +5,15 @@ namespace ListForks\Bundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * ListForks\Bundle\Entity\Profile
+ * User
  *
  * @ORM\Table()
  * @ORM\Entity
  */
-class Profile
+class User
 {
     /**
-     * @var integer $id
+     * @var integer
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
@@ -22,21 +22,21 @@ class Profile
     private $id;
 
     /**
-     * @var string $first_name
+     * @var string
      *
-     * @ORM\Column(name="first_name", type="string", length=255)
+     * @ORM\Column(name="first_name", type="string", length=20)
      */
     private $first_name;
 
     /**
-     * @var string $last_name
+     * @var string
      *
-     * @ORM\Column(name="last_name", type="string", length=255)
+     * @ORM\Column(name="last_name", type="string", length=20)
      */
     private $last_name;
 
     /**
-     * @var string $location
+     * @var string
      *
      * @ORM\Column(name="location", type="string")
      */
@@ -51,13 +51,19 @@ class Profile
 
     /**
      *
-     * @ORM\OneToMany(targetEntity="Subscription", mappedBy="profile")
+     * @ORM\OneToMany(targetEntity="ForkList", mappedBy="user")
+     */
+    private $forklists;
+
+    /**
+     *
+     * @ORM\OneToMany(targetEntity="Subscription", mappedBy="user")
      */
     private $subscriptions;
 
     /**
      *
-     * @ORM\OneToMany(targetEntity="Preference", mappedBy="profile")
+     * @ORM\OneToMany(targetEntity="Preference", mappedBy="user")
      */
     private $preferences;
 
@@ -76,7 +82,7 @@ class Profile
      * Set first_name
      *
      * @param string $firstName
-     * @return Profile
+     * @return User
      */
     public function setFirstName($firstName)
     {
@@ -99,7 +105,7 @@ class Profile
      * Set last_name
      *
      * @param string $lastName
-     * @return Profile
+     * @return User
      */
     public function setLastName($lastName)
     {
@@ -122,7 +128,7 @@ class Profile
      * Set location
      *
      * @param string $location
-     * @return Profile
+     * @return User
      */
     public function setLocation($location)
     {
@@ -140,12 +146,26 @@ class Profile
     {
         return $this->location;
     }
+    
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->first_name = '';
+        $this->last_name = '';
+        $this->location = '';
 
+        $this->forklists = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->subscriptions = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->preferences = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+    
     /**
      * Set account
      *
-     * @param ListForks\Bundle\Entity\Account $account
-     * @return Profile
+     * @param \ListForks\Bundle\Entity\Account $account
+     * @return User
      */
     public function setAccount(\ListForks\Bundle\Entity\Account $account = null)
     {
@@ -157,30 +177,51 @@ class Profile
     /**
      * Get account
      *
-     * @return ListForks\Bundle\Entity\Account 
+     * @return \ListForks\Bundle\Entity\Account 
      */
     public function getAccount()
     {
         return $this->account;
     }
-    
+
     /**
-     * Constructor
+     * Add forklists
+     *
+     * @param \ListForks\Bundle\Entity\ForkList $forklists
+     * @return User
      */
-    public function __construct()
+    public function addForklist(\ListForks\Bundle\Entity\ForkList $forklists)
     {
-        $this->first_name = '';
-        $this->last_name = '';
-        $this->location = '';
-        $this->subscriptions = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->preferences = new \Doctrine\Common\Collections\ArrayCollection();
-    }
+        $this->forklists[] = $forklists;
     
+        return $this;
+    }
+
+    /**
+     * Remove forklists
+     *
+     * @param \ListForks\Bundle\Entity\ForkList $forklists
+     */
+    public function removeForklist(\ListForks\Bundle\Entity\ForkList $forklists)
+    {
+        $this->forklists->removeElement($forklists);
+    }
+
+    /**
+     * Get forklists
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getForklists()
+    {
+        return $this->forklists;
+    }
+
     /**
      * Add subscriptions
      *
-     * @param ListForks\Bundle\Entity\Subscription $subscriptions
-     * @return Profile
+     * @param \ListForks\Bundle\Entity\Subscription $subscriptions
+     * @return User
      */
     public function addSubscription(\ListForks\Bundle\Entity\Subscription $subscriptions)
     {
@@ -192,7 +233,7 @@ class Profile
     /**
      * Remove subscriptions
      *
-     * @param ListForks\Bundle\Entity\Subscription $subscriptions
+     * @param \ListForks\Bundle\Entity\Subscription $subscriptions
      */
     public function removeSubscription(\ListForks\Bundle\Entity\Subscription $subscriptions)
     {
@@ -202,7 +243,7 @@ class Profile
     /**
      * Get subscriptions
      *
-     * @return Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection 
      */
     public function getSubscriptions()
     {
@@ -212,8 +253,8 @@ class Profile
     /**
      * Add preferences
      *
-     * @param ListForks\Bundle\Entity\Preference $preferences
-     * @return Profile
+     * @param \ListForks\Bundle\Entity\Preference $preferences
+     * @return User
      */
     public function addPreference(\ListForks\Bundle\Entity\Preference $preferences)
     {
@@ -225,7 +266,7 @@ class Profile
     /**
      * Remove preferences
      *
-     * @param ListForks\Bundle\Entity\Preference $preferences
+     * @param \ListForks\Bundle\Entity\Preference $preferences
      */
     public function removePreference(\ListForks\Bundle\Entity\Preference $preferences)
     {
@@ -235,7 +276,7 @@ class Profile
     /**
      * Get preferences
      *
-     * @return Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection 
      */
     public function getPreferences()
     {
