@@ -26,11 +26,11 @@ class UserType extends AbstractType
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
 		$resolver->setDefaults(
-			array('data_class' => 'ListForks\Bundle\Entity\User'));
+			array('data_class' => 'ListForksBundle:User'));
 	}
 
 	public function getDefaultOptions(array $options)
 	{
-		return array('data_class' => 'ListForks\Bundle\Entity\User');
+		return array('data_class' => 'ListForksBundle:User');
 	}
 }

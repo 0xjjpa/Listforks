@@ -23,12 +23,12 @@ class AccountType extends AbstractType
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
 		$resolver->setDefaults(
-			array('data_class' => 'ListForks\Bundle\Entity\Account'));
+			array('data_class' => 'ListForksBundle:Account'));
 	}
 
 	public function getDefaultOptions(array $options)
 	{
-		return array('data_class' => 'ListForks\Bundle\Entity\Account');
+		return array('data_class' => 'ListForksBundle:Account');
 	}
 
 }
