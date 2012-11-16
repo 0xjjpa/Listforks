@@ -29,21 +29,23 @@ security:
             security: false
 
         login:
-            pattern:  ^/account/login$
+            pattern:  ^/accounts/login$
             security: false
 
-        create:
-            pattern:  ^/account/create$
+        account_new:
+            pattern:  ^/accounts/new$
             security: false
 
         secured_area:
             pattern:    ^/
             form_login:
-                check_path: /account/login_check
-                login_path: /account/login
+                check_path: /accounts/login_check
+                login_path: /accounts/login
+                default_target_path: /lists
+                target_path_parameter: get_lists
             logout:
-                path:   /account/logout
-                target: /account/login
+                path:   /accounts/logout
+                target: /accounts/login
             provider: user_db
             #anonymous: ~
             #http_basic:
