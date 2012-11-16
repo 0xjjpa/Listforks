@@ -1,26 +1,27 @@
-_index:
+_home:
     pattern: /
-    defaults: { _controller: ListForksBundle:Account:index }
+    defaults: 
+        _controller: FrameworkBundle:Redirect:urlRedirect
+        path: /lists
+        permanent: true
 
 _login:
-    pattern: /account/login
+    pattern: /accounts/login
     defaults: { _controller: ListForksBundle:Security:login }
 
 _login_check:
-    pattern: /account/login_check
+    pattern: /accounts/login_check
 
 _logout:
-    pattern: /account/logout
+    pattern: /accounts/logout
 
-_account:
-    resource: "@ListForksBundle/Controller/AccountController.php"
-    type:     annotation
-    prefix:   /account
+accounts:
+    type: rest
+    resource: "@ListForksBundle/Controller/AccountsController.php"
 
-_list:
-    resource: "@ListForksBundle/Controller/ListController.php"
-    type:     annotation
-    prefix:   /list
+lists:
+    type: rest
+    resource: "@ListForksBundle/Controller/ListsController.php"
 
 _search:
     resource: "@ListForksBundle/Controller/SearchController.php"
