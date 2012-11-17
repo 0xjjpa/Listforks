@@ -1,5 +1,5 @@
 {
-    "hash": "6603b287415a317a9e0aa0c8af5204e4",
+    "hash": "cef6726b95b733366ec823e277daf2d4",
     "packages": [
         {
             "name": "doctrine/common",
@@ -11,7 +11,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/doctrine/common/zipball/bb0aebbf234db52df476a2b473d434745b34221c",
+                "url": "https://github.com/doctrine/common/archive/bb0aebbf234db52df476a2b473d434745b34221c.zip",
                 "reference": "bb0aebbf234db52df476a2b473d434745b34221c",
                 "shasum": ""
             },
@@ -76,19 +76,19 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/dbal",
-                "reference": "292d5edd17e0a9b9a7ee9eb20d6ae1033059153f"
+                "reference": "97801a74ba646d069c6674439ed74e75b34e80ca"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/doctrine/dbal/archive/292d5edd17e0a9b9a7ee9eb20d6ae1033059153f.zip",
-                "reference": "292d5edd17e0a9b9a7ee9eb20d6ae1033059153f",
+                "url": "https://github.com/doctrine/dbal/archive/97801a74ba646d069c6674439ed74e75b34e80ca.zip",
+                "reference": "97801a74ba646d069c6674439ed74e75b34e80ca",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.2",
                 "doctrine/common": "2.3.*"
             },
-            "time": "1352716871",
+            "time": "1352496774",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -140,20 +140,19 @@
             "source": {
                 "type": "git",
                 "url": "git://github.com/doctrine/DoctrineBundle.git",
-                "reference": "47df202dfb4ad38e15d6aed8a53e722b30c9f9fd"
+                "reference": "1cfd5691283f4b32cfea87e8c8e28d502902c825"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/doctrine/DoctrineBundle/archive/47df202dfb4ad38e15d6aed8a53e722b30c9f9fd.zip",
-                "reference": "47df202dfb4ad38e15d6aed8a53e722b30c9f9fd",
+                "url": "https://github.com/doctrine/DoctrineBundle/archive/1cfd5691283f4b32cfea87e8c8e28d502902c825.zip",
+                "reference": "1cfd5691283f4b32cfea87e8c8e28d502902c825",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.2",
                 "doctrine/dbal": ">=2.2,<2.4-dev",
                 "symfony/framework-bundle": ">=2.1,<2.3-dev",
-                "symfony/doctrine-bridge": ">=2.1,<2.3-dev",
-                "jdorn/sql-formatter": "v1.0.1"
+                "symfony/doctrine-bridge": ">=2.1,<2.3-dev"
             },
             "require-dev": {
                 "doctrine/orm": ">=2.2,<2.4-dev",
@@ -163,7 +162,7 @@
             "suggest": {
                 "doctrine/orm": "The Doctrine ORM integration is optional in the bundle."
             },
-            "time": "1353074073",
+            "time": "1352365569",
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
@@ -208,12 +207,12 @@
             "source": {
                 "type": "git",
                 "url": "git://github.com/doctrine/doctrine2.git",
-                "reference": "77d060ab74212919f1eaace72842ea43bf420f43"
+                "reference": "c6eb04de145b986d968be1ddb0e0a43cd8110b8e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/doctrine/doctrine2/archive/77d060ab74212919f1eaace72842ea43bf420f43.zip",
-                "reference": "77d060ab74212919f1eaace72842ea43bf420f43",
+                "url": "https://github.com/doctrine/doctrine2/archive/c6eb04de145b986d968be1ddb0e0a43cd8110b8e.zip",
+                "reference": "c6eb04de145b986d968be1ddb0e0a43cd8110b8e",
                 "shasum": ""
             },
             "require": {
@@ -225,7 +224,7 @@
             "suggest": {
                 "symfony/yaml": "If you want to use YAML Metadata Mapping Driver"
             },
-            "time": "1352731781",
+            "time": "1352495804",
             "bin": [
                 "bin/doctrine",
                 "bin/doctrine.php"
@@ -388,53 +387,6 @@
             "homepage": "http://friendsofsymfony.github.com",
             "keywords": [
                 "rest"
-            ]
-        },
-        {
-            "name": "jdorn/sql-formatter",
-            "version": "v1.0.1",
-            "source": {
-                "type": "git",
-                "url": "git://github.com/jdorn/sql-formatter.git",
-                "reference": "v1.0.1"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://github.com/jdorn/sql-formatter/archive/v1.0.1.zip",
-                "reference": "v1.0.1",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.2.4"
-            },
-            "time": "2012-10-04 22:10:16",
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.0.x-dev"
-                }
-            },
-            "installation-source": "dist",
-            "autoload": {
-                "classmap": [
-                    "lib"
-                ]
-            },
-            "license": [
-                "LGPL"
-            ],
-            "authors": [
-                {
-                    "name": "Jeremy Dorn",
-                    "email": "jeremy@jeremydorn.com",
-                    "homepage": "http://jeremydorn.com/"
-                }
-            ],
-            "description": "a PHP SQL highlighting library",
-            "homepage": "https://github.com/jdorn/sql-formatter/",
-            "keywords": [
-                "sql",
-                "highlight"
             ]
         },
         {
@@ -833,12 +785,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Seldaek/monolog",
-                "reference": "b23cfd3d6ce0b6c050dda723040b83a1a6d7637e"
+                "reference": "30b48f1231b041bfd363517a77a3a2ea02b1f576"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/Seldaek/monolog/archive/b23cfd3d6ce0b6c050dda723040b83a1a6d7637e.zip",
-                "reference": "b23cfd3d6ce0b6c050dda723040b83a1a6d7637e",
+                "url": "https://github.com/Seldaek/monolog/zipball/30b48f1231b041bfd363517a77a3a2ea02b1f576",
+                "reference": "30b48f1231b041bfd363517a77a3a2ea02b1f576",
                 "shasum": ""
             },
             "require": {
@@ -852,7 +804,7 @@
                 "ext-amqp": "Allow sending log messages to an AMQP server (1.0+ required)",
                 "ext-mongo": "Allow sending log messages to a MongoDB server"
             },
-            "time": "1352907970",
+            "time": "1352047076",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1147,7 +1099,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/symfony/MonologBundle/zipball/51517152a608926ee6b40ed8cfbba1a708f0a14f",
+                "url": "https://github.com/symfony/MonologBundle/archive/51517152a608926ee6b40ed8cfbba1a708f0a14f.zip",
                 "reference": "51517152a608926ee6b40ed8cfbba1a708f0a14f",
                 "shasum": ""
             },
@@ -1202,7 +1154,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/symfony/SwiftmailerBundle/zipball/2393ba6d4f1b544349123e24a16bbc749bef9e55",
+                "url": "https://github.com/symfony/SwiftmailerBundle/archive/2393ba6d4f1b544349123e24a16bbc749bef9e55.zip",
                 "reference": "2393ba6d4f1b544349123e24a16bbc749bef9e55",
                 "shasum": ""
             },
@@ -1252,12 +1204,12 @@
             "source": {
                 "type": "git",
                 "url": "git://github.com/symfony/symfony.git",
-                "reference": "9a2edb9a6396dc8a549b26dce78bef655a90e176"
+                "reference": "de63128cabc9c0b0367bb5d7d0fba02309716bd3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/symfony/symfony/archive/9a2edb9a6396dc8a549b26dce78bef655a90e176.zip",
-                "reference": "9a2edb9a6396dc8a549b26dce78bef655a90e176",
+                "url": "https://github.com/symfony/symfony/archive/de63128cabc9c0b0367bb5d7d0fba02309716bd3.zip",
+                "reference": "de63128cabc9c0b0367bb5d7d0fba02309716bd3",
                 "shasum": ""
             },
             "require": {
@@ -1306,7 +1258,7 @@
                 "propel/propel1": "dev-master",
                 "monolog/monolog": "1.*"
             },
-            "time": "1352985781",
+            "time": "1352478730",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1349,7 +1301,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/fabpot/Twig-extensions/zipball/dcdff02fbac1282e6b8f4d0558cc7e9580105688",
+                "url": "https://github.com/fabpot/Twig-extensions/archive/dcdff02fbac1282e6b8f4d0558cc7e9580105688.zip",
                 "reference": "dcdff02fbac1282e6b8f4d0558cc7e9580105688",
                 "shasum": ""
             },
