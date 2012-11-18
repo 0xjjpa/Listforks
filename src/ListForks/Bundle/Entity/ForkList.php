@@ -43,18 +43,17 @@ class ForkList
     private $private;
 
     /**
-     * @var string $location
-     *
-     * @ORM\Column(name="location", type="string")
-     */
-    private $location;
-
-    /**
      * @var integer $rating
      *
      * @ORM\Column(name="rating", type="integer")
      */
     private $rating;
+
+    /**
+     *
+     * @ORM\OneToOne(targetEntity="Location", mappedBy="forklist", cascade={"persist", "remove"})
+     */
+    private $location;
 
     /**
      *
@@ -64,7 +63,7 @@ class ForkList
 
     /**
      *
-     * @ORM\OneToMany(targetEntity="Item", mappedBy="forklist")
+     * @ORM\OneToMany(targetEntity="Item", mappedBy="forklist", cascade={"persist", "remove"})
      */
     private $items;
 
@@ -155,29 +154,6 @@ class ForkList
     }
 
     /**
-     * Set location
-     *
-     * @param string $location
-     * @return List
-     */
-    public function setLocation($location)
-    {
-        $this->location = $location;
-    
-        return $this;
-    }
-
-    /**
-     * Get location
-     *
-     * @return string 
-     */
-    public function getLocation()
-    {
-        return $this->location;
-    }
-
-    /**
      * Set rating
      *
      * @param integer $rating
@@ -200,7 +176,6 @@ class ForkList
         return $this->rating;
     }
     
-
     /**
      * Constructor
      */
@@ -210,6 +185,29 @@ class ForkList
         $this->subscriptions = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
+    /**
+     * Set location
+     *
+     * @param \ListForks\Bundle\Entity\Location $location
+     * @return ForkList
+     */
+    public function setLocation(\ListForks\Bundle\Entity\Location $location = null)
+    {
+        $this->location = $location;
+    
+        return $this;
+    }
+
+    /**
+     * Get location
+     *
+     * @return \ListForks\Bundle\Entity\Location 
+     */
+    public function getLocation()
+    {
+        return $this->location;
+    }
+
     /**
      * Set user
      *
