@@ -26,9 +26,6 @@ class AccountsController extends Controller
     } // "options_accounts" [OPTIONS] /accounts
 
 
-    /**
-     * @Secure(roles="ROLE_USER")
-     */
     public function getAccountsAction()
     {
         return new Response('[GET] /accounts');
