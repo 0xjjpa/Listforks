@@ -4,6 +4,8 @@ namespace ListForks\Bundle\Controller;
 
 use ListForks\Bundle\Entity\ForkList;
 use ListForks\Bundle\Entity\User;
+use ListForks\Bundle\Entity\Item;
+use ListForks\Bundle\Entity\Location;
 
 use ListForks\Bundle\Form\Type\AccountType;
 use ListForks\Bundle\Form\Type\UserType;
@@ -31,7 +33,79 @@ class ListsController extends Controller
      */
     public function getListsAction()
     {
-        return $this->render('ListForksBundle:List:index.html.twig');
+        // Get current account
+        $account = $this->get('security.context')->getToken()->getUser();
+
+        // Find user in DB using account
+        $user = $this->getDoctrine()
+            ->getRepository('ListForksBundle:User')
+            ->findOneByAccount($account);
+
+        // User does not exist
+        if( !$user )
+        {
+            // Create a JSON-response
+            $response = new Response(
+                json_encode(array('_hasData' => false,
+                                  'message' => 'We could not retrieve your lists.')));
+        }
+        // User exists
+        else
+        {
+            // Get user's lists
+            $forklists = $user->getForklists();
+
+            // Empty array to store the user's lists
+            $listArray = array();
+
+            // Traverse through each list
+            foreach( $forklists as $forklist )
+            {
+                // Get information for current list
+                $id = $forklist->getId();
+                $userId = $forklist->getUser()->getId();
+                $name = $forklist->getName();
+                $description = $forklist->getDescription();
+                $private = $forklist->getPrivate();
+                $location = $forklist->getLocation();
+                $rating = $forklist->getRating();
+                $items = $forklist->getItems();
+
+                // Array to store the location co-ordinates of the current list
+                $locationArray = array( 'latitude' => $location->getLatitude(),
+                                        'longitude' => $location->getLongitude() );
+
+                // Empty array to store the items of the current list
+                $itemsArray = array();
+
+                // Traverse through the items for the current list
+                foreach( $items as $item )
+                {
+                    // Add item to itemArray
+                    $itemsArray[] =  array( 'id' => $item->getId(),
+                                            'description' => $item->getDescription() );
+                }
+
+                // Add list to listArray
+                $listArray[] = array( '_hasData' => true,
+                                      'attributes' => array( 'id' => $id,
+                                                             'userId' => $userId,
+                                                             'name' => $name,
+                                                             'description' => $description,
+                                                             'private' => $private,
+                                                             'location' => $locationArray,
+                                                             'rating' => $rating,
+                                                             'items' => $itemsArray ));
+            }
+
+            // Create a JSON-response with the user's lists
+            $response = new Response(json_encode($listArray));
+        }
+
+        // Set response headers
+        $response->headers->set('Content-Type', 'application/json');
+
+        return $response;
 
     } // "get_lists"     [GET] /lists
 
@@ -45,7 +119,125 @@ class ListsController extends Controller
 
     public function postListsAction()
     {
-        return new Response('[POST] /lists');
+        // Get current request
+        $request = $this->getRequest();
+        // Get content associated with request
+        $content = $request->getContent();
+
+        // Check if content is empty
+        if( !empty($content) )
+        {
+            // Empty array to store the list data
+            $newListArray = array();
+
+            // Convert JSON Request Object into an array 
+            $newListArray = json_decode($content, true);
+
+            // Get userId from request
+            $userId = $newListArray['userId'];
+
+            // Get current account
+            $account = $this->get('security.context')->getToken()->getUser();
+
+            // Find user in DB
+            $user = $this->getDoctrine()
+                ->getRepository('ListForksBundle:User')
+                ->findOneByAccount($account);
+
+            // Check if userId from request matches the userId associated with the current account
+            if( $user->getId() == $userId )
+            {
+                 // Get list information from request
+                 $listArray = $newListArray['list'];
+
+                 // Get specific list info
+                 $name = $listArray['name'];
+                 $description = $listArray['description'];
+                 $private = $listArray['private'];
+                 $rating = $listArray['rating'];
+                 $items = $listArray['items'];
+                 $location = $listArray['location'];
+                 $latitude = $listArray['location']['latitude'];
+                 $longitude = $listArray['location']['longitude'];
+
+                 // Create a new list
+                 $forklist = new ForkList();
+
+                 // Create a new location and associate it with the list
+                 $newLocation = new Location();
+                 $newLocation->setLatitude($latitude);
+                 $newLocation->setLongitude($longitude);
+                 $newLocation->setForklist($forklist);
+
+                 // Bind list information to the list
+                 $forklist->setName($name);
+                 $forklist->setDescription($description);
+                 $forklist->setPrivate($private);
+                 $forklist->setLocation($newLocation);
+                 $forklist->setRating($rating);
+                 $forklist->setUser($user);
+
+                 // Create items and associate it with the list
+                 foreach( $items as $item )
+                 {
+                    $newItem = new Item();
+                    $newItem->setDescription($item['description']);
+                    $newItem->setComplete(false);
+                    $newItem->setForklist($forklist);
+
+                    $forklist->addItem($newItem);
+                 }
+
+                 // Associate the new list with the current user
+                 $user->addForklist($forklist);
+
+                 // Persist changes to DB
+                 $em = $this->getDoctrine()->getManager();
+                 $em->persist($forklist);
+                 $em->flush();
+
+                 // Get id for new list
+                 $id = $forklist->getId();
+
+                 // Create an array with new list information to be returned
+                 $returnList = array( '_hasData' => true,
+                                      'attributes' => array( 'id' => $id,
+                                                             'userId' => $userId,
+                                                             'name' => $name,
+                                                             'description' => $description,
+                                                             'private' => $private,
+                                                             'location' => $location,
+                                                             'rating' => $rating,
+                                                             'items' => $items ));
+
+                 // Create a JSON response with the new list information
+                 $response = new Response(json_encode($returnList)); 
+
+            }
+            // UserId does not match
+            else
+            {
+                // Create a JSON response
+                $response = new Response(
+                json_encode(array('_hasData' => false,
+                                  'message' => 'We could not create your list.')));
+
+            }
+        }
+        // Content is empty
+        else
+        {
+            // Create a JSON response
+            $response = new Response(
+                json_encode(array('_hasData' => false,
+                                  'message' => 'We could not create your list.')));
+            
+        }
+
+        // Set response headers
+        $response->headers->set('Content-Type', 'application/json');
+
+        return $response;
 
     } // "post_lists"    [POST] /lists
 
@@ -88,5 +280,16 @@ class ListsController extends Controller
         return new Response('[DELETE] /lists/'.$id);
 
     } // "delete_list"   [DELETE] /lists/{id}
+
+
+    public function getListItemsAction($id)
+    {
+        return new Response('[GET] /lists/'.$id.'/items');
+    } // "get_user_comments"    [GET] /lists/{slug}/items
+
+    public function newListItemsAction($id)
+    {
+        return new Response('[GET] /lists/'.$id.'/items/new');
+    } // "new_user_comments"    [GET] /lists/{slug}/items/new
 
 }
