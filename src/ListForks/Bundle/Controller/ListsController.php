@@ -22,8 +22,11 @@ class ListsController extends Controller
 {
 	
 	public function optionsListsAction()
-    {
+    {        
+
         return new Response('[OPTIONS] /lists');
+
+    //    return new Response('[OPTIONS] /lists');
 
     } // "options_lists" [OPTIONS] /lists
 
@@ -247,7 +250,8 @@ class ListsController extends Controller
      */
     public function getListAction($id)
     {
-        return new Response('[GET] /lists/'.$id);
+
+
 
     } // "get_list"      [GET] /lists/{id}
 
