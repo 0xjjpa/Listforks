@@ -250,8 +250,85 @@ class ListsController extends Controller
      */
     public function getListAction($id)
     {
+        // Find list in DB using $id
+        $forklist = $this->getDoctrine()
+            ->getRepository('ListForksBundle:ForkList')
+            ->find($id);
 
+        // List does not exist
+        if( !$forklist )
+        {
+            $response = new Response(
+                json_encode(array('_hasData' => false,
+                                  'message' => 'No list found for id '.$id)));
+        }
+        // List exists
+        else
+        {
+            // Get current account
+            $account = $this->get('security.context')->getToken()->getUser();
 
+            // Find user in DB using account
+            $user = $this->getDoctrine()
+                ->getRepository('ListForksBundle:User')
+                ->findOneByAccount($account);
+
+            // List is public or user is list owner
+            if( $forklist->getPrivate() == false || $forklist->getUser()->getId() == $user->getId() )
+            {
+                // Get information for current list
+                $id = $forklist->getId();
+                $userId = $forklist->getUser()->getId();
+                $name = $forklist->getName();
+                $description = $forklist->getDescription();
+                $private = $forklist->getPrivate();
+                $location = $forklist->getLocation();
+                $rating = $forklist->getRating();
+                $items = $forklist->getItems();
+
+                // Array to store the location co-ordinates of the current list
+                $locationArray = array( 'latitude' => $location->getLatitude(),
+                                        'longitude' => $location->getLongitude() );
+
+                // Empty array to store the items of the current list
+                $itemsArray = array();
+
+                // Traverse through the items for the current list
+                foreach( $items as $item )
+                {
+                    // Add item to itemArray
+                    $itemsArray[] =  array( 'id' => $item->getId(),
+                                            'description' => $item->getDescription() );
+                }
+
+                // Add list to listArray
+                $listArray[] = array( '_hasData' => true,
+                                      'attributes' => array( 'id' => $id,
+                                                             'userId' => $userId,
+                                                             'name' => $name,
+                                                             'description' => $description,
+                                                             'private' => $private,
+                                                             'location' => $locationArray,
+                                                             'rating' => $rating,
+                                                             'items' => $itemsArray ));
+
+                // Create a JSON-response with the user's list
+                $response = new Response(json_encode($listArray));
+            }
+            // List is private and user is not the list owner
+            else
+            {
+                $response = new Response(
+                json_encode(array('_hasData' => false,
+                                  'message' => 'You do not have permission to view list id '.$id)));
+            }
+            
+        }
+
+        // Set response headers
+        $response->headers->set('Content-Type', 'application/json');
+
+        return $response;
 
     } // "get_list"      [GET] /lists/{id}
 
@@ -289,11 +366,11 @@ class ListsController extends Controller
     public function getListItemsAction($id)
     {
         return new Response('[GET] /lists/'.$id.'/items');
-    } // "get_user_comments"    [GET] /lists/{slug}/items
+    } // "get_user_comments"    [GET] /lists/{id}/items
 
     public function newListItemsAction($id)
     {
         return new Response('[GET] /lists/'.$id.'/items/new');
-    } // "new_user_comments"    [GET] /lists/{slug}/items/new
+    } // "new_user_comments"    [GET] /lists/{id}/items/new
 
 }
