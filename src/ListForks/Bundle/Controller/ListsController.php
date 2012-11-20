@@ -358,7 +358,111 @@ class ListsController extends Controller
      */
     public function deleteListAction($id)
     {
-        return new Response('[DELETE] /lists/'.$id);
+
+        // Find list in DB using $id
+        $forklist = $this->getDoctrine()
+            ->getRepository('ListForksBundle:ForkList')
+            ->find($id);
+
+        // List does not exist
+        if( !$forklist )
+        {
+
+            // set error code 403  for login but no list exists.
+            $response->setStatusCode(403);
+            $response = new Response(
+                json_encode(array('_hasData' => false,
+                                  'message' => 'No list found for id '.$id)));
+        }
+        // List exists
+        else
+        {
+            // Get current account
+            $account = $this->get('security.context')->getToken()->getUser();
+
+            // Find user in DB using account
+            $user = $this->getDoctrine()
+                ->getRepository('ListForksBundle:User')
+                ->findOneByAccount($account);
+
+            // List is public or user is list owner
+            if( $forklist->getPrivate() == false || $forklist->getUser()->getId() == $user->getId() )
+            {
+                // Get information for current list
+                $id = $forklist->getId();
+                $userId = $forklist->getUser()->getId();
+                $name = $forklist->getName();
+                $description = $forklist->getDescription();
+                $private = $forklist->getPrivate();
+                $location = $forklist->getLocation();
+                $rating = $forklist->getRating();
+                $items = $forklist->getItems();
+
+                // Array to store the location co-ordinates of the current list
+                $locationArray = array( 'latitude' => $location->getLatitude(),
+                                        'longitude' => $location->getLongitude() );
+
+                // Empty array to store the items of the current list
+                $itemsArray = array();
+
+                // Traverse through the items for the current list
+                foreach( $items as $item )
+                {
+                    // Add item to itemArray
+                    $itemsArray[] =  array( 'id' => $item->getId(),
+                                            'description' => $item->getDescription() );
+                }
+
+                // Add list to listArray
+                $listArray[] = array( '_hasData' => true,
+                                      'attributes' => array( 'id' => $id,
+                                                             'userId' => $userId,
+                                                             'name' => $name,
+                                                             'description' => $description,
+                                                             'private' => $private,
+                                                             'location' => $locationArray,
+                                                             'rating' => $rating,
+                                                             'items' => $itemsArray ));
+
+
+                // delete the user's list
+                $em = $this->getDoctrine()->getManager();
+                $em->remove($forklist);
+                $em->remove($location);
+
+                foreach( $items as $item )
+                {
+                    // Add item to itemArray
+                    $em->remove($item);
+                }
+
+                
+                $em->flush();
+
+
+
+
+                // Create a JSON-response with the user's list
+                $response = new Response(json_encode($listArray));
+            }
+            // List is private and user is not the list owner
+            else
+            {
+                // 404 when user is not loged in or wrong permission
+                $response->setStatusCode(404);
+                $response = new Response(
+                json_encode(array('_hasData' => false,
+                                  'message' => 'You don’t have permissions to delete this list' + 
+                                  ' We couldn’t delete the list with the list Id provided.')));
+
+            }
+            
+        }
+
+        // Set response headers
+        $response->headers->set('Content-Type', 'application/json');
+
+        return $response;
 
     } // "delete_list"   [DELETE] /lists/{id}
 
