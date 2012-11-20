@@ -199,6 +199,19 @@ class ListsController extends Controller
                  $em->persist($forklist);
                  $em->flush();
 
+                 // Empty array to store the items of the list
+                 $itemsArray = array();
+
+                 // Get new items from DB
+                 $newItems = $forklist->getItems();
+
+                 foreach( $newItems as $newItem )
+                 {
+                    // Add item to itemArray
+                    $itemsArray[] =  array( 'id' => $newItem->getId(),
+                                            'description' => $newItem->getDescription() );
+                 }
+
                  // Get id for new list
                  $id = $forklist->getId();
 
@@ -211,7 +224,7 @@ class ListsController extends Controller
                                                              'private' => $private,
                                                              'location' => $location,
                                                              'rating' => $rating,
-                                                             'items' => $items ));
+                                                             'items' => $itemsArray ));
 
                  // Create a JSON response with the new list information
                  $response = new Response(json_encode($returnList)); 
