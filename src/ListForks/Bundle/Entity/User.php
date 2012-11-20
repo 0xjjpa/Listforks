@@ -45,25 +45,25 @@ class User
     /**
      *
      * @ORM\OneToOne(targetEntity="Account")
-     * @ORM\JoinColumn(name="account_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="CASCADE")
      */
     private $account;
 
     /**
      *
-     * @ORM\OneToMany(targetEntity="ForkList", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="ForkList", mappedBy="user", cascade={"persist", "remove"})
      */
     private $forklists;
 
     /**
      *
-     * @ORM\OneToMany(targetEntity="Subscription", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="Subscription", mappedBy="user", cascade={"persist", "remove"})
      */
     private $subscriptions;
 
     /**
      *
-     * @ORM\OneToMany(targetEntity="Preference", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="Preference", mappedBy="user", cascade={"persist", "remove"})
      */
     private $preferences;
 

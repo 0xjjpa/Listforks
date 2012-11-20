@@ -45,6 +45,7 @@ class Preference
     /**
      *
      * @ORM\ManyToOne(targetEntity="User", inversedBy="preferences")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="CASCADE")
      */
     private $user;
 

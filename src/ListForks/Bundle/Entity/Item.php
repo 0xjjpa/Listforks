@@ -38,6 +38,7 @@ class Item
     /**
      *
      * @ORM\ManyToOne(targetEntity="ForkList", inversedBy="items")
+     * @ORM\JoinColumn(name="forklist_id", referencedColumnName="id", onDelete="CASCADE")
      */
     private $forklist;
 
