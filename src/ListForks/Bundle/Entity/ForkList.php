@@ -58,6 +58,7 @@ class ForkList
     /**
      *
      * @ORM\ManyToOne(targetEntity="User", inversedBy="forklists")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="CASCADE")
      */
     private $user;
 
@@ -69,7 +70,7 @@ class ForkList
 
     /**
      *
-     * @ORM\OneToMany(targetEntity="Subscription", mappedBy="forklist")
+     * @ORM\OneToMany(targetEntity="Subscription", mappedBy="forklist", cascade={"persist", "remove"})
      */
     private $subscriptions;
 
@@ -151,6 +152,16 @@ class ForkList
     public function getPrivate()
     {
         return $this->private;
+    }
+
+    /**
+     * Get private (string)
+     *
+     * @return string
+     */
+    public function getPrivateToString($private)
+    {
+        return ($private ? 'true' : 'false');
     }
 
     /**

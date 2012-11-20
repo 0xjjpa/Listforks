@@ -24,12 +24,14 @@ class Subscription
     /**
      *
      * @ORM\ManyToOne(targetEntity="User", inversedBy="subscriptions")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="CASCADE")
      */
     private $user;
 
     /**
      *
      * @ORM\ManyToOne(targetEntity="ForkList", inversedBy="subscriptions")
+     * @ORM\JoinColumn(name="forklist_id", referencedColumnName="id", onDelete="CASCADE")
      */
     private $forklist;
 

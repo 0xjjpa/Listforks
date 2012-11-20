@@ -38,7 +38,7 @@ class Location
     /**
      *
      * @ORM\OneToOne(targetEntity="ForkList", inversedBy="location")
-     * @ORM\JoinColumn(name="forklist_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="forklist_id", referencedColumnName="id", onDelete="CASCADE")
      */
     private $forklist;
 
