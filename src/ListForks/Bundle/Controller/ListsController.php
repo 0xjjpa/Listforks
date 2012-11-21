@@ -685,11 +685,164 @@ class ListsController extends Controller
         return new Response('[GET] /lists/'.$id.'/rate');
     } // "get_user_rating"    [GET] /lists/{id}/rate
 
+
+
+    // !! !! !! to be fixed. can not read the value from request parameter.
     public function postListRateAction($id)
     {
 
+        // Get current request
+        $request = $this->getRequest();
+        // Get content associated with request
+        $content = $request->getContent();
 
-        return new Response('[POST] /lists/'.$id.'/rate');
+        $rating = 4;
+
+        // Check if content is empty
+        if( !empty($content) )
+        {
+            // Empty array to store the list data
+            $newListArray = array();
+
+            // Convert JSON Request Object into an array 
+            $newListArray = json_decode($content, true);
+
+
+            // Get userId from request
+            $userId = $newListArray['userId'];
+
+            // Get current account
+            $account = $this->get('security.context')->getToken()->getUser();
+
+            // Find user in DB
+            $user = $this->getDoctrine()
+                ->getRepository('ListForksBundle:User')
+                ->findOneByAccount($account);
+
+            // Check if userId from request matches the userId associated with the current account
+            if( $user->getId() == $userId )
+            {
+                 // Get list information from request
+                 $listArray = $newListArray['list'];
+
+                 // Get specific list info
+                 $rating = $listArray['rating'];
+            }
+
+        }
+
+
+        // if change to || it wnt include the cases when rating is sent as alpha numeric insted of number
+        if ( ! ( $rating >= 0 && $rating <= 10 ) )
+        {
+                // set error code 403  for login but no list exists.
+            $response->setStatusCode(416);
+            $response = new Response(
+                json_encode(array('_hasData' => false,
+                                  'message' => 'Requested Range Not Satisfiable, 0 <= Rate <= 10 ')));
+
+        }
+        else
+        {
+            
+            // Find list in DB using $id
+            $forklist = $this->getDoctrine()
+                ->getRepository('ListForksBundle:ForkList')
+                ->find($id);
+
+            // List does not exist
+            if( !$forklist )
+            {
+
+                // set error code 403  for login but no list exists.
+                $response->setStatusCode(403);
+                $response = new Response(
+                    json_encode(array('_hasData' => false,
+                                      'message' => 'No list found for id '.$id)));
+            }
+            // List exists
+            else
+            {
+                // Get current account
+                $account = $this->get('security.context')->getToken()->getUser();
+
+                // Find user in DB using account
+                $user = $this->getDoctrine()
+                    ->getRepository('ListForksBundle:User')
+                    ->findOneByAccount($account);
+
+                // List is public or user is list owner
+                if( $forklist->getPrivate() == false || $forklist->getUser()->getId() == $user->getId() )
+                {
+                    $forklist->setRating($rating);
+
+                    // Get information for current list
+                    $id = $forklist->getId();
+                    $userId = $forklist->getUser()->getId();
+                    $name = $forklist->getName();
+                    $description = $forklist->getDescription();
+                    $private = $forklist->getPrivate();
+                    $location = $forklist->getLocation();    
+                    $rating = $forklist->getRating();
+                    $items = $forklist->getItems();
+
+                    // Array to store the location co-ordinates of the current list
+                    $locationArray = array( 'latitude' => $location->getLatitude(),
+                                            'longitude' => $location->getLongitude() );
+
+                    // Empty array to store the items of the current list
+                    $itemsArray = array();
+
+                    // Traverse through the items for the current list
+                    foreach( $items as $item )
+                    {
+                        // Add item to itemArray
+                        $itemsArray[] =  array( 'id' => $item->getId(),
+                                                'description' => $item->getDescription() );
+                    }
+
+                    // Add list to listArray
+                    $listArray[] = array( '_hasData' => true,
+                                          'attributes' => array( 'id' => $id,
+                                                                 'userId' => $userId,
+                                                                 'name' => $name,
+                                                                 'description' => $description,
+                                                                 'private' => $private,
+                                                                 'location' => $locationArray,
+                                                                 'rating' => $rating,
+                                                                 'items' => $itemsArray ));
+
+
+                    // delete the user's list
+                    $em = $this->getDoctrine()->getManager();
+                    $em->persist($forklist);
+                    $em->flush();
+
+
+
+                    
+                    // Create a JSON-response with the user's list
+                    $response = new Response(json_encode($listArray));
+                }
+                // List is private and user is not the list owner
+                else
+                {
+                    // 404 when user is not loged in or wrong permission
+                    $response->setStatusCode(404);
+                    $response = new Response(
+                    json_encode(array('_hasData' => false,
+                                      'message' => 'You don’t have permissions to rate this list' + 
+                                      ' We couldn’t rate the list with the list Id provided.')));
+                }  
+            }
+
+        }
+        
+
+        // Set response headers
+        $response->headers->set('Content-Type', 'application/json');
+
+        return $response;
     } // "new_user_rating"    [POST] /lists/{id}/rate
 
 
