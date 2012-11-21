@@ -490,4 +490,57 @@ class ListsController extends Controller
         return new Response('[GET] /lists/'.$id.'/items/new');
     } // "new_user_comments"    [GET] /lists/{id}/items/new
 
+
+    public function getListForkAction($id)
+    {
+        return new Response('[GET] /lists/'.$id.'/fork');
+    } // "get_user_forkedlist"    [GET] /lists/{id}/fork
+
+    public function postListForkAction($id)
+    {
+        return new Response('[POST] /lists/'.$id.'/fork');
+    } // "new_user_forkedlist"    [POST] /lists/{id}/fork
+
+    
+    // isnt this same as remove a list ? i thought 
+    // after we fork we simply make a new lis ?????
+    public function deleteListForkAction($id)
+    {
+        return new Response('[DELETE] /lists/'.$id.'/fork');
+    } // "delete_user_forkedlist"    [DELETE] /lists/{id}/fork
+
+    public function getListWatchAction($id)
+    {
+        return new Response('[GET] /lists/'.$id.'/watch');
+    } // "get_user_watchlist"    [GET] /lists/{id}/watch
+
+    public function postListWatchAction($id)
+    {
+        return new Response('[POST] /lists/'.$id.'/watch');
+    } // "post_user_watchlist"    [POST] /lists/{id}/watch
+
+    public function deleteListWatchAction($id)
+    {
+        return new Response('[DELETE] /lists/'.$id.'/watch');
+    } // "delete_user_watchedlist"    [DELETE] /lists/{id}/watch
+
+        public function deleteListWatchAction($id)
+    {
+        return new Response('[GET] /lists/'.$id.'/rate');
+    } // "get_user_rating"    [GET] /lists/{id}/rate
+
+    public function deleteListWatchAction($id)
+    {
+        return new Response('[POST] /lists/'.$id.'/rate');
+    } // "new_user_rating"    [POST] /lists/{id}/rate
+
+
+    // Should we not implement this. once a user rate they can only change their rating. can delete.
+    public function deleteListWatchAction($id)
+    {
+        return new Response('[DELETE] /lists/'.$id.'/rate');
+    } // "delete_user_rating"    [DELETE] /lists/{id}/rate
+
+
+
 }
