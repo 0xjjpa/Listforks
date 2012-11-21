@@ -398,8 +398,8 @@ class ListsController extends Controller
                 ->getRepository('ListForksBundle:User')
                 ->findOneByAccount($account);
 
-            // List is public or user is list owner
-            if( $forklist->getPrivate() == false || $forklist->getUser()->getId() == $user->getId() )
+            // user is list owner
+            if(  $forklist->getUser()->getId() == $user->getId() )
             {
                 // Get information for current list
                 $id = $forklist->getId();
