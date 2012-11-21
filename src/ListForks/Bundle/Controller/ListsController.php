@@ -680,19 +680,21 @@ class ListsController extends Controller
         return new Response('[DELETE] /lists/'.$id.'/watch');
     } // "delete_user_watchedlist"    [DELETE] /lists/{id}/watch
 
-        public function deleteListWatchAction($id)
+        public function getListRateAction($id)
     {
         return new Response('[GET] /lists/'.$id.'/rate');
     } // "get_user_rating"    [GET] /lists/{id}/rate
 
-    public function deleteListWatchAction($id)
+    public function postListRateAction($id)
     {
+
+
         return new Response('[POST] /lists/'.$id.'/rate');
     } // "new_user_rating"    [POST] /lists/{id}/rate
 
 
     // Should we not implement this. once a user rate they can only change their rating. can delete.
-    public function deleteListWatchAction($id)
+    public function deleteListRateAction($id)
     {
         return new Response('[DELETE] /lists/'.$id.'/rate');
     } // "delete_user_rating"    [DELETE] /lists/{id}/rate
