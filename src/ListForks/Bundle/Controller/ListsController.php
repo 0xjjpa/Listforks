@@ -74,6 +74,11 @@ class ListsController extends Controller
                 $rating = $forklist->getRating();
                 $items = $forklist->getItems();
 
+                $createdDate = $forklist->getCreatedAt();
+                $createdAt = $createdDate->format('D M d Y H:i:s (T)');
+                $updatedDate = $forklist->getUpdatedAt();
+                $updatedAt = $updatedDate->format('D M d Y H:i:s (T)');
+
                 // Array to store the location co-ordinates of the current list
                 $locationArray = array( 'latitude' => $location->getLatitude(),
                                         'longitude' => $location->getLongitude() );
@@ -91,6 +96,8 @@ class ListsController extends Controller
 
                 // Add list to listArray
                 $listArray[] = array( '_hasData' => true,
+                                      'createdAt' => $createdAt,
+                                      'updatedAt' => $updatedAt,
                                       'attributes' => array( 'id' => $id,
                                                              'userId' => $userId,
                                                              'name' => $name,
@@ -194,6 +201,15 @@ class ListsController extends Controller
                  // Associate the new list with the current user
                  $user->addForklist($forklist);
 
+                 // Get current server date and time
+                 $date = new \DateTime('now');
+                 $createdAt = $date->format('D M d Y H:i:s (T)');
+                 $updatedAt = $createdAt;
+
+                 // Set timestamp for list
+                 $forklist->setCreatedAt($date);
+                 $forklist->setUpdatedAt($date);
+
                  // Persist changes to DB
                  $em = $this->getDoctrine()->getManager();
                  $em->persist($forklist);
@@ -217,6 +233,8 @@ class ListsController extends Controller
 
                  // Create an array with new list information to be returned
                  $returnList = array( '_hasData' => true,
+                                      'createdAt' => $createdAt,
+                                      'updatedAt' => $updatedAt,
                                       'attributes' => array( 'id' => $id,
                                                              'userId' => $userId,
                                                              'name' => $name,
@@ -299,6 +317,11 @@ class ListsController extends Controller
                 $rating = $forklist->getRating();
                 $items = $forklist->getItems();
 
+                $createdDate = $forklist->getCreatedAt();
+                $createdAt = $createdDate->format('D M d Y H:i:s (T)');
+                $updatedDate = $forklist->getUpdatedAt();
+                $updatedAt = $updatedDate->format('D M d Y H:i:s (T)');
+
                 // Array to store the location co-ordinates of the current list
                 $locationArray = array( 'latitude' => $location->getLatitude(),
                                         'longitude' => $location->getLongitude() );
@@ -316,6 +339,8 @@ class ListsController extends Controller
 
                 // Add list to listArray
                 $listArray[] = array( '_hasData' => true,
+                                      'createdAt' => $createdAt,
+                                      'updatedAt' => $updatedAt,
                                       'attributes' => array( 'id' => $id,
                                                              'userId' => $userId,
                                                              'name' => $name,
