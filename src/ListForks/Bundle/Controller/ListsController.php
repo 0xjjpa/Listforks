@@ -480,15 +480,171 @@ class ListsController extends Controller
     } // "delete_list"   [DELETE] /lists/{id}
 
 
+    /**
+     * @Secure(roles="ROLE_USER")
+     */
     public function getListItemsAction($id)
     {
-        return new Response('[GET] /lists/'.$id.'/items');
-    } // "get_user_comments"    [GET] /lists/{id}/items
+
+        // Find list in DB using $id
+        $forklist = $this->getDoctrine()
+            ->getRepository('ListForksBundle:ForkList')
+            ->find($id);
+
+        // List does not exist
+        if( !$forklist )
+        {
+            $response = new Response(
+                json_encode(array('_hasData' => false,
+                                  'message' => 'No list found for id '.$id)));
+        }
+        // List exists
+        else
+        {
+            // Get current account
+            $account = $this->get('security.context')->getToken()->getUser();
+
+            // Find user in DB using account
+            $user = $this->getDoctrine()
+                ->getRepository('ListForksBundle:User')
+                ->findOneByAccount($account);
+
+            // List is public or user is list owner
+            if( $forklist->getPrivate() == false || $forklist->getUser()->getId() == $user->getId() )
+            {
+                // Get items for current list
+                $items = $forklist->getItems();
+
+                // Empty array to store the items of the current list
+                $itemsArray = array();
+
+                // Traverse through the items for the current list
+                foreach( $items as $item )
+                {
+                    // Add item to itemArray
+                    $itemsArray[] =  array( '_hasData' => true,
+                                            'attributes' => array( 'id' => $item->getId(),
+                                                                   'listId' => $forklist->getId(),
+                                                                   'description' => $item->getDescription())); 
+                }
+
+                // Create a JSON-response with the requested list items
+                $response = new Response(json_encode($itemsArray));
+            }
+            // List is private and user is not the list owner
+            else
+            {
+                $response = new Response(
+                json_encode(array('_hasData' => false,
+                                  'message' => 'You do not have permission to view list id '.$id)));
+            }
+            
+        }
+
+        // Set response headers
+        $response->headers->set('Content-Type', 'application/json');
+
+        return $response;
+
+    } // "get_list_items"    [GET] /lists/{id}/items
+
 
     public function newListItemsAction($id)
     {
         return new Response('[GET] /lists/'.$id.'/items/new');
-    } // "new_user_comments"    [GET] /lists/{id}/items/new
+    } // "new_list_items"    [GET] /lists/{id}/items/new
+
+
+    /**
+     * @Secure(roles="ROLE_USER")
+     */
+    public function getListItemAction($listId, $id)
+    {
+        // return new Response('[GET] /lists/'.$listId.'/items/'.$id);
+
+        // Find list in DB using $listId
+        $forklist = $this->getDoctrine()
+            ->getRepository('ListForksBundle:ForkList')
+            ->find($listId);
+
+        // List does not exist
+        if( !$forklist )
+        {
+            $response = new Response(
+                json_encode(array('_hasData' => false,
+                                  'message' => 'No list found for id '.$listId)));
+        }
+        // List exists
+        else
+        {
+            // Get current account
+            $account = $this->get('security.context')->getToken()->getUser();
+
+            // Find user in DB using account
+            $user = $this->getDoctrine()
+                ->getRepository('ListForksBundle:User')
+                ->findOneByAccount($account);
+
+            // List is public or user is list owner
+            if( $forklist->getPrivate() == false || $forklist->getUser()->getId() == $user->getId() )
+            {
+                // Find item in DB using $id
+                $item = $this->getDoctrine()
+                    ->getRepository('ListForksBundle:Item')
+                    ->find($id);
+
+                // Item does not exist
+                if( !$item )
+                {
+                    $response = new Response(
+                        json_encode(array('_hasData' => false,
+                                          'message' => 'No item found for id '.$id)));
+
+                }
+                // Item exists
+                else
+                {
+                    // Check if item belongs to the requested list
+                    if( $item->getForklist()->getId() == $forklist->getId() )
+                    {
+
+                        $itemArray = array( '_hasData' => true,
+                                            'attributes' => array( 'id' => $item->getId(),
+                                                                   'listId' => $forklist->getId(),
+                                                                   'description' => $item->getDescription())); 
+
+                        // Create a JSON-response with the requested list item
+                        $response = new Response(json_encode($itemArray));
+
+                    }
+                    // Requested item does not belong to requested list
+                    else
+                    {
+                        $response = new Response(
+                            json_encode(array('_hasData' => false,
+                                              'message' => 'We could not retrieve item id '.$id.' for the list id provided.')));
+
+                    }
+
+                }
+
+            }
+            // List is private and user is not the list owner
+            else
+            {
+                $response = new Response(
+                json_encode(array('_hasData' => false,
+                                  'message' => 'You do not have permission to view list id '.$id)));
+            }
+            
+        }
+
+        // Set response headers
+        $response->headers->set('Content-Type', 'application/json');
+
+        return $response;
+    }
+    // "get_list_item"     [GET] /lists/{listId}/items/{id}
 
 
     public function getListForkAction($id)
