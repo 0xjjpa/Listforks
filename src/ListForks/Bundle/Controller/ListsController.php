@@ -668,8 +668,13 @@ class ListsController extends Controller
         $response->headers->set('Content-Type', 'application/json');
 
         return $response;
-    }
-    // "get_list_item"     [GET] /lists/{listId}/items/{id}
+    } // "get_list_item"     [GET] /lists/{listId}/items/{id}
+
+
+
+
+
+
 
 
     public function getListForkAction($id)
@@ -677,10 +682,164 @@ class ListsController extends Controller
         return new Response('[GET] /lists/'.$id.'/fork');
     } // "get_user_forkedlist"    [GET] /lists/{id}/fork
 
+
+
+
+
+
+
+
+
+
+    // post a list, an identical list gets created for thr user and the list is returned
     public function postListForkAction($id)
     {
-        return new Response('[POST] /lists/'.$id.'/fork');
+
+        // Find list in DB using $id
+        $forklist = $this->getDoctrine()
+            ->getRepository('ListForksBundle:ForkList')
+            ->find($id);
+
+        // List does not exist
+        if( !$forklist )
+        {
+            $response = new Response(
+                json_encode(array('_hasData' => false,
+                                  'message' => 'No list found for id '.$id)));
+        }
+        // List exists
+        else
+        {
+            // Get current account
+            $account = $this->get('security.context')->getToken()->getUser();
+
+            // Find user in DB using account
+            $user = $this->getDoctrine()
+                ->getRepository('ListForksBundle:User')
+                ->findOneByAccount($account);
+
+            // List is public or user is list owner
+            if( $forklist->getPrivate() == false || $forklist->getUser()->getId() == $user->getId() )
+            {
+                // Get information for current list
+                $id = $forklist->getId();
+                $userId = $forklist->getUser()->getId();
+                $name = $forklist->getName();
+                $description = $forklist->getDescription();
+                $private = $forklist->getPrivate();
+                $location = $forklist->getLocation();
+                $rating = $forklist->getRating();
+                $items = $forklist->getItems();
+
+                
+                // set current time as the creation time
+                $date = new DateTime('now');
+                $createdAt = $date->format('D M d Y H:i:s (T)');
+                // because we are goint to create a list right now, update date is the same
+                $updatedDate = $createdDate;
+
+                // Array to store the location co-ordinates of the current list
+                $locationArray = array( 'latitude' => $location->getLatitude(),
+                                        'longitude' => $location->getLongitude() );
+
+                // Empty array to store the items of the current list
+                $itemsArray = array();
+
+                // Traverse through the items for the current list
+                foreach( $items as $item )
+                {
+                    // Add item to itemArray
+                    $itemsArray[] =  array( 'id' => $item->getId(),
+                                            'description' => $item->getDescription() );
+                }
+
+
+                // --- Create a new list from retrived data ---
+                 $forkedForklist = new ForkList();
+
+                 // Create a new location and associate it with the list
+                 $newLocation = new Location();
+                 $newLocation->setLatitude($latitude->getLatitude());
+                 $newLocation->setLongitude($longitude->getLongitude());
+                 $newLocation->setForklist($forkedForklist);
+
+                 // Bind list information to the list
+                 $forkedForklist->setName($forklist->getName());
+                 $forkedForklist->setDescription($forklist->getDescription());
+                 $forkedForklist->setPrivate($forklist->getPrivate());
+                 $forkedForklist->setLocation($forklist->getNewLocation());
+                 $forkedForklist->setRating($forklist->getRating());
+                 $forkedForklist->setUser($user);
+
+                 // Create items and associate it with the list
+                 foreach( $items as $item )
+                 {
+                    $newItem = new Item();
+                    $newItem->setDescription($item->getDescription());
+                    $newItem->setComplete(false);
+                    $newItem->setForklist($forkedForklist);
+
+                    $forkedForklist->addItem($newItem);
+                 }
+
+                 // Associate the new list with the current user
+                 $user->addForklist($forkedForklist);
+
+                 // Get current server date and time
+                 $date = new DateTime('now');
+                 $createdAt = $date->format('D M d Y H:i:s (T)');
+                 $updatedAt = $createdAt;
+
+                 // Set timestamp for list
+                 $forkedForklist->setCreatedAt($date);
+                 $forkedForklist->setUpdatedAt($date);
+
+                 // Persist changes to DB
+                 $em = $this->getDoctrine()->getManager();
+                 $em->persist($forkedForklist);
+                 $em->flush();
+
+
+                // Add list to listArray
+                $listArray[] = array( '_hasData' => true,
+                                      'createdAt' => $createdAt,
+                                      'updatedAt' => $updatedAt,
+                                      'attributes' => array( 'id' => $id,
+                                                             'userId' => $userId,
+                                                             'name' => $name,
+                                                             'description' => $description,
+                                                             'private' => $private,
+                                                             'location' => $locationArray,
+                                                             'rating' => $rating,
+                                                             'items' => $itemsArray ));
+
+                // Create a JSON-response with the user's list
+                $response = new Response(json_encode($listArray));
+            }
+            // List is private and user is not the list owner
+            else
+            {
+                $response = new Response(
+                json_encode(array('_hasData' => false,
+                                  'message' => 'You do not have permission to fork list id '.$id)));
+            }
+            
+        }
+
+        // Set response headers
+        $response->headers->set('Content-Type', 'application/json');
+
+        return $response;
+        
     } // "new_user_forkedlist"    [POST] /lists/{id}/fork
+
+
+
+
+
+
+
+
 
     
     // isnt this same as remove a list ? i thought 
@@ -690,25 +849,85 @@ class ListsController extends Controller
         return new Response('[DELETE] /lists/'.$id.'/fork');
     } // "delete_user_forkedlist"    [DELETE] /lists/{id}/fork
 
+
+
+
+
+
+
+
+
     public function getListWatchAction($id)
     {
         return new Response('[GET] /lists/'.$id.'/watch');
     } // "get_user_watchlist"    [GET] /lists/{id}/watch
+
+
+
+
+
+
+
+
+
+
+
 
     public function postListWatchAction($id)
     {
         return new Response('[POST] /lists/'.$id.'/watch');
     } // "post_user_watchlist"    [POST] /lists/{id}/watch
 
+
+
+
+
+
+
+
+
+
+
+
+
+
     public function deleteListWatchAction($id)
     {
         return new Response('[DELETE] /lists/'.$id.'/watch');
     } // "delete_user_watchedlist"    [DELETE] /lists/{id}/watch
 
-        public function getListRateAction($id)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public function getListRateAction($id)
     {
         return new Response('[GET] /lists/'.$id.'/rate');
     } // "get_user_rating"    [GET] /lists/{id}/rate
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -869,6 +1088,20 @@ class ListsController extends Controller
 
         return $response;
     } // "new_user_rating"    [POST] /lists/{id}/rate
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     // Should we not implement this. once a user rate they can only change their rating. can delete.
