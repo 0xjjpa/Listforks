@@ -28,7 +28,32 @@ class AccountsController extends Controller
 
     public function getAccountsAction()
     {
-        return new Response('[GET] /accounts');
+        // Get current User
+        $account = $this->get('security.context')->getToken()->getUser();
+
+        // Retrieve user from DB
+        $user = $this->getDoctrine()
+            ->getRepository('ListForksBundle:User')
+            ->findOneByAccount($account);
+
+        if( !$user )
+        {
+            $response = new Response('We were unable to retrieve your account information.');
+        }
+        else
+        {
+            // Create a JSON-response
+            $response = new Response(json_encode(array(
+                'accountId' => $account->getId(),
+                'userId' => $user->getId(),
+                'username' => $account->getUsername(),
+                'email' => $account->getEmail())));    
+        }
+        
+        // Set response header
+        $response->headers->set('Content-Type', 'application/json');
+
+        return $response;
 
     } // "get_accounts"     [GET] /accounts
 
@@ -107,7 +132,8 @@ class AccountsController extends Controller
 
             // Create a JSON-response
             $response = new Response(json_encode(array(
-                'account_id' => $account->getId(),
+                'accountId' => $account->getId(),
+                'userId' => $user->getId(),
                 'username' => $account->getUsername(),
                 'email' => $account->getEmail())));
 

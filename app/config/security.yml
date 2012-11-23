@@ -36,9 +36,9 @@ security:
             pattern:  ^/accounts/new$
             security: false
 
-        account_process:
-            pattern: ^/accounts$
-            security: false
+        # account_process:
+        #    pattern: ^/accounts$
+        #    security: false
 
         secured_area:
             pattern:    ^/
