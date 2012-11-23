@@ -912,7 +912,60 @@ class ListsController extends Controller
 
     public function getListRateAction($id)
     {
-        return new Response('[GET] /lists/'.$id.'/rate');
+
+         // Find list in DB using $id
+        $forklist = $this->getDoctrine()
+            ->getRepository('ListForksBundle:ForkList')
+            ->find($id);
+
+        // List does not exist
+        if( !$forklist )
+        {
+            $response = new Response(
+                json_encode(array('_hasData' => false,
+                                  'message' => 'No list found for id '.$id)));
+        }
+        // List exists
+        else
+        {
+            // Get current account
+            $account = $this->get('security.context')->getToken()->getUser();
+
+            // Find user in DB using account
+            $user = $this->getDoctrine()
+                ->getRepository('ListForksBundle:User')
+                ->findOneByAccount($account);
+
+            // List is public or user is list owner
+            if( $forklist->getPrivate() == false || $forklist->getUser()->getId() == $user->getId() )
+            {
+                $rating = $forklist->getRating();
+
+                // Add list id and rating to listArray
+                $listArray[] = array( '_hasData' => true,
+                                      'id' => $id,
+                                      'rating' => $rating );
+
+                // Create a JSON-response with the user's list
+                $response = new Response(json_encode($listArray));
+            }
+            // List is private and user is not the list owner
+            else
+            {
+                $response = new Response(
+                json_encode(array('_hasData' => false,
+                                  'message' => 'You do not have permission to access list id '.$id)));
+            }
+            
+        }
+
+        // Set response headers
+        $response->headers->set('Content-Type', 'application/json');
+
+        return $response;
+
+
+
     } // "get_user_rating"    [GET] /lists/{id}/rate
 
 
