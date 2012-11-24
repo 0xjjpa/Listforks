@@ -68,7 +68,7 @@ class AccountsController extends Controller
     } // "new_accounts"     [GET] /accounts/new
 
 
-    public function postAccountsAction()
+    public function postAccountsNewAction()
     {
         // Get current request
         $request = $this->getRequest();
@@ -108,10 +108,10 @@ class AccountsController extends Controller
             }
             else
             {
-                return new Response('[POST] /accounts');
+                return new Response('We could not create your account.');
             }
 
-    } // "post_accounts"    [POST] /accounts
+    } // "post_accounts_new" [POST] /accounts/new
 
 
     /**
