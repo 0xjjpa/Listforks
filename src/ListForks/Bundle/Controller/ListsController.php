@@ -1046,42 +1046,35 @@ class ListsController extends Controller
                 ->getRepository('ListForksBundle:User')
                 ->findOneByAccount($account);
 
-            // assuming user can subscribe and unsubscribe to their own list 
-            // ( just like facebook, even when u own a group u may not want to recive notification )
-            // List is public or user is list owner
-            if( $forklist->getPrivate() == false || $forklist->getUser()->getId() == $user->getId() )
-            {
-
-                $subscription = new Subsription();
-
-                $subscription->setUser($user);
-                $subscription->setForklist($forklist);
 
 
-                // delete the user's list
+                $subscriptions = $user->getSubscriptions();
                 $em = $this->getDoctrine()->getManager();
-                $em->persist($subscription);
+
+                foreach ( $subscriptions as $subscription )
+                {
+                    if ( $subscription->getForklist()->getId() == $id)
+                    {
+                        $em->remove($subscription);
+                    }
+                }
+
                 $em->flush();
+
 
                 // set the return values to 
                 $responseArray[] =  array(  
                                          'id' => $id,
-                                         'subscription' => "subscribed" );
+                                         'subscription' => "unSubscribed" );
                 
 
 
                 // Create a JSON-response with the user's list
                 $response = new Response(json_encode($responseArray));
             }
-            // List is private and user is not the list owner
-            else
-            {
-                $response = new Response(
-                json_encode(array('_hasData' => false,
-                                  'message' => 'You do not have permission to view list id '.$id)));
-            }
+
             
-        }
+        
 
                         
                   
