@@ -57,3 +57,10 @@ swiftmailer:
     username:  "%mailer_user%"
     password:  "%mailer_password%"
     spool:     { type: memory }
+
+# Services
+services:
+    update_listener:
+        class: ListForks\Bundle\Listener\UpdateListener
+        tags:
+            - { name: doctrine.event_listener, event: postPersist }
