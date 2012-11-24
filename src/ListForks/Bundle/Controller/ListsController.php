@@ -6,6 +6,7 @@ use ListForks\Bundle\Entity\ForkList;
 use ListForks\Bundle\Entity\User;
 use ListForks\Bundle\Entity\Item;
 use ListForks\Bundle\Entity\Location;
+use ListForks\Bundle\Entity\Subscription;
 
 use ListForks\Bundle\Form\Type\AccountType;
 use ListForks\Bundle\Form\Type\UserType;
@@ -677,16 +678,6 @@ class ListsController extends Controller
 
 
 
-    public function getListForkAction($id)
-    {
-        return new Response('[GET] /lists/'.$id.'/fork');
-    } // "get_user_forkedlist"    [GET] /lists/{id}/fork
-
-
-
-
-
-
 
 
 
@@ -703,6 +694,7 @@ class ListsController extends Controller
         // List does not exist
         if( !$forklist )
         {
+
             $response = new Response(
                 json_encode(array('_hasData' => false,
                                   'message' => 'No list found for id '.$id)));
@@ -841,20 +833,6 @@ class ListsController extends Controller
 
 
 
-    
-    // isnt this same as remove a list ? i thought 
-    // after we fork we simply make a new lis ?????
-    public function deleteListForkAction($id)
-    {
-        return new Response('[DELETE] /lists/'.$id.'/fork');
-    } // "delete_user_forkedlist"    [DELETE] /lists/{id}/fork
-
-
-
-
-
-
-
 
 
     public function getListWatchAction($id)
@@ -875,7 +853,108 @@ class ListsController extends Controller
 
     public function postListWatchAction($id)
     {
-        return new Response('[POST] /lists/'.$id.'/watch');
+
+        // Get current request
+        $request = $this->getRequest();
+        // Get content associated with request
+        $content = $request->getContent();
+
+
+        // Check if content is empty
+        if( !empty($content) )
+         {
+
+                // Find list in DB using $id
+                $forklist = $this->getDoctrine()
+                    ->getRepository('ListForksBundle:ForkList')
+                    ->find($id);
+
+                // List does not exist
+                if( !$forklist )
+                {
+                    $response = new Response(
+                        json_encode(array('_hasData' => false,
+                                          'message' => 'No list found for id '.$id)));
+                }
+                // List exists
+                else
+                {
+
+
+                    // Empty array to store the list data
+                    $newListArray = array();
+
+                    // Convert JSON Request Object into an array 
+                    $newListArray = json_decode($content, true);
+
+
+                    // Get userId from request
+                    $userId = $newListArray['userId'];
+
+                    // Get current account
+                    $account = $this->get('security.context')->getToken()->getUser();
+
+                    // Find user in DB
+                    $user = $this->getDoctrine()
+                        ->getRepository('ListForksBundle:User')
+                        ->findOneByAccount($account);
+
+
+    
+                    // List is public or user is list owner => user can subscribe ( watch)
+                    if( $forklist->getPrivate() == false || $forklist->getUser()->getId() == $user->getId() )
+                    {
+                         
+                        $subscription = new Subscription();
+                        $subscription->setForklist($forklist);
+                        $subscription->setUser($user);
+
+                        // save the user subscription
+                        $em = $this->getDoctrine()->getManager();
+                        $em->persist($subscription);
+                        $em->flush();
+
+
+                        // Add list to listArray
+                        $listArray[] = array( '_hasData' => true,
+                                              'attributes' => array( 'id' => $subscription->getId(),
+                                                                     'status' => "subscribed" ));
+
+                    
+                        // Create a JSON-response with the user's list
+                        $response = new Response(json_encode($listArray));
+
+                    }
+                    // unauthorized access - user not logged in
+                    else
+                    {
+                        
+                        // Create a JSON response
+                        $response = new Response(
+                            json_encode(array('_hasData' => false,
+                                              'message' => 'UnAuthorized Access - Access Denied')));
+
+                    }
+
+             }
+ 
+        }
+
+        // the request content is empty
+        else{
+            
+            // Create a JSON response
+            $response = new Response(
+                json_encode(array('_hasData' => false,
+                                  'message' => 'We could not create your list.')));
+
+        }
+
+        // Set response headers
+        $response->headers->set('Content-Type', 'application/json');
+
+        return $response;
+
     } // "post_user_watchlist"    [POST] /lists/{id}/watch
 
 
@@ -893,7 +972,77 @@ class ListsController extends Controller
 
     public function deleteListWatchAction($id)
     {
-        return new Response('[DELETE] /lists/'.$id.'/watch');
+
+        
+
+         // Find list in DB using $id
+        $forklist = $this->getDoctrine()
+            ->getRepository('ListForksBundle:ForkList')
+            ->find($id);
+
+        // List does not exist
+        if( !$forklist )
+        {
+            $response = new Response(
+                json_encode(array('_hasData' => false,
+                                  'message' => 'No list found for id '.$id)));
+        }
+        // List exists
+        else
+        {
+            // Get current account
+            $account = $this->get('security.context')->getToken()->getUser();
+
+            // Find user in DB using account
+            $user = $this->getDoctrine()
+                ->getRepository('ListForksBundle:User')
+                ->findOneByAccount($account);
+
+            // assuming user can subscribe and unsubscribe to their own list 
+            // ( just like facebook, even when u own a group u may not want to recive notification )
+            // List is public or user is list owner
+            if( $forklist->getPrivate() == false || $forklist->getUser()->getId() == $user->getId() )
+            {
+
+                $subscription = new Subsription();
+
+                $subscription->setUser($user);
+                $subscription->setForklist($forklist);
+
+
+                // delete the user's list
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($subscription);
+                $em->flush();
+
+                // set the return values to 
+                $responseArray[] =  array(  
+                                         'id' => $id,
+                                         'subscription' => "subscribed" );
+                
+
+
+                // Create a JSON-response with the user's list
+                $response = new Response(json_encode($responseArray));
+            }
+            // List is private and user is not the list owner
+            else
+            {
+                $response = new Response(
+                json_encode(array('_hasData' => false,
+                                  'message' => 'You do not have permission to view list id '.$id)));
+            }
+            
+        }
+
+                        
+                  
+        // Set response headers
+        $response->headers->set('Content-Type', 'application/json');
+
+        return $response;
+
+
     } // "delete_user_watchedlist"    [DELETE] /lists/{id}/watch
 
 
@@ -921,6 +1070,8 @@ class ListsController extends Controller
         // List does not exist
         if( !$forklist )
         {
+            // set error code 403  for login but not exists.
+            $response->setStatusCode(403);
             $response = new Response(
                 json_encode(array('_hasData' => false,
                                   'message' => 'No list found for id '.$id)));
@@ -1141,27 +1292,6 @@ class ListsController extends Controller
 
         return $response;
     } // "new_user_rating"    [POST] /lists/{id}/rate
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // Should we not implement this. once a user rate they can only change their rating. can delete.
-    public function deleteListRateAction($id)
-    {
-        return new Response('[DELETE] /lists/'.$id.'/rate');
-    } // "delete_user_rating"    [DELETE] /lists/{id}/rate
 
 
 
