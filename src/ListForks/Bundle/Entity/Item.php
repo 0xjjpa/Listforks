@@ -36,6 +36,14 @@ class Item
     private $complete;
 
     /**
+     * @var integer $orderNumber
+     *
+     * @ORM\Column(name="orderNumber", type="integer")
+     *
+     */
+    private $orderNumber;
+
+    /**
      *
      * @ORM\ManyToOne(targetEntity="ForkList", inversedBy="items")
      * @ORM\JoinColumn(name="forklist_id", referencedColumnName="id", onDelete="CASCADE")
@@ -97,6 +105,29 @@ class Item
     public function getComplete()
     {
         return $this->complete;
+    }
+
+    /**
+     * Set orderNumber
+     *
+     * @param integer $orderNumber
+     * @return Item
+     */
+    public function setOrderNumber($orderNumber)
+    {
+        $this->orderNumber = $orderNumber;
+    
+        return $this;
+    }
+
+    /**
+     * Get orderNumber
+     *
+     * @return integer 
+     */
+    public function getOrderNumber()
+    {
+        return $this->orderNumber;
     }
 
     /**

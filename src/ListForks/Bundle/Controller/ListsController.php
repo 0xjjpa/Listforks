@@ -92,7 +92,8 @@ class ListsController extends Controller
                 {
                     // Add item to itemArray
                     $itemsArray[] =  array( 'id' => $item->getId(),
-                                            'description' => $item->getDescription() );
+                                            'description' => $item->getDescription(),
+                                            'order' => $item->getOrderNumber() );
                 }
 
                 // Add list to listArray
@@ -167,34 +168,63 @@ class ListsController extends Controller
                  $private = $listArray['private'];
                  $rating = $listArray['rating'];
                  $items = $listArray['items'];
-                 $location = $listArray['location'];
                  $latitude = $listArray['location']['latitude'];
                  $longitude = $listArray['location']['longitude'];
+
+                 // Sanitize user input
+                 $filterName = filter_var( $name, FILTER_SANITIZE_STRING );
+                 $filterDescription = filter_var( $description, FILTER_SANITIZE_STRING );
+                 $filterPrivate = filter_var( $private, FILTER_VALIDATE_BOOLEAN );
+                 $filterRating = filter_var( $rating, FILTER_SANITIZE_NUMBER_INT );
+                 $filterLatitude = filter_var( $latitude, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION );
+                 $filterLongitude = filter_var( $longitude, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION );
+
+                 // Array to store the location co-ordinates of the new list
+                 $filterLocation = array( 'latitude' => $filterLatitude,
+                                          'longitude' => $filterLongitude );
 
                  // Create a new list
                  $forklist = new ForkList();
 
                  // Create a new location and associate it with the list
                  $newLocation = new Location();
-                 $newLocation->setLatitude($latitude);
-                 $newLocation->setLongitude($longitude);
+                 $newLocation->setLatitude($filterLatitude);
+                 $newLocation->setLongitude($filterLongitude);
                  $newLocation->setForklist($forklist);
 
                  // Bind list information to the list
-                 $forklist->setName($name);
-                 $forklist->setDescription($description);
-                 $forklist->setPrivate($private);
+                 $forklist->setName($filterName);
+                 $forklist->setDescription($filterDescription);
+                 
+                 if( $filterPrivate )
+                 {
+                    $forklist->setPrivate($private);
+                 }
+                 else
+                 {
+                    $private = false;
+                    $forklist->setPrivate($private);
+                 }
+
                  $forklist->setLocation($newLocation);
-                 $forklist->setRating($rating);
+                 $forklist->setRating($filterRating);
                  $forklist->setUser($user);
 
                  // Create items and associate it with the list
                  foreach( $items as $item )
                  {
+                    // Sanitize user input
+                    $itemDescription = $item['description'];
+                    $filterItemDescription = filter_var( $itemDescription, FILTER_SANITIZE_STRING );
+
+                    $itemOrder = $item['order'];
+                    $filterItemOrder = filter_var( $itemOrder, FILTER_SANITIZE_NUMBER_INT );
+
                     $newItem = new Item();
-                    $newItem->setDescription($item['description']);
+                    $newItem->setDescription($filterItemDescription);
                     $newItem->setComplete(false);
                     $newItem->setForklist($forklist);
+                    $newItem->setOrderNumber($filterItemOrder);
 
                     $forklist->addItem($newItem);
                  }
@@ -226,7 +256,8 @@ class ListsController extends Controller
                  {
                     // Add item to itemArray
                     $itemsArray[] =  array( 'id' => $newItem->getId(),
-                                            'description' => $newItem->getDescription() );
+                                            'description' => $newItem->getDescription(),
+                                            'order' => $newItem->getOrderNumber() );
                  }
 
                  // Get id for new list
@@ -238,24 +269,28 @@ class ListsController extends Controller
                                       'updatedAt' => $updatedAt,
                                       'attributes' => array( 'id' => $id,
                                                              'userId' => $userId,
-                                                             'name' => $name,
-                                                             'description' => $description,
+                                                             'name' => $filterName,
+                                                             'description' => $filterDescription,
                                                              'private' => $private,
-                                                             'location' => $location,
-                                                             'rating' => $rating,
+                                                             'location' => $filterLocation,
+                                                             'rating' => $filterRating,
                                                              'items' => $itemsArray ));
 
                  // Create a JSON response with the new list information
-                 $response = new Response(json_encode($returnList)); 
+                 $response = new Response(json_encode($returnList));
+                 // 200: OK
+                 $response->setStatusCode(200);
 
             }
-            // UserId does not match
+            // UserId does not match || UserId is null from bad JSON input
             else
             {
                 // Create a JSON response
                 $response = new Response(
                 json_encode(array('_hasData' => false,
                                   'message' => 'We could not create your list.')));
+                // 400: Bad Request
+                $response->setStatusCode(400);
 
             }
         }
@@ -266,7 +301,8 @@ class ListsController extends Controller
             $response = new Response(
                 json_encode(array('_hasData' => false,
                                   'message' => 'We could not create your list.')));
-            
+            // 400: Bad Request
+                $response->setStatusCode(400);
         }
 
         // Set response headers
@@ -335,7 +371,8 @@ class ListsController extends Controller
                 {
                     // Add item to itemArray
                     $itemsArray[] =  array( 'id' => $item->getId(),
-                                            'description' => $item->getDescription() );
+                                            'description' => $item->getDescription(),
+                                            'order' => $item->getOrderNumber() );
                 }
 
                 // Add list to listArray
@@ -449,7 +486,8 @@ class ListsController extends Controller
                 {
                     // Add item to itemArray
                     $itemsArray[] =  array( 'id' => $item->getId(),
-                                            'description' => $item->getDescription() );
+                                            'description' => $item->getDescription(),
+                                            'order' => $item->getOrderNumber() );
                 }
 
                 // Add list to listArray
@@ -551,7 +589,8 @@ class ListsController extends Controller
                     $itemsArray[] =  array( '_hasData' => true,
                                             'attributes' => array( 'id' => $item->getId(),
                                                                    'listId' => $forklist->getId(),
-                                                                   'description' => $item->getDescription())); 
+                                                                   'description' => $item->getDescription(),
+                                                                   'order' => $item->getOrderNumber() ));
                 }
 
                 // Create a JSON-response with the requested list items
@@ -637,7 +676,8 @@ class ListsController extends Controller
                         $itemArray = array( '_hasData' => true,
                                             'attributes' => array( 'id' => $item->getId(),
                                                                    'listId' => $forklist->getId(),
-                                                                   'description' => $item->getDescription())); 
+                                                                   'description' => $item->getDescription(),
+                                                                   'order' => $item->getOrderNumber() )); 
 
                         // Create a JSON-response with the requested list item
                         $response = new Response(json_encode($itemArray));
@@ -742,7 +782,8 @@ class ListsController extends Controller
                 {
                     // Add item to itemArray
                     $itemsArray[] =  array( 'id' => $item->getId(),
-                                            'description' => $item->getDescription() );
+                                            'description' => $item->getDescription(),
+                                            'order' => $item->getOrderNumber() );
                 }
 
 
@@ -770,6 +811,7 @@ class ListsController extends Controller
                     $newItem->setDescription($item->getDescription());
                     $newItem->setComplete(false);
                     $newItem->setForklist($forkedForklist);
+                    $newItem->setOrderNumber($item->getOrderNumber());
 
                     $forkedForklist->addItem($newItem);
                  }
