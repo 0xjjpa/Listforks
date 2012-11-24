@@ -2,8 +2,13 @@ _home:
     pattern: /
     defaults: 
         _controller: FrameworkBundle:Redirect:urlRedirect
-        path: /lists
+        path: /main
         permanent: true
+
+main:
+    resource: "@ListForksBundle/Controller/MainController.php"
+    type: annotation
+    prefix: /main
 
 _login:
     pattern: /accounts/login
