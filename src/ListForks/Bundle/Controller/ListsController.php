@@ -91,7 +91,8 @@ class ListsController extends Controller
                 {
                     // Add item to itemArray
                     $itemsArray[] =  array( 'id' => $item->getId(),
-                                            'description' => $item->getDescription() );
+                                            'description' => $item->getDescription(),
+                                            'order' => $item->getOrderNumber() );
                 }
 
                 // Add list to listArray
@@ -215,10 +216,14 @@ class ListsController extends Controller
                     $itemDescription = $item['description'];
                     $filterItemDescription = filter_var( $itemDescription, FILTER_SANITIZE_STRING );
 
+                    $itemOrder = $item['order'];
+                    $filterItemOrder = filter_var( $itemOrder, FILTER_SANITIZE_NUMBER_INT );
+
                     $newItem = new Item();
                     $newItem->setDescription($filterItemDescription);
                     $newItem->setComplete(false);
                     $newItem->setForklist($forklist);
+                    $newItem->setOrderNumber($filterItemOrder);
 
                     $forklist->addItem($newItem);
                  }
@@ -250,7 +255,8 @@ class ListsController extends Controller
                  {
                     // Add item to itemArray
                     $itemsArray[] =  array( 'id' => $newItem->getId(),
-                                            'description' => $newItem->getDescription() );
+                                            'description' => $newItem->getDescription(),
+                                            'order' => $newItem->getOrderNumber() );
                  }
 
                  // Get id for new list
@@ -364,7 +370,8 @@ class ListsController extends Controller
                 {
                     // Add item to itemArray
                     $itemsArray[] =  array( 'id' => $item->getId(),
-                                            'description' => $item->getDescription() );
+                                            'description' => $item->getDescription(),
+                                            'order' => $item->getOrderNumber() );
                 }
 
                 // Add list to listArray
@@ -478,7 +485,8 @@ class ListsController extends Controller
                 {
                     // Add item to itemArray
                     $itemsArray[] =  array( 'id' => $item->getId(),
-                                            'description' => $item->getDescription() );
+                                            'description' => $item->getDescription(),
+                                            'order' => $item->getOrderNumber() );
                 }
 
                 // Add list to listArray
@@ -580,7 +588,8 @@ class ListsController extends Controller
                     $itemsArray[] =  array( '_hasData' => true,
                                             'attributes' => array( 'id' => $item->getId(),
                                                                    'listId' => $forklist->getId(),
-                                                                   'description' => $item->getDescription())); 
+                                                                   'description' => $item->getDescription(),
+                                                                   'order' => $item->getOrderNumber() ));
                 }
 
                 // Create a JSON-response with the requested list items
@@ -666,7 +675,8 @@ class ListsController extends Controller
                         $itemArray = array( '_hasData' => true,
                                             'attributes' => array( 'id' => $item->getId(),
                                                                    'listId' => $forklist->getId(),
-                                                                   'description' => $item->getDescription())); 
+                                                                   'description' => $item->getDescription(),
+                                                                   'order' => $item->getOrderNumber() )); 
 
                         // Create a JSON-response with the requested list item
                         $response = new Response(json_encode($itemArray));
@@ -780,7 +790,8 @@ class ListsController extends Controller
                 {
                     // Add item to itemArray
                     $itemsArray[] =  array( 'id' => $item->getId(),
-                                            'description' => $item->getDescription() );
+                                            'description' => $item->getDescription(),
+                                            'order' => $item->getOrderNumber() );
                 }
 
 
@@ -808,6 +819,7 @@ class ListsController extends Controller
                     $newItem->setDescription($item->getDescription());
                     $newItem->setComplete(false);
                     $newItem->setForklist($forkedForklist);
+                    $newItem->setOrderNumber($item->getOrderNumber());
 
                     $forkedForklist->addItem($newItem);
                  }
