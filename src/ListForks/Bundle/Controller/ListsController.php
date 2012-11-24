@@ -950,6 +950,12 @@ class ListsController extends Controller
                         $subscription = new Subscription();
                         $subscription->setForklist($forklist);
                         $subscription->setUser($user);
+                        
+
+                        // we have to check if subscription already exists ? so we dont double insert ?
+                        // or use SQL integrity check. 
+
+
 
                         // save the user subscription
                         $em = $this->getDoctrine()->getManager();
