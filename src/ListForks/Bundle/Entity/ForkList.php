@@ -79,6 +79,7 @@ class ForkList
     /**
      *
      * @ORM\OneToMany(targetEntity="Item", mappedBy="forklist", cascade={"persist", "remove"})
+     * @ORM\OrderBy({"orderNumber" = "ASC"})
      */
     private $items;
 
