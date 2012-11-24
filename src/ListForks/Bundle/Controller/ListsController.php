@@ -1279,8 +1279,10 @@ class ListsController extends Controller
                         $subscription = new Subscription();
                         $subscription->setForklist($forklist);
                         $subscription->setUser($user);
-                        
 
+                        // Associate subscription with list
+                        $forklist->addSubscription($subscription);
+                        
                         // we have to check if subscription already exists ? so we dont double insert ?
                         // or use SQL integrity check. 
 
