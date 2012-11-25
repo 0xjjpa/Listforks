@@ -331,7 +331,7 @@ class ListsController extends Controller
             {
                 // Create a JSON response
                 $response = new Response(
-                json_encode(array('_hasData' => false,
+                        json_encode(array('_hasData' => false,
                                   'message' => 'We could not create your list.')));
                 // 400: Bad Request
                 $response->setStatusCode(400);
@@ -346,7 +346,7 @@ class ListsController extends Controller
                 json_encode(array('_hasData' => false,
                                   'message' => 'We could not create your list.')));
             // 400: Bad Request
-                $response->setStatusCode(400);
+            $response->setStatusCode(400);
         }
 
         // Set response headers
@@ -768,7 +768,7 @@ class ListsController extends Controller
                         {
                             // Create a JSON response
                             $response = new Response(
-                            json_encode(array('_hasData' => false,
+                                    json_encode(array('_hasData' => false,
                                               'message' => 'We could not update the attributes of the list with the list id provided.')));
                             // 400: Bad Request
                             $response->setStatusCode(400);
@@ -844,11 +844,13 @@ class ListsController extends Controller
         if( !$forklist )
         {
 
-            // set error code 403  for login but no list exists.
-            $response->setStatusCode(403);
+            
             $response = new Response(
                 json_encode(array('_hasData' => false,
                                   'message' => 'No list found for id '.$id)));
+
+            // set error code 403  for login but no list exists.
+            $response->setStatusCode(403);
         }
         // List exists
         else
@@ -925,12 +927,14 @@ class ListsController extends Controller
             // List is private and user is not the list owner
             else
             {
-                // 404 when user is not loged in or wrong permission
-                $response->setStatusCode(404);
+                
                 $response = new Response(
                 json_encode(array('_hasData' => false,
                                   'message' => 'You don’t have permissions to delete this list' + 
                                   ' We couldn’t delete the list with the list Id provided.')));
+
+                // 404 when user is not loged in or wrong permission
+                $response->setStatusCode(404);
 
             }
             
@@ -1903,11 +1907,14 @@ class ListsController extends Controller
         // List does not exist
         if( !$forklist )
         {
-            // set error code 403  for login but not exists.
-            $response->setStatusCode(403);
+            
             $response = new Response(
                 json_encode(array('_hasData' => false,
                                   'message' => 'No list found for id '.$id)));
+
+            // set error code 403  for login but not exists.
+            $response->setStatusCode(403);
+
         }
         // List exists
         else
@@ -1924,11 +1931,14 @@ class ListsController extends Controller
             // list is private and user not the owner
             if( $forklist->getPrivate() == true || $forklist->getUser()->getId() != $user->getId() )
             {
-                // set error code 403  for login but not exists.
-                $response->setStatusCode(404);
+                
                 $response = new Response(
                 json_encode(array('_hasData' => false,
                                   'message' => 'Not Authorized to access this list '.$id)));
+
+                // set error code 403  for login but not exists.
+                $response->setStatusCode(404);
+
             }
 
            
@@ -2261,8 +2271,8 @@ class ListsController extends Controller
     *
     * @author  Benjamin Akhtary
     *
-    * @param
-    * @return
+    * @param listId for which the rating to be retrived
+    * @return Id Retrived if user has permission to access the list ( public or owner )
     *
     * Sample request and response :  https://skydrive.live.com/#!/view.aspx?cid=B33E7327F5123B4D&resid=B33E7327F5123B4D%212190&app=Word
     *
@@ -2279,10 +2289,11 @@ class ListsController extends Controller
         if( !$forklist )
         {
             // set error code 403  for login but not exists.
-            $response->setStatusCode(403);
+            
             $response = new Response(
                 json_encode(array('_hasData' => false,
                                   'message' => 'No list found for id '.$id)));
+            $response->setStatusCode(403);
         }
         // List exists
         else
@@ -2314,6 +2325,7 @@ class ListsController extends Controller
                 $response = new Response(
                 json_encode(array('_hasData' => false,
                                   'message' => 'You do not have permission to access list id '.$id)));
+                $response->setStatusCode(404);
             }
             
         }
@@ -2392,11 +2404,11 @@ class ListsController extends Controller
         if ( ! ( $rating >= 0 && $rating <= 10 ) )
         {
                 // set error code 403  for login but no list exists.
-            $response->setStatusCode(416);
+            
             $response = new Response(
                 json_encode(array('_hasData' => false,
                                   'message' => 'Requested Range Not Satisfiable, 0 <= Rate <= 10 ')));
-
+            $response->setStatusCode(416);
         }
         else
         {
@@ -2410,11 +2422,13 @@ class ListsController extends Controller
             if( !$forklist )
             {
 
-                // set error code 403  for login but no list exists.
-                $response->setStatusCode(403);
+                
                 $response = new Response(
                     json_encode(array('_hasData' => false,
                                       'message' => 'No list found for id '.$id)));
+                // set error code 403  for login but no list exists.
+                $response->setStatusCode(403);
+
             }
             // List exists
             else
@@ -2483,12 +2497,14 @@ class ListsController extends Controller
                 // List is private and user is not the list owner
                 else
                 {
-                    // 404 when user is not loged in or wrong permission
-                    $response->setStatusCode(404);
+                    
                     $response = new Response(
                     json_encode(array('_hasData' => false,
                                       'message' => 'You don’t have permissions to rate this list' + 
                                       ' We couldn’t rate the list with the list Id provided.')));
+                    // 404 when user is not loged in or wrong permission
+                    $response->setStatusCode(404);
+
                 }  
             }
 
