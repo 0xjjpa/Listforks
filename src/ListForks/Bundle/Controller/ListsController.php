@@ -1062,7 +1062,9 @@ class ListsController extends Controller
 
 
 
-
+    /**
+     * @Secure(roles="ROLE_USER")
+     */
     // post a list, an identical list gets created for thr user and the list is returned
     public function postListForkAction($id)
     {
@@ -1214,7 +1216,9 @@ class ListsController extends Controller
 
 
 
-
+    /**
+     * @Secure(roles="ROLE_USER")
+     */
     // only retrive the watched list by the current user logged in on the specified list ( not watched for all list )
     public function getListWatchAction($id)
     {
@@ -1355,7 +1359,9 @@ class ListsController extends Controller
 
 
 
-
+    /**
+     * @Secure(roles="ROLE_USER")
+     */
     public function postListWatchAction($id)
     {
 
@@ -1482,7 +1488,9 @@ class ListsController extends Controller
 
 
 
-
+/**
+     * @Secure(roles="ROLE_USER")
+     */
     public function deleteListWatchAction($id)
     {
 
@@ -1557,7 +1565,9 @@ class ListsController extends Controller
 
 
 
-
+    /**
+     * @Secure(roles="ROLE_USER")
+     */
     public function getListRateAction($id)
     {
 
@@ -1622,7 +1632,9 @@ class ListsController extends Controller
 
 
 
-
+    /**
+     * @Secure(roles="ROLE_USER")
+     */
     // !! !! !! to be fixed. can not read the value from request parameter.
     public function postListRateAction($id)
     {
