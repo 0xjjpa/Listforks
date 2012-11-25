@@ -23,7 +23,16 @@ use JMS\SecurityExtraBundle\Annotation\Secure;
 class UsersController extends Controller
 {
 	
-
+    /**
+     * @Secure(roles="ROLE_USER")
+     *
+    *
+    *
+    * @param
+    * @return
+    *
+    *
+     */
 	public function optionsUsersAction()
     {        
 
@@ -34,8 +43,15 @@ class UsersController extends Controller
     } // "options_lists" [OPTIONS] /users
 
 
-    /**
+    /*
     * @Secure(roles="ROLE_USER")
+    *
+    * @author Benjamin Akhtary
+    *
+    * @param $id is the userid to retrive the subscription lists for
+    * @return json object for all the list user is subscribed to. only public lists are retrived unless user is the owner of the list.
+    * 
+    * sample Request & Response : https://skydrive.live.com/#!/view.aspx?cid=B33E7327F5123B4D&resid=B33E7327F5123B4D%212189&app=Word
     */
     public function getUserSubscriptionsAction($id)
     {

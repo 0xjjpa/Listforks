@@ -24,6 +24,14 @@ class ListsController extends Controller
 {
 	/**
      * @Secure(roles="ROLE_USER")
+     *
+    *
+    *
+    * @param
+    * @return
+    *
+    * Sample request and response :  
+    *
      */
 	public function optionsListsAction()
     {        
@@ -37,6 +45,15 @@ class ListsController extends Controller
 
     /**
      * @Secure(roles="ROLE_USER")
+     *
+    *
+    * @author Raymond Chow
+    *
+    * @param
+    * @return
+    *
+    * Sample request and response :  
+    *
      */
     public function getListsAction()
     {
@@ -127,6 +144,15 @@ class ListsController extends Controller
 
     /**
      * @Secure(roles="ROLE_USER")
+     *
+    *
+    * @author Raymond Chow
+    *
+    * @param
+    * @return
+    *
+    * Sample request and response :  
+    *
      */
     public function newListsAction()
     {
@@ -137,6 +163,15 @@ class ListsController extends Controller
 
     /**
      * @Secure(roles="ROLE_USER")
+     *
+    *
+    * @author Raymond Chow
+    *
+    * @param
+    * @return
+    *
+    * Sample request and response :  
+    *
      */
     public function postListsAction()
     {
@@ -324,6 +359,15 @@ class ListsController extends Controller
 
     /**
      * @Secure(roles="ROLE_USER")
+     *
+    *
+    * @author Raymond Chow
+    *
+    * @param
+    * @return
+    *
+    * Sample request and response :  
+    *
      */
     public function getListAction($id)
     {
@@ -430,6 +474,15 @@ class ListsController extends Controller
 
     /**
      * @Secure(roles="ROLE_USER")
+     *
+    *
+    * @author Raymond Chow
+    *
+    * @param
+    * @return
+    *
+    * Sample request and response :  
+    *
      */
     public function putListAction($id)
     {
@@ -769,6 +822,15 @@ class ListsController extends Controller
 
     /**
      * @Secure(roles="ROLE_USER")
+     *
+    *
+    * @author  Benjamin Akhtary
+    *
+    * @param
+    * @return
+    *
+    * Sample request and response :  
+    *
      */
     public function deleteListAction($id)
     {
@@ -884,6 +946,15 @@ class ListsController extends Controller
 
     /**
      * @Secure(roles="ROLE_USER")
+     *
+    *
+    * @author Raymond Chow
+    *
+    * @param
+    * @return
+    *
+    * Sample request and response :  
+    *
      */
     public function getListItemsAction($id)
     {
@@ -954,6 +1025,15 @@ class ListsController extends Controller
 
     /**
      * @Secure(roles="ROLE_USER")
+     *
+    *
+    * @author Raymond Chow
+    *
+    * @param
+    * @return
+    *
+    * Sample request and response :  
+    *
      */
     public function newListItemsAction($id)
     {
@@ -963,6 +1043,14 @@ class ListsController extends Controller
 
     /**
      * @Secure(roles="ROLE_USER")
+     *
+    * @author Raymond Chow
+    *
+    * @param
+    * @return
+    *
+    * Sample request and response :  
+    *
      */
     public function getListItemAction($listId, $id)
     {
@@ -1064,6 +1152,15 @@ class ListsController extends Controller
 
     /**
      * @Secure(roles="ROLE_USER")
+     *
+    *
+    * @author Benjamin Akhtary
+    *
+    * @param
+    * @return
+    *
+    * Sample request and response :  https://skydrive.live.com/#!/view.aspx?cid=B33E7327F5123B4D&resid=B33E7327F5123B4D%212218&app=Word
+    *
      */
     // post a list, an identical list gets created for thr user and the list is returned
     public function postListForkAction($id)
@@ -1218,6 +1315,15 @@ class ListsController extends Controller
 
     /**
      * @Secure(roles="ROLE_USER")
+     *
+    *
+    * @author Benjamin Akhtary
+    *
+    * @param
+    * @return
+    *
+    * Sample request and response :  https://skydrive.live.com/#!/view.aspx?cid=B33E7327F5123B4D&resid=B33E7327F5123B4D%212207&app=Word
+    *
      */
     // only retrive the watched list by the current user logged in on the specified list ( not watched for all list )
     public function getListWatchAction($id)
@@ -1361,6 +1467,15 @@ class ListsController extends Controller
 
     /**
      * @Secure(roles="ROLE_USER")
+     *
+    *
+    * @author Benjamin Akhtary
+    *
+    * @param
+    * @return
+    *
+    * Sample request and response :  https://skydrive.live.com/#!/view.aspx?cid=B33E7327F5123B4D&resid=B33E7327F5123B4D%212210&app=Word
+    *
      */
     public function postListWatchAction($id)
     {
@@ -1490,6 +1605,15 @@ class ListsController extends Controller
 
 /**
      * @Secure(roles="ROLE_USER")
+     *
+    *
+    * @author Benjamin Akhtary
+    *
+    * @param
+    * @return
+    *
+    * Sample request and response :  https://skydrive.live.com/#!/view.aspx?cid=B33E7327F5123B4D&resid=B33E7327F5123B4D%212211&app=Word
+    *
      */
     public function deleteListWatchAction($id)
     {
@@ -1567,6 +1691,15 @@ class ListsController extends Controller
 
     /**
      * @Secure(roles="ROLE_USER")
+     *
+    *
+    * @author  Benjamin Akhtary
+    *
+    * @param
+    * @return
+    *
+    * Sample request and response :  https://skydrive.live.com/#!/view.aspx?cid=B33E7327F5123B4D&resid=B33E7327F5123B4D%212190&app=Word
+    *
      */
     public function getListRateAction($id)
     {
@@ -1634,6 +1767,15 @@ class ListsController extends Controller
 
     /**
      * @Secure(roles="ROLE_USER")
+     *
+    *
+    * @author Benjamin Akhtary
+    *
+    * @param
+    * @return
+    *  
+    * Sample request and response :  https://skydrive.live.com/#!/view.aspx?cid=B33E7327F5123B4D&resid=B33E7327F5123B4D%212214&app=Word
+    *
      */
     // !! !! !! to be fixed. can not read the value from request parameter.
     public function postListRateAction($id)
