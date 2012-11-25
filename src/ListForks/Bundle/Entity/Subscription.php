@@ -88,6 +88,7 @@ class Subscription
      * @return \ListForks\Bundle\Entity\ForkList 
      */
     public function getForklist()
+
     {
         return $this->forklist;
     }

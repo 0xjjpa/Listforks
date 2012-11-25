@@ -24,6 +24,10 @@ accounts:
     type: rest
     resource: "@ListForksBundle/Controller/AccountsController.php"
 
+subscriptions:
+    type: rest
+    resource: "@ListForksBundle/Controller/SubscriptionsController.php"
+
 lists:
     type: rest
     resource: "@ListForksBundle/Controller/ListsController.php"

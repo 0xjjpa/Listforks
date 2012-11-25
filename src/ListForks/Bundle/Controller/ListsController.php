@@ -19,9 +19,12 @@ use Symfony\Component\HttpFoundation\Request;
 // imports the "@Secure" annotation
 use JMS\SecurityExtraBundle\Annotation\Secure;
 
+
 class ListsController extends Controller
 {
-	
+	/**
+     * @Secure(roles="ROLE_USER")
+     */
 	public function optionsListsAction()
     {        
 
@@ -122,6 +125,9 @@ class ListsController extends Controller
     } // "get_lists"     [GET] /lists
 
 
+    /**
+     * @Secure(roles="ROLE_USER")
+     */
     public function newListsAction()
     {
         return new Response('[GET] /lists/new');
@@ -129,6 +135,9 @@ class ListsController extends Controller
     } // "new_lists"     [GET] /lists/new
 
 
+    /**
+     * @Secure(roles="ROLE_USER")
+     */
     public function postListsAction()
     {
         // Get current request
@@ -614,6 +623,9 @@ class ListsController extends Controller
     } // "get_list_items"    [GET] /lists/{id}/items
 
 
+    /**
+     * @Secure(roles="ROLE_USER")
+     */
     public function newListItemsAction($id)
     {
         return new Response('[GET] /lists/'.$id.'/items/new');
@@ -874,12 +886,134 @@ class ListsController extends Controller
 
 
 
-
-
-
+    // only retrive the watched list by the current user logged in on the specified list ( not watched for all list )
     public function getListWatchAction($id)
     {
-        return new Response('[GET] /lists/'.$id.'/watch');
+
+           // Find list in DB using $id
+        $forklist = $this->getDoctrine()
+            ->getRepository('ListForksBundle:ForkList')
+            ->find($id);
+
+        // List does not exist
+        if( !$forklist )
+        {
+            // set error code 403  for login but not exists.
+            $response->setStatusCode(403);
+            $response = new Response(
+                json_encode(array('_hasData' => false,
+                                  'message' => 'No list found for id '.$id)));
+        }
+        // List exists
+        else
+        {
+            // Get current account
+            $account = $this->get('security.context')->getToken()->getUser();
+
+            // Find user in DB using account
+            $user = $this->getDoctrine()
+                ->getRepository('ListForksBundle:User')
+                ->findOneByAccount($account);
+
+
+            // list is private and user not the owner
+            if( $forklist->getPrivate() == true || $forklist->getUser()->getId() != $user->getId() )
+            {
+                // set error code 403  for login but not exists.
+                $response->setStatusCode(404);
+                $response = new Response(
+                json_encode(array('_hasData' => false,
+                                  'message' => 'Not Authorized to access this list '.$id)));
+            }
+
+           
+
+            // List is public or user is list owner
+            if( $forklist->getPrivate() == false || $forklist->getUser()->getId() == $user->getId() )
+            {
+                
+                $subscriptions = $user->getSubscriptions();
+                $watchingLists = array();
+
+
+                foreach ( $subscriptions as $subscription)
+                {
+                    array_push($watchingLists, $subscription->getForklist() );
+                }
+                
+
+                
+                $watchListsPrepare;
+                $listsArray = array();
+
+                foreach ( $watchingLists as $watchlist)
+                {
+
+
+                    // Array to store the location co-ordinates of the current list
+                    $locationArray = array( 'latitude' => $watchlist->getLocation()->getLatitude(),
+                                        'longitude' => $watchlist->getLocation()->getLongitude()
+                                        );
+
+                    // Empty array to store the items of the current list
+                    $itemsArray = array();
+                    $items = $watchlist->getItems();
+
+                    // Traverse through the items for the current list
+                    foreach( $items as $item )
+                    {
+                        // Add item to itemArray
+                        $itemsArray[] =  array( 'id' => $item->getId(),
+                                                'description' => $item->getDescription(),
+                                                'order' => $item->getOrderNumber() );
+                    }
+
+                    // Add list to listArray
+                    $listArray[] = array( '_hasData' => true,
+                                          'attributes' => array( 'id' => $watchlist->getId(),
+                                                                 'userId' => $watchlist->getUser()->getId(),
+                                                                 'name' => $watchlist->getName(),
+                                                                 'description' => $watchlist->getDescription(),
+                                                                 'private' => $watchlist->getPrivate(),
+                                                                 'location' => $locationArray,
+                                                                 'rating' => $watchlist->getRating(),
+                                                                 'items' => $itemsArray,
+                                                                 'createdAt' => $watchlist->getCreatedAt(),
+                                                                 'updatedAt' => $watchlist->getUpdatedAt()
+                                                                  ));
+
+
+                    array_push($listsArray, $listArray );
+                }
+
+                // Add all lists to the response array
+                $responseArray[] = array( '_hasData' => true,
+                                      'watchedLists' => $listsArray );
+
+                // Create a JSON-response with the user's list
+                $response = new Response(json_encode($responseArray));
+            }
+            // List is private and user is not the list owner
+            else
+            {
+                $response = new Response(
+                json_encode(array('_hasData' => false,
+                                  'message' => 'You do not have permission to access list id '.$id)));
+            }
+            
+        }
+
+        // Set response headers
+        $response->headers->set('Content-Type', 'application/json');
+
+        return $response;
+
+
+
+
+
+
+        
     } // "get_user_watchlist"    [GET] /lists/{id}/watch
 
 
@@ -1093,13 +1227,6 @@ class ListsController extends Controller
 
 
 
-
-
-
-
-
-
-
     public function getListRateAction($id)
     {
 
@@ -1159,17 +1286,6 @@ class ListsController extends Controller
 
 
     } // "get_user_rating"    [GET] /lists/{id}/rate
-
-
-
-
-
-
-
-
-
-
-
 
 
 
