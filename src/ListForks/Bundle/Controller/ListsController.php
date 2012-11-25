@@ -433,7 +433,336 @@ class ListsController extends Controller
      */
     public function putListAction($id)
     {
-        return new Response('[PUT] /lists/'.$id);
+        // Find list in DB using $id
+        $forklist = $this->getDoctrine()
+            ->getRepository('ListForksBundle:ForkList')
+            ->find($id);
+
+        // List does not exist
+        if( !$forklist )
+        {
+            $response = new Response(
+                json_encode(array('_hasData' => false,
+                                  'message' => 'No list found for id '.$id)));
+            // 404: Not Found
+            $response->setStatusCode(404);
+        }
+        // List exists
+        else
+        {
+            // Get current account
+            $account = $this->get('security.context')->getToken()->getUser();
+
+            // Find user in DB using account
+            $user = $this->getDoctrine()
+                ->getRepository('ListForksBundle:User')
+                ->findOneByAccount($account);
+
+            // Check if user is list owner
+            if( $forklist->getUser()->getId() == $user->getId() )
+            {
+
+                // Get current request
+                $request = $this->getRequest();
+                // Get content associated with request
+                $content = $request->getContent();
+
+                // Check if content is empty
+                if( !empty($content) )
+                {
+                    // Empty array to store the updated list data
+                    $updateListArray = array();
+
+                    // Convert JSON Request Object into an array 
+                    $updateListArray = json_decode($content, true);
+
+                    // Get userId from request
+                    $updateUserId = $updateListArray['userId'];
+
+                    // Check if userId from request matches the userId associated with the current account
+                    if( $user->getId() == $updateUserId )
+                    {
+                        $updateListId = $updateListArray['listId'];
+
+                        // Ensure that listId from request matches the listId for the list retrieved from the DB
+                        if( $forklist->getId() == $updateListId )
+                        {
+                            // Get list attributes from update request
+                            $attributesArray = $updateListArray['attributes'];
+
+                            // Get specific list attribute info from update request
+                            $updateName = $attributesArray['name'];
+                            $updateDescription = $attributesArray['description'];
+                            $updatePrivate = $attributesArray['private'];
+                            $updateRating = $attributesArray['rating'];
+                            $updateItems = $attributesArray['items'];
+                            $updateLatitude = $attributesArray['location']['latitude'];
+                            $updateLongitude = $attributesArray['location']['longitude'];
+
+                            // Sanitize user input
+                            $filterName = filter_var( $updateName, FILTER_SANITIZE_STRING );
+                            $filterDescription = filter_var( $updateDescription, FILTER_SANITIZE_STRING );
+                            $filterPrivate = filter_var( $updatePrivate, FILTER_VALIDATE_BOOLEAN );
+                            $filterRating = filter_var( $updateRating, FILTER_SANITIZE_NUMBER_INT );
+                            $filterLatitude = filter_var( $updateLatitude, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION );
+                            $filterLongitude = filter_var( $updateLongitude, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION );
+
+                            // Get information for current list
+                            $id = $forklist->getId();
+                            $userId = $forklist->getUser()->getId();
+                            $name = $forklist->getName();
+                            $description = $forklist->getDescription();
+                            $private = $forklist->getPrivate();
+                            $rating = $forklist->getRating();
+                            $items = $forklist->getItems();
+                            $location = $forklist->getLocation();
+                            $latitude = $location->getLatitude();
+                            $longitude = $location->getLongitude();
+
+                            // Check which values need to be updated and update them
+                            if( $name != $filterName )
+                            {
+                                $forklist->setName($filterName);
+                                $name = $forklist->getName();
+                            }
+
+                            if( $description != $filterDescription )
+                            {
+                                $forklist->setDescription($filterDescription);
+                                $description = $forklist->getDescription();
+                            }
+
+                            if( $filterPrivate )
+                            {
+                                if( $forklist->getPrivateToString($private) != $updatePrivate )
+                                {
+                                    $forklist->setPrivate($updatePrivate);
+                                    $private = $forklist->getPrivate();
+                                }
+                            }
+                            
+                            if( $rating != $filterRating )
+                            {
+                                $forklist->setRating($filterRating);
+                                $rating = $forklist->getRating();
+                            }
+
+                            if( $latitude != $filterLatitude )
+                            {
+                                $forklist->getLocation()->setLatitude($filterLatitude);
+                                $latitude = $forklist->getLocation()->getLatitude();
+                            }
+
+                            if( $longitude != $filterLongitude )
+                            {
+                                $forklist->getLocation()->setLongitude($filterLongitude);
+                                $longitude = $forklist->getLocation()->getLongitude();
+                            }
+
+                            // Array to store the location co-ordinates of the current list
+                            $locationArray = array( 'latitude' => $location->getLatitude(),
+                                                    'longitude' => $location->getLongitude() );
+
+                            // Traverse through the items for the current list
+                            foreach( $updateItems as $updateItem )
+                            {
+                                // Get current item id, description, and order number
+                                $updateItemId = $updateItem['id'];
+                                $updateItemDescription = $updateItem['description'];
+                                $updateItemOrder = $updateItem['order'];
+                                $updateItemStatus = $updateItem['status'];
+
+                                // Sanitize user input
+                                $filterItemId = filter_var( $updateItemId, FILTER_SANITIZE_NUMBER_INT );
+                                $filterItemDescription = filter_var( $updateItemDescription, FILTER_SANITIZE_STRING );
+                                $filterItemOrder = filter_var( $updateItemOrder, FILTER_SANITIZE_NUMBER_INT );
+                                $filterItemStatus = filter_var( $updateItemStatus, FILTER_SANITIZE_STRING ); 
+
+                                // Find item in DB
+                                $item = $this->getDoctrine()
+                                    ->getRepository('ListForksBundle:Item')
+                                    ->find($filterItemId);
+
+                                $em = $this->getDoctrine()->getManager();
+
+                                // Item does not exist
+                                if( !$item )
+                                {
+                                    // Create new item
+                                    if( $filterItemStatus == 'new' )
+                                    {
+                                        $newItem = new Item();
+                                        $newItem->setDescription($filterItemDescription);
+                                        $newItem->setComplete(false);
+                                        $newItem->setOrderNumber($filterItemOrder);
+                                        $newItem->setForklist($forklist);
+
+                                        $forklist->addItem($newItem);
+                                    }
+                                    // Attempt to update a non-existent item
+                                    else if ( $filterItemStatus == 'updated' )
+                                    {
+                                        $response = new Response(
+                                            json_encode(array('_hasData' => false,
+                                                              'message' => 'Attempted to update one or more items that do not exist.')));
+                                        // 400: Bad Request
+                                        $response->setStatusCode(400);
+
+                                        return $response;
+                                    }
+                                    // Attempt to delete a non-existent item
+                                    else if ( $filterItemStatus == 'deleted' )
+                                    {
+                                        $response = new Response(
+                                            json_encode(array('_hasData' => false,
+                                                              'message' => 'Attempted to delete one or more items that do not exist.')));
+                                        // 400: Bad Request
+                                        $response->setStatusCode(400);
+
+                                        return $response;
+                                    }
+                                    else
+                                    {
+                                        $response = new Response(
+                                            json_encode(array('_hasData' => false,
+                                                              'message' => 'Missing or unrecognized status for one or more items.')));
+                                        // 400: Bad Request
+                                        $response->setStatusCode(400);
+
+                                        return $response;
+                                    }
+                                }
+                                // Update existing item
+                                else if( $filterItemStatus == 'updated' )
+                                {
+                                    // Check if description has changed
+                                    if( $item->getDescription() != $filterItemDescription )
+                                        $item->setDescription($filterItemDescription);
+
+                                    if( $item->getOrderNumber() != $filterItemOrder )
+                                        $item->setOrderNumber($filterItemOrder);
+                                }
+                                // Delete existing item
+                                else if( $filterItemStatus == 'deleted' )
+                                {
+                                    $forklist->removeItem($item);
+
+                                    $em->remove($item);
+                                }
+                                // Unrecognized item status
+                                else
+                                {
+                                    $response = new Response(
+                                            json_encode(array('_hasData' => false,
+                                                              'message' => 'Missing or unrecognized status for one or more items.')));
+                                    // 400: Bad Request
+                                    $response->setStatusCode(400);
+
+                                    return $response;
+                                }
+
+                                /*
+
+                                // Add item to itemArray
+                                $itemsArray[] =  array( 'id' => $item->getId(),
+                                                        'description' => $item->getDescription(),
+                                                        'order' => $item->getOrderNumber() );
+
+                                */
+                            }
+
+                            // Get current server date and time
+                            $date = new \DateTime('now');
+                            $updatedAt = $date->format('D M d Y H:i:s (T)');
+
+                            // Persist update changes to DB
+                            $forklist->setUpdatedAt($date);
+                            $em->flush();
+
+                            // Empty array to store the items of the current list
+                            $itemsArray = array();
+
+                            // Get new items from DB
+                            $newItems = $forklist->getItems();
+
+                            foreach( $newItems as $newItem )
+                            {
+                                // Add item to itemArray
+                                $itemsArray[] =  array( 'id' => $newItem->getId(),
+                                                        'description' => $newItem->getDescription(),
+                                                        'order' => $newItem->getOrderNumber() );
+                            }    
+
+                            // Add list to listArray
+                            $listArray[] = array( '_hasData' => true,
+                                                  'attributes' => array( 'id' => $id,
+                                                                         'userId' => $userId,
+                                                                         'name' => $name,
+                                                                         'description' => $description,
+                                                                         'private' => $private,
+                                                                         'location' => $locationArray,
+                                                                         'rating' => $rating,
+                                                                         'items' => $itemsArray ));
+
+                            // Create a JSON-response with the user's list
+                            $response = new Response(json_encode($listArray));
+                            // 200: OK
+                            $response->setStatusCode(200);
+
+                        }
+                        // ListId does not match
+                        else
+                        {
+                            // Create a JSON response
+                            $response = new Response(
+                            json_encode(array('_hasData' => false,
+                                              'message' => 'We could not update the attributes of the list with the list id provided.')));
+                            // 400: Bad Request
+                            $response->setStatusCode(400);
+                        }
+
+                    }
+                    // UserId does not match
+                    else
+                    {
+                        // Create a JSON response
+                        $response = new Response(
+                            json_encode(array('_hasData' => false,
+                                              'message' => 'We could not update the attributes of the list with the list id provided.')));
+                        // 400: Bad Request
+                        $response->setStatusCode(400);
+                    }
+
+                }
+                // Content is empty
+                else
+                {
+                    // Create a JSON response
+                    $response = new Response(
+                        json_encode(array('_hasData' => false,
+                                          'message' => 'We could not update the attributes of the list with the list id provided.')));
+                    // 400: Bad Request
+                    $response->setStatusCode(400);
+            
+                }   
+
+            }
+            // User is not the list owner
+            else
+            {
+                $response = new Response(
+                json_encode(array('_hasData' => false,
+                                  'message' => 'You do not have permission to update attributes for list id '.$id)));
+                // 403: Forbidden
+                $response->setStatusCode(403);
+            }
+            
+        }
+
+        // Set response headers
+        $response->headers->set('Content-Type', 'application/json');
+
+        return $response;
 
     } // "put_list"      [PUT] /lists/{id}
 
@@ -1084,8 +1413,10 @@ class ListsController extends Controller
                         $subscription = new Subscription();
                         $subscription->setForklist($forklist);
                         $subscription->setUser($user);
-                        
 
+                        // Associate subscription with list
+                        $forklist->addSubscription($subscription);
+                        
                         // we have to check if subscription already exists ? so we dont double insert ?
                         // or use SQL integrity check. 
 
