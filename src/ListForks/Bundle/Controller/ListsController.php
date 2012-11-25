@@ -964,6 +964,572 @@ class ListsController extends Controller
     /**
      * @Secure(roles="ROLE_USER")
      */
+    public function postListItemsAction($id)
+    {
+        $filterId = filter_var( $id, FILTER_SANITIZE_NUMBER_INT );
+
+        // Find list in DB using $id
+        $forklist = $this->getDoctrine()
+            ->getRepository('ListForksBundle:ForkList')
+            ->find($filterId);
+
+        // List does not exist
+        if( !$forklist )
+        {
+            $response = new Response(
+                json_encode(array('_hasData' => false,
+                                  'message' => 'List not found for id '.$filterId)));
+
+            // 404: Not Found
+            $response->setStatusCode(404);
+        }
+        else
+        {
+
+            // Get current request
+            $request = $this->getRequest();
+            // Get content associated with request
+            $content = $request->getContent();
+
+            // Check if content is empty
+            if( !empty($content) )
+            {
+                // Empty array to store the request data
+                $listItemsArray = array();
+
+                // Convert JSON Request Object into an array 
+                $listItemsArray = json_decode($content, true);
+
+                // Get userId from request
+                $userId = $listItemsArray['userId'];
+
+                // Get current account
+                $account = $this->get('security.context')->getToken()->getUser();
+
+                // Find user in DB
+                $user = $this->getDoctrine()
+                    ->getRepository('ListForksBundle:User')
+                    ->findOneByAccount($account);
+
+                // Check if userId from request matches the userId associated with the current account
+                if( $user->getId() == $userId )
+                {
+                    // Get list information from request
+                    $listId = $listItemsArray['listId'];
+                    $filterListId = filter_var( $listId, FILTER_SANITIZE_NUMBER_INT );
+
+                    // Check if listId in URL matches listId in request
+                    if( $filterId == $filterListId )
+                    {
+                    
+                        // Get new items from request
+                        $newItems = $listItemsArray['items'];
+
+                        // Process each new item
+                        foreach( $newItems as $newItem )
+                        {
+                            // Sanitize user input
+                            $itemDescription = $newItem['description'];
+                            $filterItemDescription = filter_var( $itemDescription, FILTER_SANITIZE_STRING );
+
+                            $itemOrder = $newItem['order'];
+                            $filterItemOrder = filter_var( $itemOrder, FILTER_SANITIZE_NUMBER_INT );
+
+                            $itemStatus = $newItem['status'];
+                            $filterItemStatus = filter_var( $itemStatus, FILTER_SANITIZE_STRING );
+
+                            // Check if item is flagged as new
+                            if( $filterItemStatus == 'new' )
+                            {
+                                $createItem = new Item();
+                                $createItem->setDescription($filterItemDescription);
+                                $createItem->setComplete(false);
+                                $createItem->setOrderNumber($filterItemOrder);
+                                $createItem->setForklist($forklist);
+
+                                $forklist->addItem($createItem);
+                            }
+                        }
+
+                        // Get current server date and time
+                        $date = new \DateTime('now');
+                        $updatedAt = $date->format('D M d Y H:i:s (T)');
+
+                        // Update list timestamp
+                        $forklist->setUpdatedAt($date);
+
+                        // Persist update changes to DB
+                        $em = $this->getDoctrine()->getManager();
+                        $em->flush();
+
+                        // Empty array to store the items of the list
+                        $itemsArray = array();
+
+                        $allItems = $forklist->getItems();
+
+                        foreach( $allItems as $item )
+                        {
+                            // Add item to itemArray
+                            $itemsArray[] =  array( 'id' => $item->getId(),
+                                                           'description' => $item->getDescription(),
+                                                           'order' => $item->getOrderNumber() );
+                        }
+
+                        // Create an array with all list item information to be returned
+                        $returnItems = array( '_hasData' => true,
+                                              'userId' => $userId,
+                                              'listId' => $forklist->getId(),
+                                              'items' => $itemsArray ); 
+
+                        // Create a JSON response with the new list information
+                        $response = new Response(json_encode($returnItems));
+                    }
+                    // URL listId does not match request listId
+                    else
+                    {
+                        // Create a JSON response
+                        $response = new Response(
+                            json_encode(array('_hasData' => false,
+                                              'message' => 'We could not update your list items.')));
+
+                        // 400: Bad Request
+                        $response->setStatusCode(400);
+                    }
+
+                }
+                // UserId does not match || UserId is null from bad user input
+                else
+                {
+                    // Create a JSON response
+                    $response = new Response(
+                    json_encode(array('_hasData' => false,
+                                      'message' => 'We could not create your list.')));
+
+                    // 400: Bad Request
+                    $response->setStatusCode(400);
+                }
+
+            }
+            // Content is empty
+            else
+            {
+                // Create a JSON response
+                $response = new Response(
+                    json_encode(array('_hasData' => false,
+                                      'message' => 'We could not create your list.')));
+                // 400: Bad Request
+                $response->setStatusCode(400);
+            }
+
+        }
+        
+        // Set response headers
+        $response->headers->set('Content-Type', 'application/json');
+
+        return $response;
+        
+    } // "post_list_items"   [POST] /lists/{id}/items
+
+
+    /**
+     * @Secure(roles="ROLE_USER")
+     */
+    public function putListItemsAction($id)
+    {
+
+        $filterId = filter_var( $id, FILTER_SANITIZE_NUMBER_INT );
+
+        // Find list in DB using $id
+        $forklist = $this->getDoctrine()
+            ->getRepository('ListForksBundle:ForkList')
+            ->find($filterId);
+
+        // List does not exist
+        if( !$forklist )
+        {
+            $response = new Response(
+                json_encode(array('_hasData' => false,
+                                  'message' => 'List not found for id '.$filterId)));
+
+            // 404: Not Found
+            $response->setStatusCode(404);
+        }
+        else
+        {
+
+            // Get current request
+            $request = $this->getRequest();
+            // Get content associated with request
+            $content = $request->getContent();
+
+            // Check if content is empty
+            if( !empty($content) )
+            {
+                // Empty array to store the request data
+                $listItemsArray = array();
+
+                // Convert JSON Request Object into an array 
+                $listItemsArray = json_decode($content, true);
+
+                // Get userId from request
+                $userId = $listItemsArray['userId'];
+
+                // Get current account
+                $account = $this->get('security.context')->getToken()->getUser();
+
+                // Find user in DB
+                $user = $this->getDoctrine()
+                    ->getRepository('ListForksBundle:User')
+                    ->findOneByAccount($account);
+
+                // Check if userId from request matches the userId associated with the current account
+                if( $user->getId() == $userId )
+                {
+                    // Get list information from request
+                    $listId = $listItemsArray['listId'];
+                    $filterListId = filter_var( $listId, FILTER_SANITIZE_NUMBER_INT );
+
+                    // Check if listId in URL matches listId in request
+                    if( $filterId == $filterListId )
+                    {
+                    
+                        // Get updated items from request
+                        $updateItems = $listItemsArray['items'];
+
+                        // Process each updated item
+                        foreach( $updateItems as $updateItem )
+                        {
+                            // Sanitize user input
+                            $itemId = $updateItem['id'];
+                            $filterItemId = filter_var( $itemId, FILTER_SANITIZE_NUMBER_INT );
+
+                            $itemDescription = $updateItem['description'];
+                            $filterItemDescription = filter_var( $itemDescription, FILTER_SANITIZE_STRING );
+
+                            $itemOrder = $updateItem['order'];
+                            $filterItemOrder = filter_var( $itemOrder, FILTER_SANITIZE_NUMBER_INT );
+
+                            $itemStatus = $updateItem['status'];
+                            $filterItemStatus = filter_var( $itemStatus, FILTER_SANITIZE_STRING );
+
+                            // Check if item is flagged to be updated
+                            if( $filterItemStatus == 'updated' )
+                            {
+                                // Find item in DB using $filterItemId
+                                $item = $this->getDoctrine()
+                                    ->getRepository('ListForksBundle:Item')
+                                    ->find($filterItemId);
+
+                                // Item does not exist
+                                if( !$item )
+                                {
+                                    $response = new Response(
+                                        json_encode(array('_hasData' => false,
+                                            'message' => 'One or more items requested to be updated not found for list id '.$filterItemId)));
+                                    // 404: Not Found
+                                    $response->setStatusCode(404);
+                                }
+                                // Item exists
+                                else
+                                {
+                                    // Confirm that item belongs to the requested list
+                                    if( $item->getForklist()->getId() == $forklist->getId() )
+                                    {
+
+                                        if( $item->getDescription() != $filterItemDescription )
+                                        {
+                                            $item->setDescription($filterItemDescription);
+                                        }
+
+                                        if( $item->getOrderNumber() != $filterItemOrder )
+                                        {
+                                            $item->setOrderNumber($filterItemOrder);
+                                        }
+
+                                    }
+
+                                }
+                            }
+                        }
+
+                        // Get current server date and time
+                        $date = new \DateTime('now');
+                        $updatedAt = $date->format('D M d Y H:i:s (T)');
+
+                        // Update list timestamp
+                        $forklist->setUpdatedAt($date);
+
+                        // Persist update changes to DB
+                        $em = $this->getDoctrine()->getManager();
+                        $em->flush();
+
+                        // Empty array to store the items of the list
+                        $updatedItemsArray = array();
+
+                        $updatedItems = $forklist->getItems();
+
+                        foreach( $updatedItems as $updatedItem )
+                        {
+                            // Add item to itemArray
+                            $updatedItemsArray[] =  array( 'id' => $updatedItem->getId(),
+                                                           'description' => $updatedItem->getDescription(),
+                                                           'order' => $updatedItem->getOrderNumber() );
+                        }
+
+                        // Create an array with all list item information to be returned
+                        $returnItems = array( '_hasData' => true,
+                                              'userId' => $userId,
+                                              'listId' => $forklist->getId(),
+                                              'items' => $updatedItemsArray ); 
+
+                        // Create a JSON response with the new list information
+                        $response = new Response(json_encode($returnItems));
+                    }
+                    // URL listId does not match request listId
+                    else
+                    {
+                        // Create a JSON response
+                        $response = new Response(
+                            json_encode(array('_hasData' => false,
+                                              'message' => 'We could not update your list items.')));
+
+                        // 400: Bad Request
+                        $response->setStatusCode(400);
+                    }
+
+                }
+                // UserId does not match || UserId is null from bad user input
+                else
+                {
+                    // Create a JSON response
+                    $response = new Response(
+                    json_encode(array('_hasData' => false,
+                                      'message' => 'We could not create your list.')));
+
+                    // 400: Bad Request
+                    $response->setStatusCode(400);
+                }
+
+            }
+            // Content is empty
+            else
+            {
+                // Create a JSON response
+                $response = new Response(
+                    json_encode(array('_hasData' => false,
+                                      'message' => 'We could not create your list.')));
+                // 400: Bad Request
+                $response->setStatusCode(400);
+            }
+
+        }
+        
+        // Set response headers
+        $response->headers->set('Content-Type', 'application/json');
+
+        return $response;
+
+    } // "put_list_items"    [PUT] /lists/{id}/items
+
+
+    /**
+     * @Secure(roles="ROLE_USER")
+     */
+    public function deleteListItemsAction($id)
+    {
+        $filterId = filter_var( $id, FILTER_SANITIZE_NUMBER_INT );
+
+        // Find list in DB using $id
+        $forklist = $this->getDoctrine()
+            ->getRepository('ListForksBundle:ForkList')
+            ->find($filterId);
+
+        // List does not exist
+        if( !$forklist )
+        {
+            $response = new Response(
+                json_encode(array('_hasData' => false,
+                                  'message' => 'List not found for id '.$filterId)));
+
+            // 404: Not Found
+            $response->setStatusCode(404);
+        }
+        else
+        {
+
+            // Get current request
+            $request = $this->getRequest();
+            // Get content associated with request
+            $content = $request->getContent();
+
+            // Check if content is empty
+            if( !empty($content) )
+            {
+                // Empty array to store the request data
+                $listItemsArray = array();
+
+                // Convert JSON Request Object into an array 
+                $listItemsArray = json_decode($content, true);
+
+                // Get userId from request
+                $userId = $listItemsArray['userId'];
+
+                // Get current account
+                $account = $this->get('security.context')->getToken()->getUser();
+
+                // Find user in DB
+                $user = $this->getDoctrine()
+                    ->getRepository('ListForksBundle:User')
+                    ->findOneByAccount($account);
+
+                // Check if userId from request matches the userId associated with the current account
+                if( $user->getId() == $userId )
+                {
+                    // Get list information from request
+                    $listId = $listItemsArray['listId'];
+                    $filterListId = filter_var( $listId, FILTER_SANITIZE_NUMBER_INT );
+
+                    // Check if listId in URL matches listId in request
+                    if( $filterId == $filterListId )
+                    {
+                    
+                        // Get deleted items from request
+                        $deleteItems = $listItemsArray['items'];
+
+                        // Get DB Manager
+                        $em = $this->getDoctrine()->getManager();
+
+                        // Process each deleted item
+                        foreach( $deleteItems as $deleteItem )
+                        {
+                            // Sanitize user input
+                            $itemId = $deleteItem['id'];
+                            $filterItemId = filter_var( $itemId, FILTER_SANITIZE_NUMBER_INT );
+
+                            $itemDescription = $deleteItem['description'];
+                            $filterItemDescription = filter_var( $itemDescription, FILTER_SANITIZE_STRING );
+
+                            $itemOrder = $deleteItem['order'];
+                            $filterItemOrder = filter_var( $itemOrder, FILTER_SANITIZE_NUMBER_INT );
+
+                            $itemStatus = $deleteItem['status'];
+                            $filterItemStatus = filter_var( $itemStatus, FILTER_SANITIZE_STRING );
+
+                            // Check if item is flagged to be deleted
+                            if( $filterItemStatus == 'deleted' )
+                            {
+                                // Find item in DB using $filterItemId
+                                $item = $this->getDoctrine()
+                                    ->getRepository('ListForksBundle:Item')
+                                    ->find($filterItemId);
+
+                                // Item does not exist
+                                if( !$item )
+                                {
+                                    $response = new Response(
+                                        json_encode(array('_hasData' => false,
+                                            'message' => 'One or more items requested to be deleted not found for list id '.$filterItemId)));
+                                    // 404: Not Found
+                                    $response->setStatusCode(404);
+                                }
+                                // Item exists
+                                else
+                                {
+                                    // Confirm that item belongs to the requested list
+                                    if( $item->getForklist()->getId() == $forklist->getId() )
+                                    {
+                                        // Remove item from list
+                                        $forklist->removeItem($item);
+                                        // Remove item
+                                        $em->remove($item);
+                                    }
+
+                                }
+                            }
+                        }
+
+                        // Get current server date and time
+                        $date = new \DateTime('now');
+                        $updatedAt = $date->format('D M d Y H:i:s (T)');
+
+                        // Update list timestamp
+                        $forklist->setUpdatedAt($date);
+
+                        // Persist delete changes to DB
+                        $em->flush();
+
+                        // Empty array to store the items of the list
+                        $updatedItemsArray = array();
+
+                        $updatedItems = $forklist->getItems();
+
+                        foreach( $updatedItems as $updatedItem )
+                        {
+                            // Add item to itemArray
+                            $updatedItemsArray[] =  array( 'id' => $updatedItem->getId(),
+                                                           'description' => $updatedItem->getDescription(),
+                                                           'order' => $updatedItem->getOrderNumber() );
+                        }
+
+                        // Create an array with all list item information to be returned
+                        $returnItems = array( '_hasData' => true,
+                                              'userId' => $userId,
+                                              'listId' => $forklist->getId(),
+                                              'items' => $updatedItemsArray ); 
+
+                        // Create a JSON response with the new list information
+                        $response = new Response(json_encode($returnItems));
+                    }
+                    // URL listId does not match request listId
+                    else
+                    {
+                        // Create a JSON response
+                        $response = new Response(
+                            json_encode(array('_hasData' => false,
+                                              'message' => 'We could not update your list items.')));
+
+                        // 400: Bad Request
+                        $response->setStatusCode(400);
+                    }
+
+                }
+                // UserId does not match || UserId is null from bad user input
+                else
+                {
+                    // Create a JSON response
+                    $response = new Response(
+                    json_encode(array('_hasData' => false,
+                                      'message' => 'We could not create your list.')));
+
+                    // 400: Bad Request
+                    $response->setStatusCode(400);
+                }
+
+            }
+            // Content is empty
+            else
+            {
+                // Create a JSON response
+                $response = new Response(
+                    json_encode(array('_hasData' => false,
+                                      'message' => 'We could not create your list.')));
+                // 400: Bad Request
+                $response->setStatusCode(400);
+            }
+
+        }
+        
+        // Set response headers
+        $response->headers->set('Content-Type', 'application/json');
+
+        return $response;
+
+    } // "delete_list_items"    [DELETE] /lists/{id}/items
+
+
+    /**
+     * @Secure(roles="ROLE_USER")
+     */
     public function getListItemAction($listId, $id)
     {
         // return new Response('[GET] /lists/'.$listId.'/items/'.$id);
