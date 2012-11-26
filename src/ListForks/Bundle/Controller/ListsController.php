@@ -218,7 +218,6 @@ class ListsController extends Controller
                  // Sanitize user input
                  $filterName = filter_var( $name, FILTER_SANITIZE_STRING );
                  $filterDescription = filter_var( $description, FILTER_SANITIZE_STRING );
-                 $filterPrivate = filter_var( $private, FILTER_VALIDATE_BOOLEAN );
                  $filterRating = filter_var( $rating, FILTER_SANITIZE_NUMBER_INT );
                  $filterLatitude = filter_var( $latitude, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION );
                  $filterLongitude = filter_var( $longitude, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION );
@@ -240,7 +239,7 @@ class ListsController extends Controller
                  $forklist->setName($filterName);
                  $forklist->setDescription($filterDescription);
                  
-                 if( $filterPrivate )
+                 if( is_bool($private) )
                  {
                     $forklist->setPrivate($private);
                  }
@@ -555,7 +554,6 @@ class ListsController extends Controller
                             // Sanitize user input
                             $filterName = filter_var( $updateName, FILTER_SANITIZE_STRING );
                             $filterDescription = filter_var( $updateDescription, FILTER_SANITIZE_STRING );
-                            $filterPrivate = filter_var( $updatePrivate, FILTER_VALIDATE_BOOLEAN );
                             $filterRating = filter_var( $updateRating, FILTER_SANITIZE_NUMBER_INT );
                             $filterLatitude = filter_var( $updateLatitude, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION );
                             $filterLongitude = filter_var( $updateLongitude, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION );
@@ -585,9 +583,9 @@ class ListsController extends Controller
                                 $description = $forklist->getDescription();
                             }
 
-                            if( $filterPrivate )
+                            if( is_bool( $updatePrivate ) )
                             {
-                                if( $forklist->getPrivateToString($private) != $updatePrivate )
+                                if( $private != $updatePrivate )
                                 {
                                     $forklist->setPrivate($updatePrivate);
                                     $private = $forklist->getPrivate();
