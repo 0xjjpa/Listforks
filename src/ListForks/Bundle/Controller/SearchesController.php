@@ -49,10 +49,10 @@ class SearchesController extends Controller
     *
     * @author Benjamin Akhtary
     *
-    * @param search term
+    * @param searchTerm
     * @return the lists as json that have the search parameter in their name or description. 
     *
-    * Sample request and response :  https://skydrive.live.com/?cid=B33E7327F5123B4D&id=B33E7327F5123B4D%212188#!/view.aspx?cid=B33E7327F5123B4D&resid=B33E7327F5123B4D%212189&app=Word
+    * Sample request and response :  https://skydrive.live.com/#!/view.aspx?cid=B33E7327F5123B4D&resid=B33E7327F5123B4D%212246&app=Word
     *
      */
     // only retrive the watched list by the current user logged in on the specified list ( not watched for all list )
