@@ -46,14 +46,14 @@ class ListsController extends Controller
     /**
      * @Secure(roles="ROLE_USER")
      *
-    *
-    * @author Raymond Chow
-    *
-    * @param
-    * @return
-    *
-    * Sample request and response :  
-    *
+     * accepts a GET request for all of the current user's lists
+     * returns a JSON response containing all of the user's lists
+     *
+     * @author Raymond Chow
+     *
+     * @param
+     * @return Response 
+     *
      */
     public function getListsAction()
     {
@@ -164,14 +164,14 @@ class ListsController extends Controller
     /**
      * @Secure(roles="ROLE_USER")
      *
-    *
-    * @author Raymond Chow
-    *
-    * @param
-    * @return
-    *
-    * Sample request and response :  
-    *
+     * accepts a POST request for a new list
+     * returns a JSON response containing the new list
+     *
+     * @author Raymond Chow
+     *
+     * @param
+     * @return Response   
+     *
      */
     public function postListsAction()
     {
@@ -360,14 +360,14 @@ class ListsController extends Controller
     /**
      * @Secure(roles="ROLE_USER")
      *
-    *
-    * @author Raymond Chow
-    *
-    * @param
-    * @return
-    *
-    * Sample request and response :  
-    *
+     * accepts a GET request for a specific list (id)
+     * returns a JSON response containing the requested list
+     *
+     * @author Raymond Chow
+     *
+     * @param  integer  $id the list id
+     * @return Response 
+     *
      */
     public function getListAction($id)
     {
@@ -475,14 +475,14 @@ class ListsController extends Controller
     /**
      * @Secure(roles="ROLE_USER")
      *
-    *
-    * @author Raymond Chow
-    *
-    * @param
-    * @return
-    *
-    * Sample request and response :  
-    *
+     * accepts a PUT (update) request for a specific list (id)
+     * returns a JSON response containing the updated list
+     *
+     * @author Raymond Chow
+     *
+     * @param  integer  $id the list id
+     * @return Response 
+     *
      */
     public function putListAction($id)
     {
@@ -728,8 +728,14 @@ class ListsController extends Controller
                             $date = new \DateTime('now');
                             $updatedAt = $date->format('D M d Y H:i:s (T)');
 
-                            // Persist update changes to DB
+                            // Get list creation date and time
+                            $createdDate = $forklist->getCreatedAt();
+                            $createdAt = $createdDate->format('D M d Y H:i:s (T)');
+
+                            // Update timestamp for list
                             $forklist->setUpdatedAt($date);
+
+                            // Persist update changes to DB
                             $em->flush();
 
                             // Empty array to store the items of the current list
@@ -748,6 +754,8 @@ class ListsController extends Controller
 
                             // Add list to listArray
                             $listArray[] = array( '_hasData' => true,
+                                                  'createdAt' => $createdAt,
+                                                  'updatedAt' => $updatedAt,
                                                   'attributes' => array( 'id' => $id,
                                                                          'userId' => $userId,
                                                                          'name' => $name,
@@ -951,14 +959,14 @@ class ListsController extends Controller
     /**
      * @Secure(roles="ROLE_USER")
      *
-    *
-    * @author Raymond Chow
-    *
-    * @param
-    * @return
-    *
-    * Sample request and response :  
-    *
+     * accepts a GET request for the items of a specific list (id)
+     * returns a JSON response containing the requested list items
+     *
+     * @author Raymond Chow
+     *
+     * @param  integer  $id the list id
+     * @return Response 
+     *
      */
     public function getListItemsAction($id)
     {
@@ -1048,13 +1056,14 @@ class ListsController extends Controller
     /**
      * @Secure(roles="ROLE_USER")
      *
-    * @author Raymond Chow
-    *
-    * @param
-    * @return
-    *
-    * Sample request and response :  
-    *
+     * accepts a POST request to create one or more new items for a specific list (id)
+     * returns a JSON response containing all of the existing items for that list
+     *
+     * @author Raymond Chow
+     *
+     * @param  integer  $id the list id
+     * @return Response 
+     *
      */
     public function postListItemsAction($id)
     {
@@ -1225,6 +1234,15 @@ class ListsController extends Controller
 
     /**
      * @Secure(roles="ROLE_USER")
+     *
+     * accepts a PUT request to update one or more existing items for a specific list (id)
+     * returns a JSON response containing all of the existing items for that list
+     *
+     * @author Raymond Chow
+     *
+     * @param  integer  $id the list id
+     * @return Response 
+     *
      */
     public function putListItemsAction($id)
     {
@@ -1427,13 +1445,14 @@ class ListsController extends Controller
     /**
      * @Secure(roles="ROLE_USER")
      *
-    * @author Raymond Chow
-    *
-    * @param
-    * @return
-    *
-    * Sample request and response :  
-    *
+     * accepts a DELETE request to delete one or more existing items for a specific list (id)
+     * returns a JSON response containing all of the existing items (excluding deleted) for that list
+     *
+     * @author Raymond Chow
+     *
+     * @param  integer  $id the list id
+     * @return Response 
+     *
      */
     public function deleteListItemsAction($id)
     {
@@ -1629,6 +1648,16 @@ class ListsController extends Controller
 
     /**
      * @Secure(roles="ROLE_USER")
+     *
+     * accepts a GET request for a specific item (id) of a specific list (listId)
+     * returns a JSON response containing the requested list item
+     *
+     * @author Raymond Chow
+     *
+     * @param  integer  $listId the list id
+     * @param  integer  $id the item id
+     * @return Response 
+     *
      */
     public function getListItemAction($listId, $id)
     {
