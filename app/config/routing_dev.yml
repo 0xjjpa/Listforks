@@ -24,14 +24,20 @@ accounts:
     type: rest
     resource: "@ListForksBundle/Controller/AccountsController.php"
 
+searches:
+    type: rest
+    resource: "@ListForksBundle/Controller/SearchesController.php"
+
+
+users:
+    type: rest
+    resource: "@ListForksBundle/Controller/UsersController.php"
+
 lists:
     type: rest
     resource: "@ListForksBundle/Controller/ListsController.php"
 
-_search:
-    resource: "@ListForksBundle/Controller/SearchController.php"
-    type:     annotation
-    prefix:   /search
+
 
 
 _wdt:

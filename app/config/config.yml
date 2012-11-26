@@ -64,3 +64,7 @@ services:
         class: ListForks\Bundle\Listener\UpdateListener
         tags:
             - { name: doctrine.event_listener, event: postPersist }
+    list_listener:
+        class: ListForks\Bundle\Listener\ListListener
+        tags:
+            - { name: doctrine.event_listener, event: preUpdate }
