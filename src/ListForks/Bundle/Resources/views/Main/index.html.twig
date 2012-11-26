@@ -7,11 +7,12 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
     <!--	build:css styles/main.css -->
+    <link href="http://fonts.googleapis.com/css?family=Montserrat+Alternates:400,700|Sanchez:400italic,400" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="/styles/main.css">
     <link rel="stylesheet" href="/styles/listforks.css">
     <!--  endbuild-->
   </head>
-  <body ng-app="wwwApp">
+  <body>
     <div id="topnav" class="navbar navbar-inverse navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container"><a data-toggle="collapse" data-target=".nav-collapse" class="btn btn-navbar"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar">                          </span></a><a href="/" class="brand"><img src="/images/listforks-logo-small.png"></a>
@@ -38,13 +39,25 @@
         </div>
       </div>
     </div>
-    <div ng-view="ng-view" id="main" class="container"></div>
-    <script src="/scripts/vendor/angular.js"></script>
+    <div id="loading-holder" class="container">
+      <div class="loading">
+        <h2>Please wait while we load your lists...</h2>
+        <div class="loadingIcon">  </div>
+      </div>
+    </div>
+    <div id="lists" style="display: none" class="container"></div>
     <script src="/components/jquery/jquery.js"></script>
     <script src="/components/bootstrap-js/bootstrap.min.js"></script>
-    <!-- build:js scripts/scripts.js -->
+    <script src="/components/sammy/lib/min/sammy-latest.min.js">       </script>
+    <script src="/components/knockout.js/knockout.js">               </script>
+    <!-- build:js scripts/scripts.js         -->
+    <script src="/scripts/bindings.js"> </script>
+    <script src="/scripts/rest.js"> </script>
+    <script src="/scripts/viewModels/list.js">       </script>
+    <script src="/scripts/viewModels/account.js">       </script>
+    <script src="/scripts/viewModels/application.js">       </script>
     <script src="/scripts/app.js"></script>
-    <script src="/scripts/controllers/main.js"></script>
+    <script>Listforks.application();</script>
     <!-- endbuild -->
   </body>
 </html>
