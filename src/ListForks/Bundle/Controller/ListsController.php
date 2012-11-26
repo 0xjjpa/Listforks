@@ -614,6 +614,9 @@ class ListsController extends Controller
                             $locationArray = array( 'latitude' => $location->getLatitude(),
                                                     'longitude' => $location->getLongitude() );
 
+                            // Get DB Manager
+                            $em = $this->getDoctrine()->getManager();
+
                             // Traverse through the items for the current list
                             foreach( $updateItems as $updateItem )
                             {
@@ -627,99 +630,112 @@ class ListsController extends Controller
                                 $filterItemId = filter_var( $updateItemId, FILTER_SANITIZE_NUMBER_INT );
                                 $filterItemDescription = filter_var( $updateItemDescription, FILTER_SANITIZE_STRING );
                                 $filterItemOrder = filter_var( $updateItemOrder, FILTER_SANITIZE_NUMBER_INT );
-                                $filterItemStatus = filter_var( $updateItemStatus, FILTER_SANITIZE_STRING ); 
+                                $filterItemStatus = filter_var( $updateItemStatus, FILTER_SANITIZE_STRING );
 
-                                // Find item in DB
-                                $item = $this->getDoctrine()
-                                    ->getRepository('ListForksBundle:Item')
-                                    ->find($filterItemId);
 
-                                $em = $this->getDoctrine()->getManager();
-
-                                // Item does not exist
-                                if( !$item )
+                                // Create new item
+                                if( $filterItemStatus == 'new' )
                                 {
-                                    // Create new item
-                                    if( $filterItemStatus == 'new' )
-                                    {
-                                        $newItem = new Item();
-                                        $newItem->setDescription($filterItemDescription);
-                                        $newItem->setComplete(false);
-                                        $newItem->setOrderNumber($filterItemOrder);
-                                        $newItem->setForklist($forklist);
+                                    $newItem = new Item();
+                                    $newItem->setDescription($filterItemDescription);
+                                    $newItem->setComplete(false);
+                                    $newItem->setOrderNumber($filterItemOrder);
+                                    $newItem->setForklist($forklist);
 
-                                        $forklist->addItem($newItem);
-                                    }
-                                    // Attempt to update a non-existent item
-                                    else if ( $filterItemStatus == 'updated' )
-                                    {
-                                        $response = new Response(
-                                            json_encode(array('_hasData' => false,
-                                                              'message' => 'Attempted to update one or more items that do not exist.')));
-                                        // 400: Bad Request
-                                        $response->setStatusCode(400);
+                                    $forklist->addItem($newItem);
+                                }
+                                // Update or delete item
+                                else if( $filterItemStatus == 'updated' || $filterItemStatus == 'deleted' )
+                                {
+                                    // Find item in DB
+                                    $item = $this->getDoctrine()
+                                        ->getRepository('ListForksBundle:Item')
+                                        ->find($filterItemId);
 
-                                        return $response;
-                                    }
-                                    // Attempt to delete a non-existent item
-                                    else if ( $filterItemStatus == 'deleted' )
+                                    // Item does not exist
+                                    if( !$item )
                                     {
                                         $response = new Response(
                                             json_encode(array('_hasData' => false,
-                                                              'message' => 'Attempted to delete one or more items that do not exist.')));
+                                                              'message' => 'Attempted to update or delete one or more items that do not exist.')));
                                         // 400: Bad Request
                                         $response->setStatusCode(400);
 
+                                        // Set response headers
+                                        $response->headers->set('Content-Type', 'application/json');
+
                                         return $response;
+
                                     }
+                                    // Item exists
                                     else
                                     {
-                                        $response = new Response(
-                                            json_encode(array('_hasData' => false,
-                                                              'message' => 'Missing or unrecognized status for one or more items.')));
-                                        // 400: Bad Request
-                                        $response->setStatusCode(400);
+                                        // Ensure that the requested item belongs to the requested list
+                                        if( $item->getForklist()->getId() == $forklist->getId() )
+                                        {
+                                            // Update Item
+                                            if( $filterItemStatus == 'updated' )
+                                            {
+                                                // Check if description has changed
+                                                if( $item->getDescription() != $filterItemDescription )
+                                                    $item->setDescription($filterItemDescription);
+                                                // Check if order number has changed
+                                                if( $item->getOrderNumber() != $filterItemOrder )
+                                                    $item->setOrderNumber($filterItemOrder);
 
-                                        return $response;
+                                            }
+                                            // Delete Item
+                                            else if ( $filterItemStatus == 'deleted' )
+                                            {
+                                                $forklist->removeItem($item);
+                                                $em->remove($item);
+                                            }
+                                            else
+                                            {
+                                                $response = new Response(
+                                                    json_encode(array('_hasData' => false,
+                                                                      'message' => 'Missing or unrecognized status for one or more items.')));
+                                                // 400: Bad Request
+                                                $response->setStatusCode(400);
+                                                // Set response headers
+                                                $response->headers->set('Content-Type', 'application/json');
+
+                                                return $response;
+                                            }
+
+                                        }
+                                        // Item does not belong to the list
+                                        else
+                                        {
+                                            // Create a JSON response
+                                            $response = new Response(
+                                                json_encode(array('_hasData' => false,
+                                                'message' => 'We could not update the items of the list with the list id provided.')));
+                                            // 404: Not Found
+                                            $response->setStatusCode(404);
+
+                                            // Set response headers
+                                            $response->headers->set('Content-Type', 'application/json');
+
+                                            return $response;
+                                        }
+
                                     }
                                 }
-                                // Update existing item
-                                else if( $filterItemStatus == 'updated' )
-                                {
-                                    // Check if description has changed
-                                    if( $item->getDescription() != $filterItemDescription )
-                                        $item->setDescription($filterItemDescription);
-
-                                    if( $item->getOrderNumber() != $filterItemOrder )
-                                        $item->setOrderNumber($filterItemOrder);
-                                }
-                                // Delete existing item
-                                else if( $filterItemStatus == 'deleted' )
-                                {
-                                    $forklist->removeItem($item);
-
-                                    $em->remove($item);
-                                }
-                                // Unrecognized item status
+                                // Unknown status
                                 else
                                 {
                                     $response = new Response(
-                                            json_encode(array('_hasData' => false,
-                                                              'message' => 'Missing or unrecognized status for one or more items.')));
+                                        json_encode(array('_hasData' => false,
+                                                          'message' => 'Missing or unrecognized status for one or more items.')));
                                     // 400: Bad Request
                                     $response->setStatusCode(400);
+                                    // Set response headers
+                                    $response->headers->set('Content-Type', 'application/json');
 
                                     return $response;
                                 }
 
-                                /*
-
-                                // Add item to itemArray
-                                $itemsArray[] =  array( 'id' => $item->getId(),
-                                                        'description' => $item->getDescription(),
-                                                        'order' => $item->getOrderNumber() );
-
-                                */
                             }
 
                             // Get current server date and time
@@ -776,12 +792,12 @@ class ListsController extends Controller
                             $response = new Response(
                                     json_encode(array('_hasData' => false,
                                               'message' => 'We could not update the attributes of the list with the list id provided.')));
-                            // 400: Bad Request
-                            $response->setStatusCode(400);
+                            // 404: Not Found
+                            $response->setStatusCode(404);
                         }
 
                     }
-                    // UserId does not match
+                    // UserId does not match || UserId is null from bad JSON request
                     else
                     {
                         // Create a JSON response
