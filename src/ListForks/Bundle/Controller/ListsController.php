@@ -728,8 +728,14 @@ class ListsController extends Controller
                             $date = new \DateTime('now');
                             $updatedAt = $date->format('D M d Y H:i:s (T)');
 
-                            // Persist update changes to DB
+                            // Get list creation date and time
+                            $createdDate = $forklist->getCreatedAt();
+                            $createdAt = $createdDate->format('D M d Y H:i:s (T)');
+
+                            // Update timestamp for list
                             $forklist->setUpdatedAt($date);
+
+                            // Persist update changes to DB
                             $em->flush();
 
                             // Empty array to store the items of the current list
@@ -748,6 +754,8 @@ class ListsController extends Controller
 
                             // Add list to listArray
                             $listArray[] = array( '_hasData' => true,
+                                                  'createdAt' => $createdAt,
+                                                  'updatedAt' => $updatedAt,
                                                   'attributes' => array( 'id' => $id,
                                                                          'userId' => $userId,
                                                                          'name' => $name,
