@@ -1426,6 +1426,14 @@ class ListsController extends Controller
 
     /**
      * @Secure(roles="ROLE_USER")
+     *
+    * @author Raymond Chow
+    *
+    * @param
+    * @return
+    *
+    * Sample request and response :  
+    *
      */
     public function deleteListItemsAction($id)
     {
@@ -1889,7 +1897,7 @@ class ListsController extends Controller
     *
     * @author Benjamin Akhtary
     *
-    * @param
+    * @param the list id to check if we are watching
     * @return
     *
     * Sample request and response :  https://skydrive.live.com/#!/view.aspx?cid=B33E7327F5123B4D&resid=B33E7327F5123B4D%212207&app=Word
@@ -1898,7 +1906,7 @@ class ListsController extends Controller
     // only retrive the watched list by the current user logged in on the specified list ( not watched for all list )
     public function getListWatchAction($id)
     {
-
+        
            // Find list in DB using $id
         $forklist = $this->getDoctrine()
             ->getRepository('ListForksBundle:ForkList')
@@ -2364,6 +2372,7 @@ class ListsController extends Controller
         // Get content associated with request
         $content = $request->getContent();
 
+        // temporay !i dont know why i cant get the value !
         $rating = 4;
 
         // Check if content is empty

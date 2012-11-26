@@ -48,61 +48,77 @@ class UsersController extends Controller
     *
     * @author Benjamin Akhtary
     *
-    * @param $id is the userid to retrive the subscription lists for
-    * @return json object for all the list user is subscribed to. only public lists are retrived unless user is the owner of the list.
+    * @param 
+    * @return 
     * 
-    * sample Request & Response : https://skydrive.live.com/#!/view.aspx?cid=B33E7327F5123B4D&resid=B33E7327F5123B4D%212189&app=Word
+    * sample Request & Response : 
     */
+    public function getUserAction($id)
+    {
+
+    } // "get_user_all-subscribed-lists"    [GET] /subscriptions
+
+
+
+        /**
+     * @Secure(roles="ROLE_USER")
+     *
+    *
+    * @author Benjamin Akhtary
+    *
+    * @param the list id to check if we are watching
+    * @return
+    *
+    * Sample request and response :  https://skydrive.live.com/?cid=B33E7327F5123B4D&id=B33E7327F5123B4D%212188#!/view.aspx?cid=B33E7327F5123B4D&resid=B33E7327F5123B4D%212189&app=Word
+    *
+     */
+    // only retrive the watched list by the current user logged in on the specified list ( not watched for all list )
     public function getUserSubscriptionsAction($id)
     {
 
-       // Get current account
-       $account = $this->get('security.context')->getToken()->getUser();
-
-
-       // Find user in DB using account
-       $userBeingSearched = $this->getDoctrine()
+        // Find list in DB using $id
+        $userToGetSubscriptions = $this->getDoctrine()
             ->getRepository('ListForksBundle:User')
             ->find($id);
 
+        // Get current account
+        $account = $this->get('security.context')->getToken()->getUser();
 
-       // Find user in DB using account
-       $userLoggedIn = $this->getDoctrine()
+        // Find user in DB using account
+        $userLoggedIn = $this->getDoctrine()
             ->getRepository('ListForksBundle:User')
-            ->findOneByAccount($account);
+             ->findOneByAccount($account);
 
-            
             $subscriptions = $this->getDoctrine()
-                    ->getRepository('ListForksBundle:Subscription')
-                    ->findByUser($userBeingSearched);
+              ->getRepository('ListForksBundle:Subscription')
+              ->findByUser($userToGetSubscriptions);
 
-
-            $watchingLists = array();
-            $watchListsPrepare = array();
-            $listsArray = array();
-
-            foreach ( $subscriptions as $subscription)
-            {
-
-                // if user being searched is the logged in user or the lists to retrive are public lists subscribed
-                if( $subscription->getForklist()->getPrivate() == false || $subscription->getForklist()->getUser()->getId() == $userLoggedIn->getId() )
-                {
+        if ( $subscriptions )
+        {
                 
-          //          $watchingLists = $subscription->getForklist();
+                // to store the result retrived from database
+                $listsArray = array();
 
-          //          foreach ( $watchingLists as $watchlist)
-         //           {
-             $watchlist = $subscription->getForklist();
-                        
+                foreach ( $subscriptions as $subscription)
+                {
+                    $forklist = NULL;
 
+                    // if list is public or the owner is requesting
+                    if( $subscription->getForklist()->getPrivate() == false || $subscription->getForklist()->getUser()->getId() == $userLoggedIn->getId() )
+                    {
+                        $forklist = $subscription->getForklist();
+                    }
+                    // if the list of public as check above or the requester is the owner, proceed with returing the value
+                    if ($forklist != NULL)
+                    {
                         // Array to store the location co-ordinates of the current list
-                        $locationArray = array( 'latitude' => $watchlist->getLocation()->getLatitude(),
-                                            'longitude' => $watchlist->getLocation()->getLongitude()
-                                            );
+                        $locationArray = array( 'latitude' => $forklist->getLocation()->getLatitude(),
+                                        'longitude' => $forklist->getLocation()->getLongitude()
+                                        );
 
                         // Empty array to store the items of the current list
                         $itemsArray = array();
-                        $items = $watchlist->getItems();
+                        $items = $forklist->getItems();
 
                         // Traverse through the items for the current list
                         foreach( $items as $item )
@@ -114,46 +130,65 @@ class UsersController extends Controller
                         }
 
                         // Add list to listArray
-                        $listArray[] = array( '_hasData' => true, 
-                                             'attributes' => array( 'id' => $watchlist->getId(),
-                                                                     'userId' => $watchlist->getUser()->getId(),
-                                                                     'name' => $watchlist->getName(),
-                                                                     'description' => $watchlist->getDescription(),
-                                                                     'private' => $watchlist->getPrivate(),
+                        $listArray[] = array( '_hasData' => true,
+                                              'attributes' => array( 'id' => $forklist->getId(),
+                                                                     'userId' => $forklist->getUser()->getId(),
+                                                                     'name' => $forklist->getName(),
+                                                                     'description' => $forklist->getDescription(),
+                                                                     'private' => $forklist->getPrivate(),
                                                                      'location' => $locationArray,
-                                                                     'rating' => $watchlist->getRating(),
+                                                                     'rating' => $forklist->getRating(),
                                                                      'items' => $itemsArray,
-                                                                     'createdAt' => $watchlist->getCreatedAt(),
-                                                                     'updatedAt' => $watchlist->getUpdatedAt()
+                                                                     'createdAt' => $forklist->getCreatedAt(),
+                                                                     'updatedAt' => $forklist->getUpdatedAt()
                                                                       ));
 
 
                         array_push($listsArray, $listArray );
-         //           }
 
+
+                        }
                     
                 }
-            }
-            // Add all lists to the response array
-            $responseArray[] = array( '_hasData' => true,
-                                  'subscribedLists' => $listsArray );
 
-            // Create a JSON-response with the user's list
-            $response = new Response(json_encode($responseArray));
+                // if there is atleast 1 subscription retrived from above
+                if (count($listsArray) > 0 ){
+                    // Add all lists to the response array
+                    $responseArray[] = array( '_hasData' => true,
+                                          'watchedLists' => $listsArray );
+                }
+                else
+                {
+                    // Add all lists to the response array
+                    $responseArray[] = array( '_hasData' => fale,
+                                          'watchedLists' => $listsArray );
+                } 
+
+                // Create a JSON-response with the user's list
+                $response = new Response(json_encode($responseArray));
+
+        }
+
+        // List no subscriptions
+        else
+        {
             
+            $response = new Response(
+                json_encode(array('_hasData' => false,
+                                  'message' => 'No subscription found for user id '.$id)));
+
+            // set error code 403  for login but not exists.
+            $response->setStatusCode(403);
+
+        }
 
         // Set response headers
         $response->headers->set('Content-Type', 'application/json');
 
         return $response;
 
-
-
-    } // "get_user_all-subscribed-lists"    [GET] /subscriptions
-
-
-
-
+        
+    } // "get_user_forklists"    [GET] /users/{id}/forklists
 
 
 }
