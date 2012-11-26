@@ -49,8 +49,8 @@ class SearchesController extends Controller
     *
     * @author Benjamin Akhtary
     *
-    * @param the list id to check if we are watching
-    * @return
+    * @param search term
+    * @return the lists as json that have the search parameter in their name or description. 
     *
     * Sample request and response :  https://skydrive.live.com/?cid=B33E7327F5123B4D&id=B33E7327F5123B4D%212188#!/view.aspx?cid=B33E7327F5123B4D&resid=B33E7327F5123B4D%212189&app=Word
     *
