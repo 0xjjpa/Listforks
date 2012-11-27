@@ -51,7 +51,7 @@ class UsersController extends Controller
     * @param given the id of a use
     * @return all the lists the user is subscribed if the requester has permission to view those lists.
     *
-    * Sample request and response :  https://skydrive.live.com/?cid=B33E7327F5123B4D&id=B33E7327F5123B4D%212188#!/view.aspx?cid=B33E7327F5123B4D&resid=B33E7327F5123B4D%212189&app=Word
+    * Sample request and response :=>  https://skydrive.live.com/?cid=B33E7327F5123B4D&id=B33E7327F5123B4D%212188#!/view.aspx?cid=B33E7327F5123B4D&resid=B33E7327F5123B4D%212189&app=Word
     *
      */
     // only retrive the watched list by the current user logged in on the specified list ( not watched for all list )
@@ -110,6 +110,8 @@ class UsersController extends Controller
                                                     'description' => $item->getDescription(),
                                                     'order' => $item->getOrderNumber() );
                         }
+
+                        
 
                         // Add list to listArray
                         $listArray[] = array( '_hasData' => true,
@@ -234,5 +236,5 @@ class UsersController extends Controller
 
              return;
     }
-
+    
 }
