@@ -22,7 +22,8 @@ var Listforks = (function(l) {
 
     var modules = {
       lists: "listViewModel",
-      accounts: "accountViewModel"
+      accounts: "accountViewModel",
+      users: "userViewModel"
     };
 
     var loadModule = function(module, method, id, applyBindings) {
