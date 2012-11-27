@@ -23,26 +23,6 @@ use JMS\SecurityExtraBundle\Annotation\Secure;
 
 class SearchesController extends Controller
 {
-	
-    /**
-     * @Secure(roles="ROLE_USER")
-     *
-    *
-    *
-    * @param
-    * @return
-    *
-    *
-     */
-	public function optionsSearchesAction()
-    {        
-
-        return new Response('[OPTIONS] /search');
-
-    //    return new Response('[OPTIONS] /search');
-
-    } // "options_lists" [OPTIONS] /search
-
 
         /**
      * @Secure(roles="ROLE_USER")
@@ -65,21 +45,6 @@ class SearchesController extends Controller
             // even if user does a SQL injection, the results is filtered only based on lists that he has access to in the cod to follow.
             $q = $em->createQuery("select u from ListForks\Bundle\Entity\ForkList u where u.name LIKE  '%".$searchTerm."%' OR u.description LIKE '%".$searchTerm ."%' ");
             $forklistArray = $q->getResult();
-        
-
-                     /*
-        $forklistArray = $this->getDoctrine()
-            ->getRepository('ListForksBundle:ForkList')->findByName( $searchTerm); 
-        
-           // ->findBy(array("name" ));
-
-                // This doesnt work, its for old doctrine. the newone only support findBy and findOneBy
-        $forklistArray = $this->getDoctrine()
-            ->getRepository('ListForksBundle:ForkList')->createQuery('u')
-                          ->where('name LIKE ?', '%'.$searchTerm.'%')
-                          ->execute();
-
-               */
            
         // Get current account
         $account = $this->get('security.context')->getToken()->getUser();
@@ -88,9 +53,6 @@ class SearchesController extends Controller
         $userLoggedIn = $this->getDoctrine()
             ->getRepository('ListForksBundle:User')
              ->findOneByAccount($account);
-
-
-
 
         $resultsArray = array();
         $responseArray = array();
@@ -130,7 +92,7 @@ class SearchesController extends Controller
                                                                          'description' => $forklist->getDescription(),
                                                                          'private' => $forklist->getPrivate(),
                                                                          'location' => $location,
-                                                                         'rating' => $forklist->getRating(),
+                                                                         'rating' => $this->getRating($forklist),
                                                                          'items' => $itemsArray,
                                                                          'createdAt' => $forklist->getCreatedAt(),
                                                                          'updatedAt' => $forklist->getUpdatedAt()
@@ -169,6 +131,69 @@ class SearchesController extends Controller
 
         
     } // "get_searchs"    [GET] /search/{searchTerm}
+
+
+
+        // ******************* HELPERS METHODS **********************
+
+    public function getRating($forklist)
+    {
+        $allRrating = $this->getDoctrine()
+            ->getRepository('ListForksBundle:Rating')
+             ->findByForklist($forklist);
+        
+             $count = 0;
+             $sumRatings = 0;
+             $rating = 0;
+
+             foreach ( $allRrating as $rating)
+             {
+                 $sumRatings = $sumRatings + $rating->getRating();
+                 $count = $count + 1;
+             }
+
+             
+             if ( $count != 0)
+             {
+                 $rating = round( $sumRatings / $count );
+             }
+
+        return $rating;
+    }
+
+
+    public function setRating($forklist, $user, $rate)
+    {
+
+        $rating = new Rating();
+        $rating->setUser($user);
+        $rating->setForklist($forklist);
+        $rating->setRating($rate);
+
+        $allRrating = $this->getDoctrine()
+            ->getRepository('ListForksBundle:Rating')
+             ->findByForklist($forklist);
+        
+             $alreadyRated = FALSE;
+
+             foreach ( $allRrating as $rating)
+             {
+                 if ( $rating->getUser()->getId() == $user->getId() )
+                 {
+                     $alreadyRated = TRUE;
+                 }
+             }
+
+             if ( !$alreadyRated)
+             {
+                 // Persist changes to DB
+                 $em = $this->getDoctrine()->getManager();
+                 $em->persist($rating);
+                 $em->flush();
+             }
+
+             return;
+    }
 
 
 }
