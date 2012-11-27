@@ -10,18 +10,18 @@
   <body>
     <h1><img src="/images/listforks-logo-accounts.png" width="437px"></h1>
     <div class="account-container-new">
-      <form class="loginform" action="../accounts/new" method="post">
+      <form action="new" method="post" class="loginform">
         <label for="firstname">First Name</label>
         <input type="text" name="firstname" required="required" placeholder="Type your first name...">
         <label for="lastname">Last Name</label>
-        <input type="text" name="lastname" required="required" placeholder="...now your last name.">
+        <input type="text" name="firstname" required="required" placeholder="...now your last name.">
         <label for="email">E-mail</label>
         <input type="email" name="email" required="required" placeholder="yourname@something.com">
         <label for="username">Username</label>
         <input type="text" name="username" required="required" placeholder="Choose a username.">
         <label for="password">Password</label>
         <input type="password" name="password" required="required" placeholder="Choose a password.">
-        <button class="loginform">Log in</button>
+        <button type="submit" class="loginform">Log in</button>
       </form>
     </div>
     <script src="/components/jquery/jquery.js"></script>

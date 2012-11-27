@@ -10,12 +10,12 @@
   <body>
     <h1><img src="/images/listforks-logo-accounts.png" width="437px"></h1>
     <div class="account-container">
-      <form class="loginform">
-        <label for="name">Username</label>
-        <input type="text" name="name" placeholder="Type your username...">
-        <label for="password">Password</label>
-        <input type="password" name="password">
-        <button class="loginform">Log in</button>
+      <form action="login_check" method="post" class="loginform">
+        <label for="_username">Username</label>
+        <input type="text" name="_username" placeholder="Type your username...">
+        <label for="_password">Password</label>
+        <input type="password" name="_password">
+        <button type="submit" class="loginform">Log in</button>
       </form>
     </div>
     <script src="/components/jquery/jquery.js"></script>
