@@ -41,12 +41,11 @@ var Listforks = (function(l) {
     var runExecutionQueue = function() {
       var currentActions = privateExecutionQueue.removeAll();
       ko.utils.arrayForEach(currentActions, function(action) {
-        console.log(action);
         var command = action.command; 
         var args = action.args;
         var context = action.context;
-          
-        command.apply(context, args);
+          //console.log(action);
+        action.command.apply(action.context, action.args);
       });
     }
 
@@ -65,11 +64,11 @@ var Listforks = (function(l) {
     }
 
     self.endRequest = function(module) {
-      //showModule(module, window.disquesFunction);
-      showModule(module);
+      showModule(module, window.disquesFunction);
+      //showModule(module);
       //console.log(DISQUS);
       hideLoading();
-      console.log("ALL LOADED!");
+      //console.log("ALL LOADED!");
       runExecutionQueue();
     }
     

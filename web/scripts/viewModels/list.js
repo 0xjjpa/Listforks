@@ -32,7 +32,7 @@ var Listforks = (function(l) {
 			self.name = ko.protectedObservable(data.name || "List Name");
 			self.description = ko.protectedObservable(data.description || "List Description");
 			self.private = ko.protectedObservable(data.private || false);
-			self.location = ko.protectedObservable(data.location || {});
+			self.location = ko.observable(data.location || {});
 			self.rating = ko.protectedObservable(data.rating || 0);
 
 			self.items = ko.observableArray([]);
@@ -112,12 +112,12 @@ var Listforks = (function(l) {
 			
 		}
 
-		self.saveList = function(list) {
+		self.saveList = function() {
 			perform("commit", self.list);
 			goTo("displayList");
 
 			var queue = ListForksInstance.postQueue;
-			var rawList = ko.toJS(list);
+			var rawList = ko.toJS(self.list);
 			var id = rawList.id;
 
 			var message = {};
@@ -202,21 +202,20 @@ var Listforks = (function(l) {
 
 	self.list.subscribe(function(guiList) {
 		var rawList = guiList.list();
-		if(rawList.location && rawList.location.latitude !== 0 && rawList.location.longitude !== 0) {
+		if(rawList.location() && rawList.location().latitude != 0 && rawList.location().longitude != 0) {
 			self.hasGeolocation(true);
 
 			var queue = ListForksInstance.actionQueue;
-			var lat = rawList.location.latitude;
-			var lng = rawList.location.longitude;
+			var lat = rawList.location().latitude;
+			var lng = rawList.location().longitude;
 
 			var message = {};
 			message.method = self.drawMap;
 			message.context = self;
 			message.args = [lat, lng];
-
+			console.log(message.args);
 			queue(message);
 
-			//self.drawMap(rawList.location.latitude, rawList.location.longitude);
 		} else {
 			self.hasGeolocation(false);
 		}
@@ -249,6 +248,15 @@ var Listforks = (function(l) {
 				var lat = position.coords.latitude;
 				var lng = position.coords.longitude;
 				self.drawMap(lat, lng);
+				self.hasGeolocation(true);
+
+				var guiList = self.list();
+				var rawList = guiList.list();
+				
+				rawList.location({latitude: lat, longitude: lng});
+
+				guiList.list(rawList);
+				guiList.saveList();				
 			
 			}, function(error) {
 				if(error == 1) alert("We require your permission for accessing your location. Please refresh and try again.");
