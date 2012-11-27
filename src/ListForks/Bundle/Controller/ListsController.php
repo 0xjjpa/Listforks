@@ -787,7 +787,7 @@ class ListsController extends Controller
                             $listArray = array( '_hasData' => true,
                                                 'createdAt' => $createdAt,
                                                 'updatedAt' => $updatedAt,
-                                                'list' => array( 'id' => $id,
+                                                'attributes' => array( 'id' => $id,
                                                                  'userId' => $userId,
                                                                  'name' => $name,
                                                                  'description' => $description,
