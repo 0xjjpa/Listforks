@@ -209,7 +209,7 @@ var Listforks = (function(l) {
 
   self.remove = function(list, bypass) {
     var confirm;
-    if(!bypass) {
+    if(bypass !== true) {
       confirm = window.confirm("Are you sure you want to delete this List?");  
     } else {
       confirm = 1;
@@ -218,6 +218,19 @@ var Listforks = (function(l) {
     if(confirm) {
       var listId = list.id();
       self.lists.remove(function(list) { return list.id() == listId });
+
+      var queue = ListForksInstance.postQueue;
+      var rawList = ko.toJS(list);
+      var id = rawList.id;
+
+      var message = {type: "delete", id: id};
+
+      var restfulData = {};
+
+      message.data = ko.toJSON(restfulData);
+      message.module = "lists";
+      console.log(message);
+      queue(message);
     }
   }
 
