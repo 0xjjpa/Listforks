@@ -25,6 +25,93 @@ use JMS\SecurityExtraBundle\Annotation\Secure;
 class UsersController extends Controller
 {
 	
+
+
+    /*
+    * @Secure(roles="ROLE_USER")
+    *
+    * @author Benjamin Akhtary
+    *
+    * @param 
+    * @return 
+    * 
+    * sample Request & Response : 
+    */
+    public function getUsersAction()
+    {
+
+         // Get current account
+        $account = $this->get('security.context')->getToken()->getUser();
+
+        // Find user in DB using account
+        $userLoggedIn = $this->getDoctrine()
+            ->getRepository('ListForksBundle:User')
+            ->findOneByAccount($account);
+
+
+        $users = array();
+
+        if ( $userLoggedIn)
+        {
+            
+            $allUsers = $this->getDoctrine()
+                ->getRepository('ListForksBundle:User')
+                ->findAll();
+
+
+            
+            foreach( $allUsers as $user )
+            {
+
+                $numPublicList = 0;
+
+
+                  // Add list to listArray
+                  $userArray[] = array(  'id' => $user->getId(),
+                                         'name' => $user->getFirstName().$user->getLastName(),
+                                         'countlist' => $numPublicList
+                                       );
+
+
+
+
+                  array_push($users, $userArray );
+            }
+
+        }
+
+        $responseArray = array();
+         // if there is atleast 1 subscription retrived from above
+         if (count($users) > 0 ){
+              // Add all lists to the response array
+               $responseArray[] = array( '_hasData' => true,
+                                         'lists' => $users );
+         }
+         else
+         {
+              // Add all lists to the response array
+              $responseArray[] = array( '_hasData' => fale,
+                                    'lists' => $users );
+              // set error code 403  for login but not exists.
+              $response->setStatusCode(403);
+         }
+        
+         // Create a JSON-response with the user's
+         $response = new Response(json_encode($responseArray));
+
+
+         // Set response headers
+        $response->headers->set('Content-Type', 'application/json');
+
+        return $response;
+
+
+
+
+    }// "get_all-user_all-subscribed-lists"    [GET] /subscriptions
+
+
+
     /*
     * @Secure(roles="ROLE_USER")
     *
