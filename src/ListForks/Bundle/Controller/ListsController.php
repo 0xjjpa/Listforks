@@ -428,17 +428,17 @@ class ListsController extends Controller
                 }
 
                 // Add list to listArray
-                $listArray[] = array( '_hasData' => true,
-                                      'createdAt' => $createdAt,
-                                      'updatedAt' => $updatedAt,
-                                      'attributes' => array( 'id' => $id,
-                                                             'userId' => $userId,
-                                                             'name' => $name,
-                                                             'description' => $description,
-                                                             'private' => $private,
-                                                             'location' => $locationArray,
-                                                             'rating' => $rating,
-                                                             'items' => $itemsArray ));
+                $listArray = array( '_hasData' => true,
+                                    'createdAt' => $createdAt,
+                                    'updatedAt' => $updatedAt,
+                                    'attributes' => array( 'id' => $id,
+                                                           'userId' => $userId,
+                                                           'name' => $name,
+                                                           'description' => $description,
+                                                           'private' => $private,
+                                                           'location' => $locationArray,
+                                                           'rating' => $rating,
+                                                           'items' => $itemsArray ));
 
                 // Create a JSON-response with the user's list
                 $response = new Response(json_encode($listArray));
@@ -767,17 +767,17 @@ class ListsController extends Controller
                             }    
 
                             // Add list to listArray
-                            $listArray[] = array( '_hasData' => true,
-                                                  'createdAt' => $createdAt,
-                                                  'updatedAt' => $updatedAt,
-                                                  'attributes' => array( 'id' => $id,
-                                                                         'userId' => $userId,
-                                                                         'name' => $name,
-                                                                         'description' => $description,
-                                                                         'private' => $private,
-                                                                         'location' => $locationArray,
-                                                                         'rating' => $rating,
-                                                                         'items' => $itemsArray ));
+                            $listArray = array( '_hasData' => true,
+                                                'createdAt' => $createdAt,
+                                                'updatedAt' => $updatedAt,
+                                                'attributes' => array( 'id' => $id,
+                                                                       'userId' => $userId,
+                                                                       'name' => $name,
+                                                                       'description' => $description,
+                                                                       'private' => $private,
+                                                                       'location' => $locationArray,
+                                                                       'rating' => $rating,
+                                                                       'items' => $itemsArray ));
 
                             // Create a JSON-response with the user's list
                             $response = new Response(json_encode($listArray));
@@ -915,15 +915,15 @@ class ListsController extends Controller
                 }
 
                 // Add list to listArray
-                $listArray[] = array( '_hasData' => true,
-                                      'attributes' => array( 'id' => $id,
-                                                             'userId' => $userId,
-                                                             'name' => $name,
-                                                             'description' => $description,
-                                                             'private' => $private,
-                                                             'location' => $locationArray,
-                                                             'rating' => $rating,
-                                                             'items' => $itemsArray ));
+                $listArray = array( '_hasData' => true,
+                                    'attributes' => array( 'id' => $id,
+                                                           'userId' => $userId,
+                                                           'name' => $name,
+                                                           'description' => $description,
+                                                           'private' => $private,
+                                                           'location' => $locationArray,
+                                                           'rating' => $rating,
+                                                           'items' => $itemsArray ));
 
 
                 // delete the user's list
