@@ -1,0 +1,90 @@
+
+<div id="titleRow" class="row-fluid">
+  <h2 class="title">&middot; List &middot;</h2>
+  <div data-bind="click: function() { location.hash = 'lists' }" class="btn btn-primary">Go Back</div>
+</div>
+<div data-bind="foreach: lists" class="row">
+  <div data-bind="template: { name: selectedTemplate, data: list }" class="span8 forklist"></div>
+</div>
+<script type="text/html" id="displayList">
+  <div class="header">
+    <div class="name">
+      <h3 data-bind="text:name">NAME</h3><i class="icon-info-sign icon-white"></i>
+    </div>
+    <div class="rating"><i class="icon-heart heart icon-white"></i><i class="icon-heart heart icon-white"></i><i class="icon-heart heart icon-white"></i></div>
+  </div>
+  <div class="description">
+    <p data-bind="text:description">DESCRIPTION</p>
+  </div>
+  <table class="content">
+    <tbody data-bind="template: { name: $parents[0].selectedSubtemplate }"></tbody>
+  </table>
+  <div class="more"><span><i class="icon-downArrow"></i>More</span></div>
+  <div class="buttons"><a class="btn btn-primary">Fork it</a><a class="btn">Details</a><a data-bind="click: $parents[0].editList" class="btn">Edit</a><a data-bind="click: $root.remove" class="btn btn-danger">Delete</a></div>
+</script>
+<script type="text/html" id="editList">
+  <div class="header">
+    <div class="name">
+      <input type="text" data-bind="value:name"/>
+    </div>
+  </div>
+  <div class="description">
+    <textarea data-bind="value:description">DESCRIPTION</textarea>
+  </div>
+  <table class="content">
+    <tbody data-bind="template: { name: $parents[0].selectedSubtemplate }"></tbody>
+  </table>
+  <div class="more"><span><i class="icon-downArrow"></i>More</span></div>
+  <div class="buttons"><a data-bind="click: $parents[0].cancelList" class="btn">Cancel</a><a data-bind="click: $parents[0].saveList" class="btn btn-primary">Save</a></div>
+</script>
+<script type="text/html" id="displayListItem">
+  <!-- ko foreach: items-->
+  <tr class="listItem">
+    <td class="itemCheckbox">
+      <input type="checkbox" name="listItem" value=""/>
+    </td>
+    <td data-bind="text: description" class="itemText">
+      	
+      LIST ITEM DESCRIPTION
+    </td>
+  </tr>
+  <!-- /ko-->
+</script>
+<script type="text/html" id="editListItem">
+  <!-- ko foreach: items-->
+  <tr class="listItem">
+    <td class="itemCheckbox">
+      <input type="checkbox" name="listItem" value="" disabled="disabled"/>
+    </td>
+    <td data-bind="text: description" class="itemText">
+      	
+      LIST ITEM DESCRIPTION
+    </td>
+    <td class="itemOptions"><i style="cursor:pointer;" data-bind="click: $parents[1].editListItem" class="icon-edit"></i></td>
+  </tr>
+  <!-- /ko-->
+  <tr class="listItem">
+    <td class="itemCheckbox">&nbsp;</td>
+    <td data-bind="click: $parents[0].addListItem" colspan="2" style="cursor:pointer; background-color: white; text-align: center;" class="itemText"><i class="icon-plus"></i>Click to add new list item.</td>
+  </tr>
+</script>
+<script type="text/html" id="editSpecificItem">
+  <div class="header">
+    <div class="name">
+      <h3 type="text" data-bind="text:name"></h3>
+    </div>
+  </div>
+  <table class="content">
+    <tbody data-bind="with:$parents[0].selectedListItem">
+      <tr class="listItem">
+        <td class="itemCheckbox">
+          <input type="checkbox" name="listItem" value="" disabled="disabled"/>
+        </td>
+        <td class="itemText">
+          <textarea data-bind="value: description"></textarea>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="buttons"><a data-bind="click: $parents[0].cancelListItem" class="btn">Cancel</a><a data-bind="click: $parents[0].saveListItem" class="btn btn-primary">Save</a></div>
+</script>
