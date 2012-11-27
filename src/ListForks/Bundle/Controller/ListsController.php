@@ -244,7 +244,7 @@ class ListsController extends Controller
                  }
 
                  $forklist->setLocation($newLocation);
-                 $this->setRating($forklist, $user, $filterRating);
+            //     $this->setRating($forklist, $user, $filterRating);
                //  $forklist->setRating($filterRating);
                  $forklist->setUser($user);
 
@@ -290,6 +290,13 @@ class ListsController extends Controller
                  $em->persist($forklist);
                  $em->flush();
 
+                 if ( !$filterRating )
+                 {
+                     $filterRating = 0;
+                 }
+
+                 $this->setRating($forklist, $user, $filterRating);
+                
                  // Empty array to store the items of the list
                  $itemsArray = array();
 
@@ -1766,8 +1773,8 @@ class ListsController extends Controller
     *
     * @author Benjamin Akhtary
     *
-    * @param
-    * @return
+    * @param given a listId to be forked
+    * @return if user has permission to access the list then a copy of the list is created and sent to the user
     *
     * Sample request and response :  https://skydrive.live.com/#!/view.aspx?cid=B33E7327F5123B4D&resid=B33E7327F5123B4D%212218&app=Word
     *
@@ -1790,6 +1797,7 @@ class ListsController extends Controller
             $response = new Response(
                 json_encode(array('_hasData' => false,
                                   'message' => 'No list found for id '.$id)));
+            $response->setStatusCode(404);
         }
         // List exists
         else
@@ -1802,43 +1810,43 @@ class ListsController extends Controller
                 ->getRepository('ListForksBundle:User')
                 ->findOneByAccount($account);
 
-            // List is public or user is list owner
+            // List is public or user is list owner ( if user has permission )
             if( $forklist->getPrivate() == false || $forklist->getUser()->getId() == $user->getId() )
             {
-                // Get information for current list
-           //     $id = $forklist->getId();
-           //     $user = $forklist->getUser();
+
+                $forkedForklist = clone $forklist;
+                $forkedForklist->setUser($user);
+
+/*
                 $name = $forklist->getName();
                 $description = $forklist->getDescription();
                 $private = $forklist->getPrivate();
                 $location = $forklist->getLocation();
                 $rating = $this->getRating($forklist);
                 $items = $forklist->getItems();
-
-                /*
-                
-                // set current time as the creation time
-                $date = new \DateTime('now');
-                $createdAt = $date->format('D M d Y H:i:s (T)');
-                // because we are goint to create a list right now, update date is the same
-                $updatedDate = $createdDate;
-
-                */
+*/
 
                 // Array to store the location co-ordinates of the current list
-                $locationArray = array( 'latitude' => $location->getLatitude(),
-                                        'longitude' => $location->getLongitude() );
+                $locationArray = array( 'latitude' => $forkedForklist->getLocation()->getLatitude(),
+                                        'longitude' => $forkedForklist->getLocation()->getLongitude() );
 
 
+                // Get current server date and time
                 $date = new \DateTime('now');
                 $createdAt = $date->format('D M d Y H:i:s (T)');
+
+                $forkedForklist->setCreatedAt($date);
+                $forkedForklist->setUpdatedAt($date);
+
+                /*
 
                 // Create a new location to associate it with the list
                 $newLocation = new Location();
                 $newLocation->setLatitude($location->getLatitude());
                 $newLocation->setLongitude($location->getLongitude());
 
-
+                */
+/*
                 // --- Create a new list from retrived data ---
                  $forkedForklist = new ForkList();
 
@@ -1882,7 +1890,7 @@ class ListsController extends Controller
                  $date = new \DateTime('now');
                  $createdAt = $date->format('D M d Y H:i:s (T)');
                  $updatedAt = $createdAt;
-
+*/
 
 
                  // Associate the new list with the current user
@@ -1893,7 +1901,7 @@ class ListsController extends Controller
                  $em->persist($forkedForklist);
                  $em->flush();
 
-
+/*
                 // Add list to listArray
                 $listArray[] = array( '_hasData' => true,
                                       'createdAt' => $createdAt,
@@ -1906,17 +1914,20 @@ class ListsController extends Controller
                                                              'location' => $locationArray,
                                                              'rating' => $forkedForklist->get,
                                                              'items' => $forkedForklist->get ));
+*/
+
+
                 $listArray = array( '_hasData' => true,
                                     'createdAt' => $createdAt,
-                                    'updatedAt' => $updatedAt,
+                                    'updatedAt' => $createdAt,
                                     'attributes' => array( 'id' => $forkedForklist->getId(),
-                                                           'userId' => $userId,
-                                                           'name' => $name,
-                                                           'description' => $description,
-                                                           'private' => $private,
+                                                           'userId' => $forkedForklist->getUser()->getId(),
+                                                           'name' => $forkedForklist->getName(),
+                                                           'description' => $forkedForklist->getDescription(),
+                                                           'private' => $forkedForklist->getPrivate(),
                                                            'location' => $locationArray,
-                                                           'rating' => $rating,
-                                                           'items' => $itemsArray ));
+                                                           'rating' => $this->getRating($forkedForklist),
+                                                           'items' => $forkedForklist->getItems() ));
 
                 // Create a JSON-response with the user's list
                 $response = new Response(json_encode($listArray));
