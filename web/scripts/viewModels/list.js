@@ -177,7 +177,9 @@ var Listforks = (function(l) {
 	var self = {};
 
 	self.getContainer = ko.observableArray([]);  
+	self.hasGeolocation = ko.observable();
 	self.lists = ko.observableArray([]);
+	self.list = ko.observable();
 
 	self.getContainer.subscribe(function(data){
 
@@ -190,32 +192,55 @@ var Listforks = (function(l) {
 
 		} else { // GET {}  
 
-		self.lists.push(new ListGUI(data.attributes, self));
+		var list = new ListGUI(data.attributes, self);
+		self.list(list)
+		self.lists.push(list);
 
 	}
 
 });
 
+	self.list.subscribe(function(guiList) {
+		var rawList = guiList.list();
+		if(rawList.location && rawList.location.latitude !== 0 && rawList.location.longitude !== 0) {
+			self.hasGeolocation(true);
+
+			var queue = ListForksInstance.actionQueue;
+			var lat = rawList.location.latitude;
+			var lng = rawList.location.longitude;
+
+			var message = {};
+			message.method = self.drawMap;
+			message.context = self;
+			message.args = [lat, lng];
+
+			queue(message);
+
+			//self.drawMap(rawList.location.latitude, rawList.location.longitude);
+		} else {
+			self.hasGeolocation(false);
+		}
+	})
 
 	self.drawMap = function(lat, lng) {
-		var mapcanvas = document.createElement('div');
-		mapcanvas.id = 'google-map';
-		mapcanvas.style.height = '200px';
-		mapcanvas.style.width = '100%';
+			var mapcanvas = document.createElement('div');
+			mapcanvas.id = 'google-map';
+			mapcanvas.style.height = '200px';
+			mapcanvas.style.width = '100%';
 
-		document.getElementById('google-map-container').appendChild(mapcanvas);
+			document.getElementById('google-map-container').appendChild(mapcanvas);
 
-		var latlng = new google.maps.LatLng(lat, lng);
-		var options = {
-			zoom: 15,
-			center: latlng,
-			mapTypeControl: false,
-			navigationControlOptions: {style: google.maps.NavigationControlStyle.SMALL},
-			mapTypeId: google.maps.MapTypeId.ROADMAP
-		};
+			var latlng = new google.maps.LatLng(lat, lng);
+			var options = {
+				zoom: 15,
+				center: latlng,
+				mapTypeControl: false,
+				navigationControlOptions: {style: google.maps.NavigationControlStyle.SMALL},
+				mapTypeId: google.maps.MapTypeId.ROADMAP
+			};
 
-		var map = new google.maps.Map(document.getElementById("google-map"), options);
-		var marker = new google.maps.Marker({position: latlng, map: map, title: "Located here"});
+			var map = new google.maps.Map(document.getElementById("google-map"), options);
+			var marker = new google.maps.Marker({position: latlng, map: map, title: "Located here"});
 	}
 
 	self.loadGeolocation = function() {
@@ -224,9 +249,7 @@ var Listforks = (function(l) {
 				var lat = position.coords.latitude;
 				var lng = position.coords.longitude;
 				self.drawMap(lat, lng);
-
-				
-
+			
 			}, function(error) {
 				if(error == 1) alert("We require your permission for accessing your location. Please refresh and try again.");
 				if(error == 2) alert("We are unable to find your location.");

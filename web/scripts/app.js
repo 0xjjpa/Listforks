@@ -94,6 +94,15 @@ var Listforks = (function(l) {
     })
 
     self.postQueue = ko.observable();
+    self.actionQueue = ko.observable();
+
+    self.actionQueue.subscribe(function(action) {
+      var args = action.args;
+      var command = action.method;
+      var context = action.context;
+
+      self.application.call(command, args, context);
+    })
 
     self.postQueue.subscribe(function(value) {
       var content = value.data;

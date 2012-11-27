@@ -7,7 +7,7 @@
 <div data-bind="foreach: lists" class="row">
   <div data-bind="template: { name: selectedTemplate, data: list }" class="span6 forklist"></div>
   <div class="span6">
-    <div class="forklist">
+    <div data-bind="ifnot: $parents[0].hasGeolocation" class="forklist">
       <button type="button" data-bind="click: $parents[0].loadGeolocation" class="btn btn-large btn-block btn-primary">
          
         Add Geolocation
@@ -17,7 +17,7 @@
       <div class="header">
         <h3>Location</h3>
       </div>
-      <div id="google-map-container">			</div>
+      <div id="google-map-container"></div>
     </div>
     <div style="padding: 20px" class="forklist">
       <div id="disqus_thread"></div>

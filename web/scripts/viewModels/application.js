@@ -15,6 +15,8 @@ var Listforks = (function(l) {
   l.GUIEngine = function() {
   	var self = {};
 
+    var privateExecutionQueue = ko.observableArray([]);
+
     var showModule = function(module, callback) {
       if(callback) {
         $("#"+module).fadeIn('slow', callback);
@@ -36,6 +38,27 @@ var Listforks = (function(l) {
       $(".module").empty();
     }
 
+    var runExecutionQueue = function() {
+      var currentActions = privateExecutionQueue.removeAll();
+      ko.utils.arrayForEach(currentActions, function(action) {
+        console.log(action);
+        var command = action.command; 
+        var args = action.args;
+        var context = action.context;
+          
+        command.apply(context, args);
+      });
+    }
+
+    self.call = function(command, args, context) {
+      var action = {
+        command: command,
+        args: args,
+        context: context
+      }
+      privateExecutionQueue.push(action)
+    }
+
     self.startRequest = function() {
       hideModules();
       showLoading();
@@ -46,14 +69,15 @@ var Listforks = (function(l) {
       showModule(module);
       //console.log(DISQUS);
       hideLoading();
-      ;
+      console.log("ALL LOADED!");
+      runExecutionQueue();
     }
     
-  	self.init = function() {
-  		return self;
-  	}
+    self.init = function() {
+      return self;
+    }
 
-  	return self.init();
+    return self.init();
   }
 
   return l;
