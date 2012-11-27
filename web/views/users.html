@@ -7,12 +7,14 @@
 </div>
 <script type="text/html" id="displayUser">
   <div class="header">
-    <div class="name">
-      <h3 data-bind="text:name">NAME</h3><i class="icon-info-sign icon-white"></i>
+    <div class="name"><i style="margin: 5px; background-color: white; float: left; " class="icon-user"></i>
+      <h3 data-bind="text:firstName">NAME</h3>
     </div>
-    <div class="rating"><i class="icon-heart heart icon-white"></i><i class="icon-heart heart icon-white"></i><i class="icon-heart heart icon-white"></i></div>
   </div>
-  <table class="content"></table>
-  <div class="more"><span><i class="icon-downArrow"></i>More</span></div>
-  <div class="buttons"><a class="btn btn-primary">Fork it</a></div>
+  <div data-bind="foreach: lists" class="lists">
+    <div class="description">
+      <p>DESCRIPTION</p>
+    </div>
+  </div>
+  <div class="buttons"><a class="btn btn-primary">See Lists</a></div>
 </script>

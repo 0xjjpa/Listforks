@@ -15,9 +15,11 @@ var Listforks = (function(l) {
   l.userViewModel = function() {
 
     var User = function(data) {
-      console.log(data);
       var self = {};
-      self = data;
+      self.id = ko.observable(data.userId || -1);
+      self.firstName = ko.protectedObservable(data.firstName || "Johny No Name" );
+      self.lastName = ko.protectedObservable(data.lastName || "Doe No Last Name" );
+      self.lists = ko.observableArray([]);
       return self;
     }
 
@@ -46,12 +48,12 @@ var Listforks = (function(l) {
       if($.isArray(data)) { // GET []
 
         var users = ko.utils.arrayMap(data, function(rawUser) {
-          return new UserGUI(rawUser, self);
+          return new UserGUI(rawUser.attributes, self);
         });
         self.users.push.apply(self.users, users);
 
       } else { // GET {}  
-        var user = new UserGUI(rawUser, self);
+        var user = new UserGUI(rawUser.attributes, self);
         self.user(user)
         self.users.push(user);
       }

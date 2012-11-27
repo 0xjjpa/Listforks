@@ -36,6 +36,11 @@ var Listforks = (function(l) {
 			self.rating = ko.protectedObservable(data.rating || 0);
 
 			self.items = ko.observableArray([]);
+			self.filteredItems = ko.computed(function() {
+				return ko.utils.arrayFilter(self.items(), function(item) {
+					return item.status() !== "deleted";
+				})
+			});
 
 			var items = data.items || [];
 			var newItems = ko.utils.arrayMap(items, function(rawItems) {
@@ -112,12 +117,27 @@ var Listforks = (function(l) {
 			
 		}
 
+		self.removeListItem = function(listItem) {
+			var id = listItem.id();
+			if(id > 0) {
+				self.selectedListItem(listItem);
+				listItem.status("deleted");
+				perform("commit", self.selectedListItem);	
+			} else {
+				self.list().items.remove(listItem);
+			}
+			
+			console.log(ko.toJS(self.list))
+		}
+
 		self.saveList = function() {
 			perform("commit", self.list);
 			goTo("displayList");
 
 			var queue = ListForksInstance.postQueue;
 			var rawList = ko.toJS(self.list);
+			delete rawList.filteredItems;
+			console.log(rawList);
 			var id = rawList.id;
 
 			var message = {};
@@ -155,7 +175,11 @@ var Listforks = (function(l) {
 
 		self.saveListItem = function() {
 			self.editList();
-			self.selectedListItem().status("updated");
+			if(selectedListItem.id() > 0) {
+				self.selectedListItem().status("updated");
+			} else {
+				self.selectedListItem().status("new");
+			}
 			perform("commit", self.selectedListItem);
 		}
 

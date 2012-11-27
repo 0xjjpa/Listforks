@@ -38,7 +38,7 @@
   <div class="buttons"><a data-bind="click: $parents[0].cancelList" class="btn">Cancel</a><a data-bind="click: $parents[0].saveList" class="btn btn-primary">Save</a></div>
 </script>
 <script type="text/html" id="displayListItem">
-  <!-- ko foreach: items-->
+  <!-- ko foreach: filteredItems-->
   <tr class="listItem">
     <td class="itemCheckbox">
       <input type="checkbox" name="listItem" value=""/>
@@ -51,7 +51,7 @@
   <!-- /ko-->
 </script>
 <script type="text/html" id="editListItem">
-  <!-- ko foreach: items-->
+  <!-- ko foreach: filteredItems-->
   <tr class="listItem">
     <td class="itemCheckbox">
       <input type="checkbox" name="listItem" value="" disabled="disabled"/>
@@ -60,7 +60,7 @@
       	
       LIST ITEM DESCRIPTION
     </td>
-    <td class="itemOptions"><i style="cursor:pointer;" data-bind="click: $parents[1].editListItem" class="icon-edit"></i></td>
+    <td class="itemOptions"><i style="cursor:pointer;" data-bind="click: $parents[1].editListItem" class="icon-edit"></i><i style="cursor:pointer;" data-bind="click: $parents[1].removeListItem" class="icon-remove"></i></td>
   </tr>
   <!-- /ko-->
   <tr class="listItem">
