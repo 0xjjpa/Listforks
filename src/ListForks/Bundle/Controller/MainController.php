@@ -40,4 +40,9 @@ class MainController extends Controller
         return $this->render('ListForksBundle:Main:index.html.twig');        
     }
 
+    public function errorAction()
+    {  
+        return $this->render('ListForksBundle:Main:error.html.twig');
+    }
+
 }
