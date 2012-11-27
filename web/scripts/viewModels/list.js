@@ -175,7 +175,7 @@ var Listforks = (function(l) {
 
 		self.saveListItem = function() {
 			self.editList();
-			if(selectedListItem.id() > 0) {
+			if(self.selectedListItem().id() > 0) {
 				self.selectedListItem().status("updated");
 			} else {
 				self.selectedListItem().status("new");
@@ -251,19 +251,24 @@ var Listforks = (function(l) {
 			mapcanvas.style.height = '200px';
 			mapcanvas.style.width = '100%';
 
-			document.getElementById('google-map-container').appendChild(mapcanvas);
+			var mapContainer = document.getElementById('google-map-container');
+			if(mapContainer.length) {
+				mapContainer.appendChild(mapcanvas);
+				var latlng = new google.maps.LatLng(lat, lng);
+				var options = {
+					zoom: 15,
+					center: latlng,
+					mapTypeControl: false,
+					navigationControlOptions: {style: google.maps.NavigationControlStyle.SMALL},
+					mapTypeId: google.maps.MapTypeId.ROADMAP
+				};
 
-			var latlng = new google.maps.LatLng(lat, lng);
-			var options = {
-				zoom: 15,
-				center: latlng,
-				mapTypeControl: false,
-				navigationControlOptions: {style: google.maps.NavigationControlStyle.SMALL},
-				mapTypeId: google.maps.MapTypeId.ROADMAP
-			};
+				var map = new google.maps.Map(document.getElementById("google-map"), options);
+				var marker = new google.maps.Marker({position: latlng, map: map, title: "Located here"});
+			}
+				
 
-			var map = new google.maps.Map(document.getElementById("google-map"), options);
-			var marker = new google.maps.Marker({position: latlng, map: map, title: "Located here"});
+			
 	}
 
 	self.loadGeolocation = function() {

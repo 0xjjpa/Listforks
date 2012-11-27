@@ -21,6 +21,7 @@
               <li><a href="/app_dev.php">Home</a></li>
               <li class="active"><a href="#lists">My Lists</a></li>
               <li><a href="#users">Find Users</a></li>
+              <li><a href="/" onclick="(function(){ window.location = '/app_dev.php/accounts/logout'})(); return false;">Logout</a></li>
             </ul>
           </div>
         </div>
@@ -48,7 +49,11 @@
     <script src="/scripts/viewModels/account.js">       </script>
     <script src="/scripts/viewModels/application.js">       </script>
     <script src="/scripts/app.js"></script>
-    <script>window.ListForksInstance = Listforks.application();</script>
+    <script>
+      $(document).ready(function(){
+          window.ListForksInstance = Listforks.application();    
+      });
+    </script>
     <!-- endbuild -->
   </body>
 </html>
