@@ -84,10 +84,10 @@ class UsersController extends Controller
 
 
                   // Add list to listArray
-                  $userArray = array(  'id' => $user->getId(),
-                                         'firstname' => $user->getFirstName(),
-                                         'lastname' => $user->getLastName(),
-                                         'countlist' => $numPublicList
+                  $userArray = array(  'userId' => $user->getId(),
+                                         'firstName' => $user->getFirstName(),
+                                         'lastName' => $user->getLastName(),
+                                         'countList' => $numPublicList
                                        );
                   
                   $singledata = array( '_hasData' => true,
@@ -100,23 +100,26 @@ class UsersController extends Controller
         }
 
         $responseArray = array();
+
+        $response;
          // if there is atleast 1 subscription retrived from above
-         if (count($userArray) > 0 ){
-              // Add all lists to the response array
-       //        $responseArray[] = array( '_hasData' => true,
-       //                                  'attributes' => $users );
+         if (count($usersArray) > 0 ){
+              // Create a JSON-response with the user's
+              $response = new Response(json_encode($usersArray));
+
+
          }
          else
          {
-              // Add all lists to the response array
-       //       $responseArray[] = array( '_hasData' => fale,
-       //                             'attributes' => $users );
+              $singledata = array( '_hasData' => false,
+                                       'attributes' => array() ); 
+              // Create a JSON-response with the user's
+              $response = new Response(json_encode($usersArray));
               // set error code 403  for login but not exists.
               $response->setStatusCode(403);
          }
         
-         // Create a JSON-response with the user's
-         $response = new Response(json_encode($usersArray));
+         
 
 
          // Set response headers
