@@ -569,17 +569,12 @@ class ListsController extends Controller
                             $updateDescription = $attributesArray['description'];
                             $updatePrivate = $attributesArray['private'];
                             $updateRating = $attributesArray['rating'];
-                            $updateItems = $attributesArray['items'];
-                            $updateLatitude = $attributesArray['location']['latitude'];
-                            $updateLongitude = $attributesArray['location']['longitude'];
 
                             // Sanitize user input
                             $filterName = filter_var( $updateName, FILTER_SANITIZE_STRING );
                             $filterDescription = filter_var( $updateDescription, FILTER_SANITIZE_STRING );
                             $filterRating = filter_var( $updateRating, FILTER_SANITIZE_NUMBER_INT );
-                            $filterLatitude = filter_var( $updateLatitude, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION );
-                            $filterLongitude = filter_var( $updateLongitude, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION );
-
+                            
                             // Get information for current list
                             $id = $forklist->getId();
                             $userId = $forklist->getUser()->getId();
@@ -620,17 +615,28 @@ class ListsController extends Controller
                                 $rating = $forklist->getRating();
                             }
 
-                            if( $latitude != $filterLatitude )
+                            // Check if location field is empty
+                            if( !empty($attributesArray['location']) )
                             {
-                                $forklist->getLocation()->setLatitude($filterLatitude);
-                                $latitude = $forklist->getLocation()->getLatitude();
+                                $updateLatitude = $attributesArray['location']['latitude'];
+                                $updateLongitude = $attributesArray['location']['longitude'];
+
+                                $filterLatitude = filter_var( $updateLatitude, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION );
+                                $filterLongitude = filter_var( $updateLongitude, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION );
+
+                                if( $latitude != $filterLatitude )
+                                {
+                                    $forklist->getLocation()->setLatitude($filterLatitude);
+                                    $latitude = $forklist->getLocation()->getLatitude();
+                                }
+
+                                if( $longitude != $filterLongitude )
+                                {
+                                    $forklist->getLocation()->setLongitude($filterLongitude);
+                                    $longitude = $forklist->getLocation()->getLongitude();
+                                }
                             }
 
-                            if( $longitude != $filterLongitude )
-                            {
-                                $forklist->getLocation()->setLongitude($filterLongitude);
-                                $longitude = $forklist->getLocation()->getLongitude();
-                            }
 
                             // Array to store the location co-ordinates of the current list
                             $locationArray = array( 'latitude' => $location->getLatitude(),
@@ -639,86 +645,108 @@ class ListsController extends Controller
                             // Get DB Manager
                             $em = $this->getDoctrine()->getManager();
 
-                            // Traverse through the items for the current list
-                            foreach( $updateItems as $updateItem )
-                            {
-                                // Get current item id, description, and order number
-                                $updateItemId = $updateItem['id'];
-                                $updateItemDescription = $updateItem['description'];
-                                $updateItemOrder = $updateItem['order'];
-                                $updateItemStatus = $updateItem['status'];
+                            // Check if items field is empty
+                            if( !empty($attributesArray['items']) )
+                            {                            
 
-                                // Sanitize user input
-                                $filterItemId = filter_var( $updateItemId, FILTER_SANITIZE_NUMBER_INT );
-                                $filterItemDescription = filter_var( $updateItemDescription, FILTER_SANITIZE_STRING );
-                                $filterItemOrder = filter_var( $updateItemOrder, FILTER_SANITIZE_NUMBER_INT );
-                                $filterItemStatus = filter_var( $updateItemStatus, FILTER_SANITIZE_STRING );
+                                $updateItems = $attributesArray['items'];
 
-
-                                // Create new item
-                                if( $filterItemStatus == 'new' )
+                                // Traverse through the items for the current list
+                                foreach( $updateItems as $updateItem )
                                 {
-                                    $newItem = new Item();
-                                    $newItem->setDescription($filterItemDescription);
-                                    $newItem->setComplete(false);
-                                    $newItem->setOrderNumber($filterItemOrder);
-                                    $newItem->setForklist($forklist);
+                                    // Get current item id, description, and order number
+                                    $updateItemId = $updateItem['id'];
+                                    $updateItemDescription = $updateItem['description'];
+                                    $updateItemOrder = $updateItem['order'];
+                                    $updateItemStatus = $updateItem['status'];
 
-                                    $forklist->addItem($newItem);
-                                }
-                                // Update or delete item
-                                else if( $filterItemStatus == 'updated' || $filterItemStatus == 'deleted' )
-                                {
-                                    // Find item in DB
-                                    $item = $this->getDoctrine()
-                                        ->getRepository('ListForksBundle:Item')
-                                        ->find($filterItemId);
+                                    // Sanitize user input
+                                    $filterItemId = filter_var( $updateItemId, FILTER_SANITIZE_NUMBER_INT );
+                                    $filterItemDescription = filter_var( $updateItemDescription, FILTER_SANITIZE_STRING );
+                                    $filterItemOrder = filter_var( $updateItemOrder, FILTER_SANITIZE_NUMBER_INT );
+                                    $filterItemStatus = filter_var( $updateItemStatus, FILTER_SANITIZE_STRING );
 
-                                    // Item does not exist
-                                    if( !$item )
+
+                                    // Create new item
+                                    if( $filterItemStatus == 'new' )
                                     {
-                                        $response = new Response(
-                                            json_encode(array('_hasData' => false,
-                                                              'message' => 'Attempted to update or delete one or more items that do not exist.')));
-                                        // 400: Bad Request
-                                        $response->setStatusCode(400);
+                                        $newItem = new Item();
+                                        $newItem->setDescription($filterItemDescription);
+                                        $newItem->setComplete(false);
+                                        $newItem->setOrderNumber($filterItemOrder);
+                                        $newItem->setForklist($forklist);
 
-                                        // Set response headers
-                                        $response->headers->set('Content-Type', 'application/json');
-
-                                        return $response;
-
+                                        $forklist->addItem($newItem);
                                     }
-                                    // Item exists
-                                    else
+                                    // Update or delete item
+                                    else if( $filterItemStatus == 'updated' || $filterItemStatus == 'deleted' )
                                     {
-                                        // Ensure that the requested item belongs to the requested list
-                                        if( $item->getForklist()->getId() == $forklist->getId() )
+                                        // Find item in DB
+                                        $item = $this->getDoctrine()
+                                            ->getRepository('ListForksBundle:Item')
+                                            ->find($filterItemId);
+
+                                        // Item does not exist
+                                        if( !$item )
                                         {
-                                            // Update Item
-                                            if( $filterItemStatus == 'updated' )
+                                            $response = new Response(
+                                                json_encode(array('_hasData' => false,
+                                                    'message' => 'Attempted to update or delete one or more items that do not exist.')));
+                                            // 400: Bad Request
+                                            $response->setStatusCode(400);
+
+                                            // Set response headers
+                                            $response->headers->set('Content-Type', 'application/json');
+
+                                            return $response;
+                                        }
+                                        // Item exists
+                                        else
+                                        {
+                                            // Ensure that the requested item belongs to the requested list
+                                            if( $item->getForklist()->getId() == $forklist->getId() )
                                             {
-                                                // Check if description has changed
-                                                if( $item->getDescription() != $filterItemDescription )
-                                                    $item->setDescription($filterItemDescription);
-                                                // Check if order number has changed
-                                                if( $item->getOrderNumber() != $filterItemOrder )
-                                                    $item->setOrderNumber($filterItemOrder);
+                                                // Update Item
+                                                if( $filterItemStatus == 'updated' )
+                                                {
+                                                    // Check if description has changed
+                                                    if( $item->getDescription() != $filterItemDescription )
+                                                        $item->setDescription($filterItemDescription);
+                                                    // Check if order number has changed
+                                                    if( $item->getOrderNumber() != $filterItemOrder )
+                                                        $item->setOrderNumber($filterItemOrder);
+
+                                                }
+                                                // Delete Item
+                                                else if ( $filterItemStatus == 'deleted' )
+                                                {
+                                                    $forklist->removeItem($item);
+                                                    $em->remove($item);
+                                                }
+                                                else
+                                                {
+                                                    $response = new Response(
+                                                        json_encode(array('_hasData' => false,
+                                                            'message' => 'Missing or unrecognized status for one or more items.')));
+                                                    // 400: Bad Request
+                                                    $response->setStatusCode(400);
+                                                    // Set response headers
+                                                    $response->headers->set('Content-Type', 'application/json');
+
+                                                    return $response;
+                                                }
 
                                             }
-                                            // Delete Item
-                                            else if ( $filterItemStatus == 'deleted' )
-                                            {
-                                                $forklist->removeItem($item);
-                                                $em->remove($item);
-                                            }
+                                            // Item does not belong to the list
                                             else
                                             {
+                                                // Create a JSON response
                                                 $response = new Response(
                                                     json_encode(array('_hasData' => false,
-                                                                      'message' => 'Missing or unrecognized status for one or more items.')));
-                                                // 400: Bad Request
-                                                $response->setStatusCode(400);
+                                                        'message' => 'We could not update the items of the list with the list id provided.')));
+                                                // 404: Not Found
+                                                $response->setStatusCode(404);
+
                                                 // Set response headers
                                                 $response->headers->set('Content-Type', 'application/json');
 
@@ -726,38 +754,22 @@ class ListsController extends Controller
                                             }
 
                                         }
-                                        // Item does not belong to the list
-                                        else
-                                        {
-                                            // Create a JSON response
-                                            $response = new Response(
-                                                json_encode(array('_hasData' => false,
-                                                'message' => 'We could not update the items of the list with the list id provided.')));
-                                            // 404: Not Found
-                                            $response->setStatusCode(404);
-
-                                            // Set response headers
-                                            $response->headers->set('Content-Type', 'application/json');
-
-                                            return $response;
-                                        }
-
                                     }
-                                }
-                                // Unknown status
-                                else
-                                {
-                                    $response = new Response(
-                                        json_encode(array('_hasData' => false,
-                                                          'message' => 'Missing or unrecognized status for one or more items.')));
-                                    // 400: Bad Request
-                                    $response->setStatusCode(400);
-                                    // Set response headers
-                                    $response->headers->set('Content-Type', 'application/json');
+                                    // Unknown status
+                                    else
+                                    {
+                                        $response = new Response(
+                                            json_encode(array('_hasData' => false,
+                                                'message' => 'Missing or unrecognized status for one or more items.')));
+                                        // 400: Bad Request
+                                        $response->setStatusCode(400);
+                                        // Set response headers
+                                        $response->headers->set('Content-Type', 'application/json');
 
-                                    return $response;
-                                }
+                                        return $response;
+                                    }
 
+                                }
                             }
 
                             // Get current server date and time
