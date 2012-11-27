@@ -208,9 +208,10 @@ var Listforks = (function(l) {
   }
 
   self.remove = function(list, bypass) {
-    var confirm;
+    var confirm; var databaseRemove = false;
     if(bypass !== true) {
       confirm = window.confirm("Are you sure you want to delete this List?");  
+      databaseRemove = true;
     } else {
       confirm = 1;
     }
@@ -218,7 +219,9 @@ var Listforks = (function(l) {
     if(confirm) {
       var listId = list.id();
       self.lists.remove(function(list) { return list.id() == listId });
+    }
 
+    if(databaseRemove) {
       var queue = ListForksInstance.postQueue;
       var rawList = ko.toJS(list);
       var id = rawList.id;
@@ -229,7 +232,6 @@ var Listforks = (function(l) {
 
       message.data = ko.toJSON(restfulData);
       message.module = "lists";
-      console.log(message);
       queue(message);
     }
   }
