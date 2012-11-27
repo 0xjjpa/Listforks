@@ -452,12 +452,12 @@ class UsersController extends Controller
                         $listArray = array( '_hasData' => true,
                                             "createdAt" => $forklist->getCreatedAt()->format('D M d Y H:i:s (T)') ,
                                             "updatedAt" => $forklist->getUpdatedAt()->format('D M d Y H:i:s (T)')  ,
-                                              'attributes' => array( 'listId' => $forklist->getId(),
+                                              'attributes' => array( 'id' => $forklist->getId(),
                                                                      'userId' => $forklist->getUser()->getId(),
                                                                      'name' => $forklist->getName(),
                                                                      'description' => $forklist->getDescription(),
                                                                      'private' => $forklist->getPrivate(),
-                                                              //       'location' => $locationArray,
+                                                                     'location' => $locationArray,
                                                                      'rating' => $this->getRating($forklist),
                                                                      'items' => $itemsArray
                                                                       ));
