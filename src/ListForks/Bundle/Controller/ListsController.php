@@ -5,9 +5,10 @@ namespace ListForks\Bundle\Controller;
 use ListForks\Bundle\Entity\ForkList;
 use ListForks\Bundle\Entity\User;
 use ListForks\Bundle\Entity\Item;
+use ListForks\Bundle\Entity\Rating;
 use ListForks\Bundle\Entity\Location;
 use ListForks\Bundle\Entity\Subscription;
-
+use ListForks\Bundle\Model\Helpers;
 use ListForks\Bundle\Form\Type\AccountType;
 use ListForks\Bundle\Form\Type\UserType;
 
@@ -22,25 +23,6 @@ use JMS\SecurityExtraBundle\Annotation\Secure;
 
 class ListsController extends Controller
 {
-	/**
-     * @Secure(roles="ROLE_USER")
-     *
-    *
-    *
-    * @param
-    * @return
-    *
-    * Sample request and response :  
-    *
-     */
-	public function optionsListsAction()
-    {        
-
-        return new Response('[OPTIONS] /lists');
-
-    //    return new Response('[OPTIONS] /lists');
-
-    } // "options_lists" [OPTIONS] /lists
 
 
     /**
@@ -92,7 +74,7 @@ class ListsController extends Controller
                 $description = $forklist->getDescription();
                 $private = $forklist->getPrivate();
                 $location = $forklist->getLocation();
-                $rating = $forklist->getRating();
+                $rating = $this->getRating($forklist);
                 $items = $forklist->getItems();
 
                 $createdDate = $forklist->getCreatedAt();
@@ -262,7 +244,8 @@ class ListsController extends Controller
                  }
 
                  $forklist->setLocation($newLocation);
-                 $forklist->setRating($filterRating);
+                 $this->setRating($forklist, $user, $filterRating);
+               //  $forklist->setRating($filterRating);
                  $forklist->setUser($user);
 
                  // Check if items field is set
@@ -425,7 +408,7 @@ class ListsController extends Controller
                 $description = $forklist->getDescription();
                 $private = $forklist->getPrivate();
                 $location = $forklist->getLocation();
-                $rating = $forklist->getRating();
+                $rating = $this->getRating($forklist);;
                 $items = $forklist->getItems();
 
                 $createdDate = $forklist->getCreatedAt();
@@ -482,15 +465,6 @@ class ListsController extends Controller
 
     } // "get_list"      [GET] /lists/{id}
 
-
-    /**
-     * @Secure(roles="ROLE_USER")
-     */
-    public function editListAction($id)
-    {
-        return new Response('[GET] /lists/'.$id.'/edit');
-
-    } // "edit_list"     [GET] /lists/{id}/edit
 
 
     /**
@@ -581,7 +555,7 @@ class ListsController extends Controller
                             $name = $forklist->getName();
                             $description = $forklist->getDescription();
                             $private = $forklist->getPrivate();
-                            $rating = $forklist->getRating();
+                            $rating = $this->getRating($forklist);
                             $items = $forklist->getItems();
                             $location = $forklist->getLocation();
                             $latitude = $location->getLatitude();
@@ -611,8 +585,9 @@ class ListsController extends Controller
                             
                             if( $rating != $filterRating )
                             {
-                                $forklist->setRating($filterRating);
-                                $rating = $forklist->getRating();
+                                $this->setRating($forklist, $user, $filterRating);
+                             //   $forklist->setRating($filterRating);
+                                $rating = $this->getRating($forklist);
                             }
 
                             // Check if location field is empty
@@ -930,7 +905,7 @@ class ListsController extends Controller
                 $description = $forklist->getDescription();
                 $private = $forklist->getPrivate();
                 $location = $forklist->getLocation();
-                $rating = $forklist->getRating();
+                $rating = $this->getRating($forklist);
                 $items = $forklist->getItems();
 
                 // Array to store the location co-ordinates of the current list
@@ -1084,22 +1059,6 @@ class ListsController extends Controller
     } // "get_list_items"    [GET] /lists/{id}/items
 
 
-    /**
-     * @Secure(roles="ROLE_USER")
-     *
-    *
-    * @author Raymond Chow
-    *
-    * @param
-    * @return
-    *
-    * Sample request and response :  
-    *
-     */
-    public function newListItemsAction($id)
-    {
-        return new Response('[GET] /lists/'.$id.'/items/new');
-    } // "new_list_items"    [GET] /lists/{id}/items/new
 
 
     /**
@@ -1798,12 +1757,6 @@ class ListsController extends Controller
 
 
 
-
-
-
-
-
-
     
 
     /**
@@ -1858,7 +1811,7 @@ class ListsController extends Controller
                 $description = $forklist->getDescription();
                 $private = $forklist->getPrivate();
                 $location = $forklist->getLocation();
-                $rating = $forklist->getRating();
+                $rating = $this->getRating($forklist);
                 $items = $forklist->getItems();
 
                 /*
@@ -1901,7 +1854,10 @@ class ListsController extends Controller
                  $forkedForklist->setDescription($forklist->getDescription());
                  $forkedForklist->setPrivate($forklist->getPrivate());
                  $forkedForklist->setLocation($newLocation);
-                 $forkedForklist->setRating($forklist->getRating());
+
+                 // se rating to 0 for the new list
+                 $this->setRating($forklist, $user, 0 );
+              //   $forkedForklist->setRating($this->getRating($forklist));
                  $forkedForklist->setUser($user);
                  // Set timestamp for list
                  $forkedForklist->setCreatedAt($createdAt);
@@ -2091,7 +2047,7 @@ class ListsController extends Controller
                                                                  'description' => $watchlist->getDescription(),
                                                                  'private' => $watchlist->getPrivate(),
                                                                  'location' => $locationArray,
-                                                                 'rating' => $watchlist->getRating(),
+                                                                 'rating' => $this->getRating($watchlist),
                                                                  'items' => $itemsArray,
                                                                  'createdAt' => $watchlist->getCreatedAt(),
                                                                  'updatedAt' => $watchlist->getUpdatedAt()
@@ -2415,7 +2371,7 @@ class ListsController extends Controller
             // List is public or user is list owner
             if( $forklist->getPrivate() == false || $forklist->getUser()->getId() == $user->getId() )
             {
-                $rating = $forklist->getRating();
+                $rating = $this->getRating($forklist);
 
                 // Add list id and rating to listArray
                 $listArray = array( '_hasData' => true,
@@ -2551,7 +2507,8 @@ class ListsController extends Controller
                 // List is public or user is list owner
                 if( $forklist->getPrivate() == false || $forklist->getUser()->getId() == $user->getId() )
                 {
-                    $forklist->setRating($rating);
+                    $this->setRating($forklist, $user, $rating);
+                 //   $forklist->setRating($rating);
 
                     // Get information for current list
                     $id = $forklist->getId();
@@ -2560,7 +2517,7 @@ class ListsController extends Controller
                     $description = $forklist->getDescription();
                     $private = $forklist->getPrivate();
                     $location = $forklist->getLocation();    
-                    $rating = $forklist->getRating();
+                    $rating = $this->getRating($forklist);
                     $items = $forklist->getItems();
 
                     // Array to store the location co-ordinates of the current list
@@ -2625,5 +2582,68 @@ class ListsController extends Controller
     } // "new_user_rating"    [PUT] /lists/{id}/rate
 
 
+
+
+
+    // ******************* HELPERS METHODS **********************
+
+    public function getRating($forklist)
+    {
+        $allRrating = $this->getDoctrine()
+            ->getRepository('ListForksBundle:Rating')
+             ->findByForklist($forklist);
+        
+             $count = 0;
+             $sumRatings = 0;
+             $rating = 0;
+
+             foreach ( $allRrating as $rating)
+             {
+                 $sumRatings = $sumRatings + $rating->getRating();
+                 $count = $count + 1;
+             }
+
+             
+             if ( $count != 0)
+             {
+                 $rating = round( $sumRatings / $count );
+             }
+
+        return $rating;
+    }
+
+
+    public function setRating($forklist, $user, $rate)
+    {
+
+        $rating = new Rating();
+        $rating->setUser($user);
+        $rating->setForklist($forklist);
+        $rating->setRating($rate);
+
+        $allRrating = $this->getDoctrine()
+            ->getRepository('ListForksBundle:Rating')
+             ->findByForklist($forklist);
+        
+             $alreadyRated = FALSE;
+
+             foreach ( $allRrating as $rating)
+             {
+                 if ( $rating->getUser()->getId() == $user->getId() )
+                 {
+                     $alreadyRated = TRUE;
+                 }
+             }
+
+             if ( !$alreadyRated)
+             {
+                 // Persist changes to DB
+                 $em = $this->getDoctrine()->getManager();
+                 $em->persist($rating);
+                 $em->flush();
+             }
+
+             return;
+    }
 
 }

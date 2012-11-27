@@ -5,8 +5,10 @@ namespace ListForks\Bundle\Controller;
 use ListForks\Bundle\Entity\ForkList;
 use ListForks\Bundle\Entity\User;
 use ListForks\Bundle\Entity\Item;
+use ListForks\Bundle\Entity\Rating;
 use ListForks\Bundle\Entity\Location;
 use ListForks\Bundle\Entity\Subscription;
+use ListForks\Bundle\Model\Helpers;
 
 use ListForks\Bundle\Form\Type\AccountType;
 use ListForks\Bundle\Form\Type\UserType;

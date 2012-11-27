@@ -57,13 +57,6 @@ class ForkList
     private $private;
 
     /**
-     * @var integer $rating
-     *
-     * @ORM\Column(name="rating", type="integer")
-     */
-    private $rating;
-
-    /**
      *
      * @ORM\OneToOne(targetEntity="Location", mappedBy="forklist", cascade={"persist", "remove"})
      */
@@ -88,6 +81,12 @@ class ForkList
      * @ORM\OneToMany(targetEntity="Subscription", mappedBy="forklist", cascade={"persist", "remove"})
      */
     private $subscriptions;
+
+    /**
+     *
+     * @ORM\OneToMany(targetEntity="Rating", mappedBy="forklist", cascade={"persist", "remove"})
+     */
+    private $ratings;
 
 
     /**
@@ -224,29 +223,6 @@ class ForkList
     {
         return ($private ? 'true' : 'false');
     }
-
-    /**
-     * Set rating
-     *
-     * @param integer $rating
-     * @return List
-     */
-    public function setRating($rating)
-    {
-        $this->rating = $rating;
-    
-        return $this;
-    }
-
-    /**
-     * Get rating
-     *
-     * @return integer 
-     */
-    public function getRating()
-    {
-        return $this->rating;
-    }
     
     /**
      * Constructor
@@ -255,6 +231,7 @@ class ForkList
     {
         $this->items = new \Doctrine\Common\Collections\ArrayCollection();
         $this->subscriptions = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->ratings = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
     /**
@@ -369,4 +346,37 @@ class ForkList
         return $this->subscriptions;
     }
 
+
+    /**
+     * Add ratings
+     *
+     * @param \ListForks\Bundle\Entity\Rating $ratings
+     * @return ForkList
+     */
+    public function addRating(\ListForks\Bundle\Entity\Rating $ratings)
+    {
+        $this->ratings[] = $ratings;
+    
+        return $this;
+    }
+
+    /**
+     * Remove ratings
+     *
+     * @param \ListForks\Bundle\Entity\Rating $ratings
+     */
+    public function removeRating(\ListForks\Bundle\Entity\Rating $ratings)
+    {
+        $this->ratings->removeElement($ratings);
+    }
+
+    /**
+     * Get ratings
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getRatings()
+    {
+        return $this->ratings;
+    }
 }
