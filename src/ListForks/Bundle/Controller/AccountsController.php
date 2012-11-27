@@ -6,11 +6,7 @@ use ListForks\Bundle\Entity\Account;
 use ListForks\Bundle\Entity\User;
 use ListForks\Bundle\Entity\Preference;
 
-use ListForks\Bundle\Form\Type\AccountType;
-use ListForks\Bundle\Form\Type\UserType;
-
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -19,15 +15,6 @@ use JMS\SecurityExtraBundle\Annotation\Secure;
 
 class AccountsController extends Controller
 {
-	/**
-     * @Secure(roles="ROLE_USER")
-     */
-	public function optionsAccountsAction()
-    {
-        return new Response('[OPTIONS] /accounts');
-
-    } // "options_accounts" [OPTIONS] /accounts
-
     /**
      * @Secure(roles="ROLE_USER")
      *
@@ -93,19 +80,6 @@ class AccountsController extends Controller
                             'account' => $accountInfo,
                             'user' => $userInfo,
                             'preferences' => $preferenceInfo)));
-
-
-
-            /* 
-
-            // Create a JSON-response
-            $response = new Response(json_encode(array(
-                'accountId' => $account->getId(),
-                'userId' => $user->getId(),
-                'username' => $account->getUsername(),
-                'email' => $account->getEmail())));    
-
-            */
         }
         
         // Set response header
@@ -124,10 +98,7 @@ class AccountsController extends Controller
      */
     public function newAccountsAction()
     {
-
-        $form = $this->createForm(new AccountType(), $account = null);
-
-        return $this->render('ListForksBundle:Account:create.html.twig', array('form' => $form->createView()));
+        return $this->render('ListForksBundle:Account:create.html.twig');
 
     } // "new_accounts"     [GET] /accounts/new
 
@@ -146,74 +117,85 @@ class AccountsController extends Controller
         // Get current request
         $request = $this->getRequest();
 
-        // Create a new form
-        $form = $this->createForm(new AccountType(), $account = null);
+        // Get POST parameters
+        $username = $request->request->get('username');
+        $email = $request->request->get('email');
+        $password = $request->request->get('password');
+        $firstName = $request->request->get('firstname');
+        $lastName = $request->request->get('lastname');
 
-        // Bind current request to form
-        $form->bindRequest($request);
+        // Sanitize user input
+        $filterUsername = filter_var( $username, FILTER_SANITIZE_STRING );
+        $filterEmail = filter_var( $email, FILTER_SANITIZE_EMAIL );
+        $filterFirstName = filter_var( $firstName, FILTER_SANITIZE_STRING );
+        $filterLastName = filter_var( $lastName, FILTER_SANITIZE_STRING );
 
-            // Check if form is valid
-            if( $form->isValid() )
-            {
-                // Retrieve user submitted data
-                $account = $form->getData();
+        // Validate email
+        $validEmail = filter_var( $filterEmail, FILTER_VALIDATE_EMAIL );
 
-                // Retrieve encoder for Account type
-                $factory = $this->get('security.encoder_factory');
-                $encoder = $factory->getEncoder($account);
+        // Email is not valid
+        if( !$validEmail )
+        {
+          // Create a JSON Response
+          $response = new Response(
+            json_encode(array('_hasData' => false,
+                              'message' => 'We were unable to create your account. Please enter a valid e-mail address.')));
+          // 404: Not Found
+          $response->setStatusCode(404);
+          
+          // Set response header
+          $response->headers->set('Content-Type', 'application/json');
 
-                // Encode password
-                $password = $encoder->encodePassword($account->getPassword(), $account->getSalt());
-                $account->setPassword($password);
+          return $response;
+        }
 
-                // Create a new user and associate it with account
-                $user = new User();
-                $user->setAccount($account);
+        // Create a new account
+        $account = new Account();
+        $account->setUsername($filterUsername);
+        $account->setEmail($filterEmail);
 
-                // Create default user preferences
+        // Retrieve encoder for Account type
+        $factory = $this->get('security.encoder_factory');
+        $encoder = $factory->getEncoder($account);
 
-                // Attach user location to lists
-                $prefLocation = new Preference();
-                $prefLocation->setName("attachLocation");
-                $prefLocation->setDescription("Attach your current location to new lists that you create.");
-                $prefLocation->setFlag(false);
-                $prefLocation->setUser($user);
+        // Encode password
+        $encodePassword = $encoder->encodePassword( $password, $account->getSalt() );
+        $account->setPassword($encodePassword);
 
-                // Notify user by e-mail when a list that they are subscribed to is updated
-                $prefNotifyEmail = new Preference();
-                $prefNotifyEmail->setName("notifyEmail");
-                $prefNotifyEmail->setDescription("I would like to receive e-mail notifications for subscribed list updates.");
-                $prefNotifyEmail->setFlag(false);
-                $prefNotifyEmail->setUser($user);
+        // Create a new user and associate it with account
+        $user = new User();
+        $user->setFirstName($filterFirstName);
+        $user->setLastName($filterLastName);
+        $user->setAccount($account);
 
-                // Associate preferences with user
-                $user->addPreference($prefLocation);
-                $user->addPreference($prefNotifyEmail);
+        // Create default user preferences
 
-                // Persist account and user to DB
-                $em = $this->getDoctrine()->getManager();
-                $em->persist($account);
-                $em->persist($user);
-                $em->flush();
+        // Attach user location to lists
+        $prefLocation = new Preference();
+        $prefLocation->setName("attachLocation");
+        $prefLocation->setDescription("Attach your current location to new lists that you create.");
+        $prefLocation->setFlag(false);
+        $prefLocation->setUser($user);
 
-                // Redirect to login page
-                return $this->redirect($this->generateUrl('_login'));
-            }
-            // Form invalid
-            else
-            {
-                $response = new Response(
-                json_encode(array('_hasData' => false,
-                                  'message' => 'We could not create your account.')));
+        // Notify user by e-mail when a list that they are subscribed to is updated
+        $prefNotifyEmail = new Preference();
+        $prefNotifyEmail->setName("notifyEmail");
+        $prefNotifyEmail->setDescription("I would like to receive e-mail notifications for subscribed list updates.");
+        $prefNotifyEmail->setFlag(false);
+        $prefNotifyEmail->setUser($user);
 
-                // 400: Bad Request
-                $response->setStatusCode(400);
+        // Associate preferences with user
+        $user->addPreference($prefLocation);
+        $user->addPreference($prefNotifyEmail);
 
-                // Set response header
-                $response->headers->set('Content-Type', 'application/json');
+        // Persist account and user to DB
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($account);
+        $em->persist($user);
+        $em->flush();
 
-                return $response;
-            }
+        // Redirect to login page
+        return $this->redirect($this->generateUrl('_login'));
 
     } // "post_accounts_new" [POST] /accounts/new
 
