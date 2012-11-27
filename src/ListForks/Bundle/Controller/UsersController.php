@@ -62,10 +62,14 @@ class UsersController extends Controller
             
             foreach( $allUsers as $user )
             {
+
+                $numPublicList = 0;
+
+
                   // Add list to listArray
                   $userArray[] = array(  'id' => $user->getId(),
                                          'name' => $user->getFirstName().$user->getLastName(),
-                                         'countPublist' => 4
+                                         'countlist' => $numPublicList
                                        );
 
 
