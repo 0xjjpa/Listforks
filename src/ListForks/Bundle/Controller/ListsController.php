@@ -211,7 +211,7 @@ class ListsController extends Controller
                  $description = $listArray['description'];
                  $private = $listArray['private'];
                  $rating = $listArray['rating'];
-                 $items = $listArray['items'];
+                 
                  $latitude = $listArray['location']['latitude'];
                  $longitude = $listArray['location']['longitude'];
 
@@ -253,24 +253,30 @@ class ListsController extends Controller
                  $forklist->setRating($filterRating);
                  $forklist->setUser($user);
 
-                 // Create items and associate it with the list
-                 foreach( $items as $item )
+                 // Check if items field is set
+                 if( !empty($listArray['items']))
                  {
-                    // Sanitize user input
-                    $itemDescription = $item['description'];
-                    $filterItemDescription = filter_var( $itemDescription, FILTER_SANITIZE_STRING );
+                    $items = $listArray['items'];
 
-                    $itemOrder = $item['order'];
-                    $filterItemOrder = filter_var( $itemOrder, FILTER_SANITIZE_NUMBER_INT );
+                    // Create items and associate it with the list
+                    foreach( $items as $item )
+                    {
+                        // Sanitize user input
+                        $itemDescription = $item['description'];
+                        $filterItemDescription = filter_var( $itemDescription, FILTER_SANITIZE_STRING );
 
-                    $newItem = new Item();
-                    $newItem->setDescription($filterItemDescription);
-                    $newItem->setComplete(false);
-                    $newItem->setForklist($forklist);
-                    $newItem->setOrderNumber($filterItemOrder);
+                        $itemOrder = $item['order'];
+                        $filterItemOrder = filter_var( $itemOrder, FILTER_SANITIZE_NUMBER_INT );
 
-                    $forklist->addItem($newItem);
-                 }
+                        $newItem = new Item();
+                        $newItem->setDescription($filterItemDescription);
+                        $newItem->setComplete(false);
+                        $newItem->setForklist($forklist);
+                        $newItem->setOrderNumber($filterItemOrder);
+
+                        $forklist->addItem($newItem);
+                    }
+                }
 
                  // Associate the new list with the current user
                  $user->addForklist($forklist);
@@ -292,16 +298,20 @@ class ListsController extends Controller
                  // Empty array to store the items of the list
                  $itemsArray = array();
 
-                 // Get new items from DB
-                 $newItems = $forklist->getItems();
-
-                 foreach( $newItems as $newItem )
+                 if( !empty($listArray['items']))
                  {
-                    // Add item to itemArray
-                    $itemsArray[] =  array( 'id' => $newItem->getId(),
-                                            'description' => $newItem->getDescription(),
-                                            'order' => $newItem->getOrderNumber() );
-                 }
+
+                    // Get new items from DB
+                    $newItems = $forklist->getItems();
+
+                    foreach( $newItems as $newItem )
+                    {
+                        // Add item to itemArray
+                        $itemsArray[] =  array( 'id' => $newItem->getId(),
+                                                'description' => $newItem->getDescription(),
+                                                'order' => $newItem->getOrderNumber() );
+                    }
+                }
 
                  // Get id for new list
                  $id = $forklist->getId();
