@@ -15,8 +15,12 @@ var Listforks = (function(l) {
   l.GUIEngine = function() {
   	var self = {};
 
-    var showModule = function(module) {
-      $("#"+module).show();
+    var showModule = function(module, callback) {
+      if(callback) {
+        $("#"+module).fadeIn('slow', callback);
+      } else {
+        $("#"+module).fadeIn();  
+      }
     }
 
     var hideLoading = function() {
@@ -37,8 +41,9 @@ var Listforks = (function(l) {
     }
 
     self.endRequest = function(module) {
-      showModule(module);
+      showModule(module, window.disquesFunction);
       hideLoading();
+      ;
     }
     
   	self.init = function() {

@@ -16,10 +16,10 @@ var Listforks = (function(l) {
   l.restfulEngine = function() {
   	var self = {};
   	var registeredMethods = {
-  		get: {dataType: 'json', type: 'GET'},
-      post: {dataType: 'json', type: 'POST'}, 
-      put: {dataType: 'json', type: 'PUT'},
-      delete: {dataType: 'json', type: 'DELETE'}
+  		"get": {dataType: 'json', type: 'GET'},
+      "post": {dataType: 'json', type: 'POST'}, 
+      "put": {dataType: 'json', type: 'PUT'},
+      "delete": {dataType: 'json', type: 'DELETE'}
   	};
   
     var baseUrl = '/app_dev.php/';
@@ -49,7 +49,9 @@ var Listforks = (function(l) {
        restOptions.data = message;
 
        restOptions.success = function(data) {
-        container(data);
+        if(method !== 'delete') {
+          container(data);  
+        }
         self.response({
           success: true,
           module: containerModule

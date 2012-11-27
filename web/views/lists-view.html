@@ -1,10 +1,35 @@
 
 <div id="titleRow" class="row-fluid">
-  <h2 class="title">&middot; List &middot;</h2>
-  <div data-bind="click: function() { location.hash = 'lists' }" class="btn btn-primary">Go Back</div>
+  <h2 class="title">&middot; List &middot;
+    <div data-bind="click: function() { location.hash = 'lists' }" class="btn btn-primary">Go Back</div>
+  </h2>
 </div>
 <div data-bind="foreach: lists" class="row">
-  <div data-bind="template: { name: selectedTemplate, data: list }" class="span8 forklist"></div>
+  <div data-bind="template: { name: selectedTemplate, data: list }" class="span6 forklist"></div>
+  <div class="span6">
+    <div class="forklist">
+      <div class="header">
+        <div class="name">
+          <h3>Location</h3>
+        </div>
+      </div>
+    </div>
+    <div style="padding: 20px" class="forklist">
+      <div id="disqus_thread"></div>
+      <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'listforks'; // required: replace example with your forum shortname
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        window.disquesFunction = 
+        function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        };
+      </script>
+      <noscript>Please enable JavaScript to view the<a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a><a href="http://disqus.com" class="dsq-brlink"></a>comments powered by<span class="logo-disqus">Disqus</span></noscript>
+    </div>
+  </div>
 </div>
 <script type="text/html" id="displayList">
   <div class="header">

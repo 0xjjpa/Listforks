@@ -15,6 +15,7 @@ var Listforks = (function(l) {
   l.listViewModel = function() {
 
     var ListItem = function(data) {
+      if(data) data.status = "updated";
       data = data || {};
       var self = {};
       self.id = ko.protectedObservable(data.id || -1);
@@ -154,6 +155,7 @@ var Listforks = (function(l) {
 
     self.saveListItem = function() {
       self.editList();
+      self.selectedListItem().status("updated");
       perform("commit", self.selectedListItem);
     }
 
