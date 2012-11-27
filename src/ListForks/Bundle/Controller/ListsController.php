@@ -353,7 +353,7 @@ class ListsController extends Controller
                 // Create a JSON response
                 $response = new Response(
                         json_encode(array('_hasData' => false,
-                                  'message' => 'We could not create your list.')));
+                                  'message' => 'We could not create your list (User ID does not match or is null).')));
                 // 400: Bad Request
                 $response->setStatusCode(400);
 
@@ -365,7 +365,7 @@ class ListsController extends Controller
             // Create a JSON response
             $response = new Response(
                 json_encode(array('_hasData' => false,
-                                  'message' => 'We could not create your list.')));
+                                  'message' => 'We could not create your list (Empty Content).')));
             // 400: Bad Request
             $response->setStatusCode(400);
         }
