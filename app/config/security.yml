@@ -41,8 +41,8 @@ security:
             form_login:
                 check_path: /accounts/login_check
                 login_path: /accounts/login
-                default_target_path: /lists
-                target_path_parameter: get_lists
+                default_target_path: /main
+                target_path_parameter: _home
             logout:
                 path:   /accounts/logout
                 target: /accounts/login
