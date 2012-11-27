@@ -49,7 +49,7 @@ class UsersController extends Controller
             ->findOneByAccount($account);
 
 
-        $users = array();
+        $usersArray = array();
 
         if ( $userLoggedIn)
         {
@@ -65,39 +65,58 @@ class UsersController extends Controller
 
                 $numPublicList = 0;
 
+                $usersList = $this->getDoctrine()
+                    ->getRepository('ListForksBundle:ForkList')
+                    ->findByUser($user);
+                
+                foreach ( $usersList as $list)
+                {
+
+                    if( $list->getPrivate() == false || $list->getUser()->getId() == $userLoggedIn->getId() )
+                    {
+                        $numPublicList = $numPublicList + 1 ;
+                    }
+                    
+                }
+
+                
+                
+
 
                   // Add list to listArray
-                  $userArray[] = array(  'id' => $user->getId(),
-                                         'name' => $user->getFirstName().$user->getLastName(),
+                  $userArray = array(  'id' => $user->getId(),
+                                         'firstname' => $user->getFirstName(),
+                                         'lastname' => $user->getLastName(),
                                          'countlist' => $numPublicList
                                        );
+                  
+                  $singledata = array( '_hasData' => true,
+                                       'attributes' => $userArray );
 
 
-
-
-                  array_push($users, $userArray );
+                  array_push($usersArray, $singledata );
             }
 
         }
 
         $responseArray = array();
          // if there is atleast 1 subscription retrived from above
-         if (count($users) > 0 ){
+         if (count($userArray) > 0 ){
               // Add all lists to the response array
-               $responseArray[] = array( '_hasData' => true,
-                                         'lists' => $users );
+       //        $responseArray[] = array( '_hasData' => true,
+       //                                  'attributes' => $users );
          }
          else
          {
               // Add all lists to the response array
-              $responseArray[] = array( '_hasData' => fale,
-                                    'lists' => $users );
+       //       $responseArray[] = array( '_hasData' => fale,
+       //                             'attributes' => $users );
               // set error code 403  for login but not exists.
               $response->setStatusCode(403);
          }
         
          // Create a JSON-response with the user's
-         $response = new Response(json_encode($responseArray));
+         $response = new Response(json_encode($usersArray));
 
 
          // Set response headers
