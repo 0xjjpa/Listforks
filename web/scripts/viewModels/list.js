@@ -20,6 +20,7 @@ var Listforks = (function(l) {
       self.id = ko.protectedObservable(data.id || -1);
       self.description = ko.protectedObservable(data.description || "Item Description");
       self.order = ko.protectedObservable(data.order || -1);
+      self.status = ko.protectedObservable(data.status || "new");
       return self;
     }
 
@@ -122,7 +123,7 @@ var Listforks = (function(l) {
             
       if(id >= 1) { //PUT
         message.type = "put";
-        message.id = id;
+        message.id = id;        
       } else { //NEW ITEM
         message.type = "post";
         delete rawList.id;
@@ -137,17 +138,18 @@ var Listforks = (function(l) {
       message.data = ko.toJSON(restfulData);
       message.module = "lists";
       self.parent().remove(self, true);
-      
-      queue(message);
 
-      
-      
+      queue(message);
     }
 
-    self.cancelList = function() {
-      goTo("displayList");
-      subGoTo("displayListItem");
-      perform("reset", self.list);
+    self.cancelList = function(list) {
+      if(list.id() <= 0) {
+        self.parent().remove(self, true);
+      } else {
+        goTo("displayList");
+        subGoTo("displayListItem");
+        perform("reset", self.list);  
+      }
     }
 
     self.saveListItem = function() {
