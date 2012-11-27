@@ -557,9 +557,9 @@ class ListsController extends Controller
                     if( $user->getId() == $updateUserId )
                     {
                         // Get list attributes from update request
-                        $attributesArray = $updateListArray['attributes'];
+                        $attributesArray = $updateListArray['list'];
 
-                        $updateListId = $attributesArray['listId'];
+                        $updateListId = $attributesArray['id'];
 
                         // Ensure that listId from request matches the listId for the list retrieved from the DB
                         if( $forklist->getId() == $updateListId )
@@ -805,14 +805,14 @@ class ListsController extends Controller
                             $listArray = array( '_hasData' => true,
                                                 'createdAt' => $createdAt,
                                                 'updatedAt' => $updatedAt,
-                                                'attributes' => array( 'id' => $id,
-                                                                       'userId' => $userId,
-                                                                       'name' => $name,
-                                                                       'description' => $description,
-                                                                       'private' => $private,
-                                                                       'location' => $locationArray,
-                                                                       'rating' => $rating,
-                                                                       'items' => $itemsArray ));
+                                                'list' => array( 'id' => $id,
+                                                                 'userId' => $userId,
+                                                                 'name' => $name,
+                                                                 'description' => $description,
+                                                                 'private' => $private,
+                                                                 'location' => $locationArray,
+                                                                 'rating' => $rating,
+                                                                 'items' => $itemsArray ));
 
                             // Create a JSON-response with the user's list
                             $response = new Response(json_encode($listArray));
