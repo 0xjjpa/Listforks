@@ -18,6 +18,7 @@ var Listforks = (function(l) {
 
     var viewsUrl = '/views/';
     var viewsExtension = '.html';
+    var activeViewModel;
 
     var modules = {
       lists: "listViewModel",
@@ -26,10 +27,15 @@ var Listforks = (function(l) {
 
     var loadModule = function(module, method, id, applyBindings) {
       var viewModelName = modules[module];
-      var activeViewModel = new l[viewModelName](); 
+      activeViewModel = new l[viewModelName](); 
 
       var container = activeViewModel.getContainer; 
       self.client.call(module, method, id, container); 
+
+      if(id) {
+        module = module+"-view";
+      }
+
       if(applyBindings) ko.applyBindings(activeViewModel, document.getElementById(module));
     }
 
@@ -50,9 +56,6 @@ var Listforks = (function(l) {
       loadModule(module, "get");
     }
 
-    self.application = null;
-    self.client = null;
-
     self.routing = $.sammy(function() {
 
       this.get('#:module', function () {
@@ -64,6 +67,10 @@ var Listforks = (function(l) {
         $module.load(viewsUrl+module+viewsExtension, function() {
           loadModule(module, "get", null, true);
         }); 
+      });
+
+      this.post('#:module', function() {
+        //console.log("POSTING GET TO THE CHOPPA");
       });
 
       this.get('#:module/:id', function() {
@@ -85,6 +92,16 @@ var Listforks = (function(l) {
         this.app.runRoute('get', '#lists') 
       });
     })
+
+    self.postQueue = ko.observable();
+
+    self.postQueue.subscribe(function(value) {
+      var content = value.data;
+      var method = value.type;
+      var module = value.module;
+
+      self.client.call(module, method, null, activeViewModel.getContainer, content); 
+    });
 
     /**
     * Constructor for Routing Engine

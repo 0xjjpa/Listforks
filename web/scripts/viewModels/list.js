@@ -19,6 +19,7 @@ var Listforks = (function(l) {
       var self = {};
       self.id = ko.protectedObservable(data.id || -1);
       self.description = ko.protectedObservable(data.description || "Item Description");
+      self.order = ko.protectedObservable(data.order || -1);
       return self;
     }
 
@@ -96,12 +97,35 @@ var Listforks = (function(l) {
       //location.hash = list.id();
     }
 
+    self.goToList = function(list) {
+      location.hash = "lists/"+list.id();
+    }
+
     self.editListItem = function(listItem) {
       self.selectedListItem(listItem);
       goTo("editSpecificItem");        
     }
 
-    self.saveList = function() {
+    self.saveList = function(list) {
+      var queue = ListForksInstance.postQueue;
+      var rawList = ko.toJS(list);
+      var id = rawList.id;
+
+      var restfulData = {
+        userId: window.userAccountId(),
+        list: rawList
+      };
+
+      var message = {data: restfulData, module: "lists"};
+      
+      if(id >= 1) { //PUT
+        message.type = "put";
+      } else { //NEW ITEM
+        message.type = "post";
+      }
+
+      queue(message);
+
       goTo("displayList");
       perform("commit", self.list);
     }
@@ -134,16 +158,25 @@ var Listforks = (function(l) {
 
   var self = {};
 
-  self.getContainer = ko.observableArray([]);
+  self.getContainer = ko.observableArray([]);  
   self.lists = ko.observableArray([]);
 
   self.getContainer.subscribe(function(data){
-    var lists = ko.utils.arrayMap(data, function(rawList) {
-      return new ListGUI(rawList.attributes);
-    });
 
-    self.lists.push.apply(self.lists, lists);
-  });
+    if($.isArray(data)) { // GET []
+
+      var lists = ko.utils.arrayMap(data, function(rawList) {
+        return new ListGUI(rawList.attributes);
+      });
+      self.lists.push.apply(self.lists, lists);
+
+    } else { // GET {}  
+
+      self.lists.push(new ListGUI(data.attributes));
+
+    }
+
+});
 
   self.add = function() {
     var list = new ListGUI();

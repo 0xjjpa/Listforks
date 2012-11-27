@@ -16,26 +16,27 @@ var Listforks = (function(l) {
   l.restfulEngine = function() {
   	var self = {};
   	var registeredMethods = {
-  		get: $.getJSON
+  		get: $.getJSON,
+      post: $.post
   	};
   
     var baseUrl = '/app_dev.php/';
   	//var baseUrl = 'http://localhost:3501/mocks/';
   	self.response = ko.observable(null);
 
-  	self.call = function(module, method, id, container) {
+  	self.call = function(module, method, id, container, message) {
       //var module = module.replace(/-/ig, "/");
       var restUrl, containerModule = module;
       restUrl = baseUrl + module;
-      
+
       if(id) {
         restUrl += "/" + id;
         containerModule = module + "-view";
       } 
   		 
   		var restCall = registeredMethods[method] || $.getJSON;
-
-  		restCall(restUrl, {}, function(data) {
+      console.log(message);
+  		restCall(restUrl, message, function(data) {
         console.log(data);
   			container(data);
   			self.response({

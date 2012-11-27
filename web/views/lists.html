@@ -20,7 +20,7 @@
     <tbody data-bind="template: { name: $parents[0].selectedSubtemplate }"></tbody>
   </table>
   <div class="more"><span><i class="icon-downArrow"></i>More</span></div>
-  <div class="buttons"><a class="btn btn-primary">Fork it</a><a class="btn">Details</a><a data-bind="click: $parents[0].editList" class="btn">Edit</a><a data-bind="click: $root.remove" class="btn btn-danger">Delete</a></div>
+  <div class="buttons"><a class="btn btn-primary">Fork it</a><a data-bind="click: $parents[0].goToList" class="btn">Details</a><a data-bind="click: $parents[0].editList" class="btn">Edit</a><a data-bind="click: $root.remove" class="btn btn-danger">Delete</a></div>
 </script>
 <script type="text/html" id="editList">
   <div class="header">

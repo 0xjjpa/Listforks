@@ -18,7 +18,8 @@ var Listforks = (function(l) {
     self.getContainer = ko.observable({});
     
     self.getContainer.subscribe(function(data){
-      //Do something when we get the account data
+      console.log(data);
+      window.userAccountId = ko.observable(data.accountId);
     })
 
     self.init = function() {
