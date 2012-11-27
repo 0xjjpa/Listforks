@@ -1,0 +1,235 @@
+/* line 1, ../../app/styles/landing.scss */
+html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, em, img, strong, u, i, center, ol, ul, li, form, label, tbody, tfoot, thead, tr, th, td, footer, header, hgroup, menu, nav {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+  color: #ecf4f5;
+}
+
+/* line 11, ../../app/styles/landing.scss */
+header, hgroup, menu, nav, section {
+  display: block;
+}
+
+/* line 15, ../../app/styles/landing.scss */
+body {
+  background: #56a244 url(/images/listforks-bg.jpg) no-repeat top center fixed;
+  background-size: cover;
+}
+
+/* line 19, ../../app/styles/landing.scss */
+a {
+  color: #00a37f;
+  text-decoration: none;
+  outline: none;
+}
+
+/* line 24, ../../app/styles/landing.scss */
+a:hover {
+  text-decoration: underline;
+}
+
+/* line 27, ../../app/styles/landing.scss */
+p {
+  padding: 0;
+  font-family: 'Fenix', serif;
+  color: #ecf4f5;
+  font-size: 24px;
+  text-shadow: 0 0 2px black;
+}
+
+/* headings */
+/* line 35, ../../app/styles/landing.scss */
+h1, h2, h3, h4, h5, h6 {
+  font-size: 50px;
+  color: #ecf4f5;
+  font-family: 'Montserrat Alternates', sans-serif;
+  text-shadow: 0 0 2px black;
+}
+
+/* line 41, ../../app/styles/landing.scss */
+h2 a {
+  text-decoration: none;
+}
+
+/* line 42, ../../app/styles/landing.scss */
+h2 a:hover {
+  border-bottom: 1px dotted #ecf4f5;
+}
+
+/* line 44, ../../app/styles/landing.scss */
+#rightcontent {
+  position: relative;
+  float: right;
+  display: block;
+  width: 39%;
+  right: 3%;
+  top: 130px;
+}
+
+/* line 52, ../../app/styles/landing.scss */
+button.signup {
+  text-shadow: -1px -1px 0 #b91414;
+  color: white;
+  float: left;
+  border-left: 0;
+  border: 0;
+  margin: 6px auto auto auto;
+  width: 300px;
+  height: 44px;
+  line-height: 10px;
+  font-size: 22px;
+  text-align: center;
+  padding: none;
+  opacity: .8;
+  /* layer alpha */
+  -moz-border-radius: 34px;
+  -webkit-border-radius: 34px;
+  border-radius: 34px;
+  /* border radius */
+  -moz-background-clip: padding;
+  -webkit-background-clip: padding-box;
+  background-clip: padding-box;
+  /* prevents bg color from leaking outside the border */
+  background-color: #e15961;
+  /* layer fill content */
+  -moz-box-shadow: 0 3px 0 #862227, inset 0 2px 1px rgba(255, 255, 255, 0.4);
+  /* drop shadow and inner shadow */
+  -webkit-box-shadow: 0 3px 0 #862227, inset 0 2px 1px rgba(255, 255, 255, 0.4);
+  /* drop shadow and inner shadow */
+  box-shadow: 0 3px 0 #862227, inset 0 2px 1px rgba(255, 255, 255, 0.4);
+  /* drop shadow and inner shadow */
+}
+
+/* line 78, ../../app/styles/landing.scss */
+button.signup:hover {
+  background-color: #e96a71;
+}
+
+/* line 81, ../../app/styles/landing.scss */
+button.signup:active {
+  background-color: #d05057;
+}
+
+/* line 85, ../../app/styles/landing.scss */
+#header {
+  position: relative;
+  height: 44px;
+}
+
+/* line 90, ../../app/styles/landing.scss */
+#site-logo {
+  position: absolute;
+  left: 20px;
+  top: 20px;
+}
+
+/* line 96, ../../app/styles/landing.scss */
+#loginbutton {
+  position: absolute;
+  top: 0px;
+  right: 5px;
+}
+
+/* line 102, ../../app/styles/landing.scss */
+#loginbutton li {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  float: right;
+  position: relative;
+}
+
+/* line 110, ../../app/styles/landing.scss */
+#loginbutton a {
+  font-family: 'Fenix', serif;
+  color: #ecf4f5;
+  font-size: 24px;
+  text-shadow: 0 0 2px black;
+  display: block;
+  padding: 14px 15px;
+  text-decoration: none;
+}
+
+/* line 119, ../../app/styles/landing.scss */
+#loginbutton a:hover {
+  color: #8bf8ad;
+}
+
+/* line 123, ../../app/styles/landing.scss */
+.loginholder {
+  background-image: url("/images/login-holder.png");
+  position: absolute;
+  right: 5px;
+  top: 45px;
+  width: 158px;
+  height: 164px;
+}
+
+/* line 132, ../../app/styles/landing.scss */
+.loginform {
+  position: absolute;
+  right: 4px;
+  top: 20px;
+  width: 140px;
+}
+
+/* line 139, ../../app/styles/landing.scss */
+.loginform label {
+  font-family: 'Fenix', serif;
+  color: #ecf4f5;
+  font-size: 18px;
+  text-shadow: 0 0 2px black;
+}
+
+/* line 146, ../../app/styles/landing.scss */
+button.loginform {
+  text-shadow: -1px -1px 0 #b91414;
+  color: white;
+  top: 90px;
+  border-left: 0;
+  border: 0;
+  margin: 6px auto auto auto;
+  width: 140px;
+  height: 30px;
+  line-height: 10px;
+  font-size: 18px;
+  text-align: center;
+  padding: none;
+  opacity: .8;
+  /* layer alpha */
+  -moz-border-radius: 34px;
+  -webkit-border-radius: 34px;
+  border-radius: 34px;
+  /* border radius */
+  -moz-background-clip: padding;
+  -webkit-background-clip: padding-box;
+  background-clip: padding-box;
+  /* prevents bg color from leaking outside the border */
+  background-color: #e15961;
+  /* layer fill content */
+  -moz-box-shadow: 0 3px 0 #862227, inset 0 2px 1px rgba(255, 255, 255, 0.4);
+  /* drop shadow and inner shadow */
+  -webkit-box-shadow: 0 3px 0 #862227, inset 0 2px 1px rgba(255, 255, 255, 0.4);
+  /* drop shadow and inner shadow */
+  box-shadow: 0 3px 0 #862227, inset 0 2px 1px rgba(255, 255, 255, 0.4);
+  /* drop shadow and inner shadow */
+}
+
+/* line 172, ../../app/styles/landing.scss */
+button.loginform:hover {
+  background-color: #e96a71;
+}
+
+/* line 175, ../../app/styles/landing.scss */
+button.loginform:active {
+  background-color: #d05057;
+}
+
+/* line 179, ../../app/styles/landing.scss */
+.errorbox {
+  text-align: center;
+}

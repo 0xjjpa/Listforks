@@ -1,0 +1,213 @@
+/*
+ * Listforks 
+ *
+ * Copyright 2012 Listforks, Inc
+ * Licensed under the Apache License v2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * @jjperezaguinaga
+ * --> Your name here ;)
+ */
+/* line 1, ../../app/styles/compass_listforks/_fixes.scss */
+.navbar-fixed-top {
+  margin-bottom: 18px;
+}
+
+/* line 1, ../../app/styles/compass_listforks/_accounts.scss */
+body {
+  background: white url("/images/account-bg.jpg") no-repeat top center fixed;
+  text-align: center;
+}
+
+/* line 6, ../../app/styles/compass_listforks/_accounts.scss */
+body.errorpic {
+  background: white url("/images/404.jpg") no-repeat top center fixed;
+}
+
+/* line 10, ../../app/styles/compass_listforks/_accounts.scss */
+p {
+  padding: 0;
+  font-family: 'Fenix', serif;
+  color: #ecf4f5;
+  font-size: 24px;
+  text-shadow: 0 0 2px black;
+}
+
+/* line 18, ../../app/styles/compass_listforks/_accounts.scss */
+h1, h2, h3, h4, h5, h6 {
+  font-size: 50px;
+  color: #ecf4f5;
+  font-family: 'Montserrat Alternates', sans-serif;
+  text-shadow: 0 0 2px black;
+}
+
+/* line 25, ../../app/styles/compass_listforks/_accounts.scss */
+#logo {
+  position: absolute;
+  width: 100%;
+  left: 0;
+  text-align: center;
+  margin: auto;
+}
+
+/* line 33, ../../app/styles/compass_listforks/_accounts.scss */
+.account-container {
+  background-color: #000;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
+  border-radius: 5px;
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=80);
+  opacity: 0.8;
+  border: 2px solid rgba(169, 169, 169, 0.51);
+  -webkit-box-shadow: 0 3px 3px rgba(0, 0, 0, 0.33);
+  -moz-box-shadow: 0 3px 3px rgba(0, 0, 0, 0.33);
+  box-shadow: 0 3px 3px rgba(0, 0, 0, 0.33);
+  width: 250px;
+  height: 200px;
+  margin: 0 auto;
+  text-align: left;
+  padding: 20px 30px 30px 30px;
+}
+
+/* line 46, ../../app/styles/compass_listforks/_accounts.scss */
+.account-container-new {
+  background-color: #000;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
+  border-radius: 5px;
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=80);
+  opacity: 0.8;
+  border: 2px solid rgba(169, 169, 169, 0.51);
+  -webkit-box-shadow: 0 3px 3px rgba(0, 0, 0, 0.33);
+  -moz-box-shadow: 0 3px 3px rgba(0, 0, 0, 0.33);
+  box-shadow: 0 3px 3px rgba(0, 0, 0, 0.33);
+  width: 250px;
+  height: 305px;
+  margin: 0 auto;
+  text-align: left;
+  padding: 20px 30px 30px 30px;
+}
+
+/* line 59, ../../app/styles/compass_listforks/_accounts.scss */
+.errorbox {
+  background-color: #000;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
+  border-radius: 5px;
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=70);
+  opacity: 0.7;
+  border: 2px solid rgba(169, 169, 169, 0.51);
+  -webkit-box-shadow: 0 3px 3px rgba(0, 0, 0, 0.33);
+  -moz-box-shadow: 0 3px 3px rgba(0, 0, 0, 0.33);
+  box-shadow: 0 3px 3px rgba(0, 0, 0, 0.33);
+  width: 800px;
+  height: auto;
+  margin: 0 auto;
+  text-align: center;
+  padding: 10px 30px 30px 30px;
+}
+
+/* line 72, ../../app/styles/compass_listforks/_accounts.scss */
+.loginform label {
+  font-family: 'Fenix', serif;
+  color: #ecf4f5;
+  font-size: 28px;
+  text-shadow: 1px 1px 2px black;
+}
+
+/* line 79, ../../app/styles/compass_listforks/_accounts.scss */
+.loginform input {
+  font-family: 'Fenix', serif;
+  font-size: 18px;
+  width: 99%;
+}
+
+/* line 85, ../../app/styles/compass_listforks/_accounts.scss */
+button.loginform {
+  text-shadow: -1px -1px 0 #b91414;
+  color: white;
+  float: left;
+  border-left: 0;
+  border: 0;
+  margin: 20px auto auto auto;
+  width: 100%;
+  height: 44px;
+  line-height: 10px;
+  font-size: 22px;
+  text-align: center;
+  padding: none;
+  opacity: .8;
+  /* layer alpha */
+  -moz-border-radius: 34px;
+  -webkit-border-radius: 34px;
+  border-radius: 34px;
+  /* border radius */
+  -moz-background-clip: padding;
+  -webkit-background-clip: padding-box;
+  background-clip: padding-box;
+  /* prevents bg color from leaking outside the border */
+  background-color: #e15961;
+  /* layer fill content */
+  -moz-box-shadow: 0 3px 0 #862227, inset 0 2px 1px rgba(255, 255, 255, 0.4);
+  /* drop shadow and inner shadow */
+  -webkit-box-shadow: 0 3px 0 #862227, inset 0 2px 1px rgba(255, 255, 255, 0.4);
+  /* drop shadow and inner shadow */
+  box-shadow: 0 3px 0 #862227, inset 0 2px 1px rgba(255, 255, 255, 0.4);
+  /* drop shadow and inner shadow */
+}
+
+/* line 110, ../../app/styles/compass_listforks/_accounts.scss */
+button.loginform:hover {
+  background-color: #e96a71;
+}
+
+/* line 113, ../../app/styles/compass_listforks/_accounts.scss */
+button.loginform:active {
+  background-color: #d05057;
+}
+
+/* line 116, ../../app/styles/compass_listforks/_accounts.scss */
+button.fixit {
+  text-shadow: -1px -1px 0 #b91414;
+  color: white;
+  border-left: 0;
+  border: 0;
+  width: 300px;
+  height: 44px;
+  line-height: 10px;
+  font-size: 22px;
+  text-align: center;
+  padding: none;
+  -moz-border-radius: 34px;
+  -webkit-border-radius: 34px;
+  border-radius: 34px;
+  /* border radius */
+  -moz-background-clip: padding;
+  -webkit-background-clip: padding-box;
+  background-clip: padding-box;
+  /* prevents bg color from leaking outside the border */
+  background-color: #e15961;
+  /* layer fill content */
+  -moz-box-shadow: 0 3px 0 #862227, inset 0 2px 1px rgba(255, 255, 255, 0.4);
+  /* drop shadow and inner shadow */
+  -webkit-box-shadow: 0 3px 0 #862227, inset 0 2px 1px rgba(255, 255, 255, 0.4);
+  /* drop shadow and inner shadow */
+  box-shadow: 0 3px 0 #862227, inset 0 2px 1px rgba(255, 255, 255, 0.4);
+  /* drop shadow and inner shadow */
+}
+
+/* line 139, ../../app/styles/compass_listforks/_accounts.scss */
+button.fixit:hover {
+  background-color: #e96a71;
+}
+
+/* line 142, ../../app/styles/compass_listforks/_accounts.scss */
+button.fixit:active {
+  background-color: #d05057;
+}

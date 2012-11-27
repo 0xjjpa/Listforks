@@ -1,18 +1,23 @@
 
 <div id="titleRow" class="row-fluid">
   <h2 class="title">&middot; List &middot;
-    <div data-bind="click: function() { location.hash = 'lists' }" class="btn btn-primary">Go Back</div>
+    <div data-bind="click: function() { location.hash = 'lists' }" class="btn btn-primary">My Lists</div>
   </h2>
 </div>
 <div data-bind="foreach: lists" class="row">
   <div data-bind="template: { name: selectedTemplate, data: list }" class="span6 forklist"></div>
   <div class="span6">
     <div class="forklist">
+      <button type="button" data-bind="click: $parents[0].loadGeolocation" class="btn btn-large btn-block btn-primary">
+         
+        Add Geolocation
+      </button>
+    </div>
+    <div class="forklist">
       <div class="header">
-        <div class="name">
-          <h3>Location</h3>
-        </div>
+        <h3>Location</h3>
       </div>
+      <div id="google-map-container">			</div>
     </div>
     <div style="padding: 20px" class="forklist">
       <div id="disqus_thread"></div>

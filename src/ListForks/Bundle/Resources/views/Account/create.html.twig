@@ -1,19 +1,27 @@
-{% block title %} {% endblock %}
-
-
-{% block body %}
-    <h3> hello from account create view</h3>
-
-    <form action="{{ path('post_accounts_new') }}" method="post" {{ form_enctype(form) }}>
-	{{ form_widget(form) }}
-
-	<input type="submit" />
-	</form>
-{% endblock %}
-
-
-
-{% block footer %} 
-             {% include 'ListForksBundle:Footer:footer.html.twig' %}  
-{% endblock %}
-
+<!DOCTYPE html>
+<html class="no-js"></html>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="/styles/listforks_accounts.css">
+  <title>ListForks | Account</title>
+  <link href="http://fonts.googleapis.com/css?family=Fenix|Montserrat+Alternates:400,700" rel="stylesheet" type="text/css"><!--
+  <html5 class="js">for IE less than 9 </html5>--><!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <body>
+    <h1><img src="/images/listforks-logo-accounts.png" width="437px"></h1>
+    <div class="account-container-new">
+      <form class="loginform">
+        <label for="firstname">First Name</label>
+        <input type="text" name="firstname" placeholder="Type your first name...">
+        <label for="lastname">Last Name</label>
+        <input type="text" name="firstname" placeholder="...now your last name.">
+        <label for="username">Username</label>
+        <input type="text" name="username" placeholder="Choose a username.">
+        <label for="password">Password</label>
+        <input type="password" name="password" placeholder="Choose a password.">
+        <button class="loginform">Log in</button>
+      </form>
+    </div>
+    <script src="/components/jquery/jquery.js"></script>
+  </body>
+</head>

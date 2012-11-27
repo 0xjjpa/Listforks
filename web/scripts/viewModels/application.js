@@ -33,6 +33,7 @@ var Listforks = (function(l) {
 
     var hideModules = function() {
       $(".module").fadeOut();
+      $(".module").empty();
     }
 
     self.startRequest = function() {
@@ -41,7 +42,9 @@ var Listforks = (function(l) {
     }
 
     self.endRequest = function(module) {
-      showModule(module, window.disquesFunction);
+      //showModule(module, window.disquesFunction);
+      showModule(module);
+      //console.log(DISQUS);
       hideLoading();
       ;
     }

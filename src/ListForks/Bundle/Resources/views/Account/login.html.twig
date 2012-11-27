@@ -1,15 +1,23 @@
-{% extends 'ListForksBundle::layout.html.twig' %}
-
-{% block title %} {% endblock %}
-
-
-{% block body %}
-
-
-{% endblock %}
-
-
-
-{% block footer %} 
-             {% include 'ListForksBundle:Footer:footer.html.twig' %}  
-{% endblock %}
+<!DOCTYPE html>
+<html class="no-js"></html>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="/styles/listforks_accounts.css">
+  <title>ListForks | Account</title>
+  <link href="http://fonts.googleapis.com/css?family=Fenix|Montserrat+Alternates:400,700" rel="stylesheet" type="text/css"><!--
+  <html5 class="js">for IE less than 9 </html5>--><!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <body>
+    <h1><img src="/images/listforks-logo-accounts.png" width="437px"></h1>
+    <div class="account-container">
+      <form class="loginform">
+        <label for="name">Username</label>
+        <input type="text" name="name" placeholder="Type your username...">
+        <label for="password">Password</label>
+        <input type="password" name="password">
+        <button class="loginform">Log in</button>
+      </form>
+    </div>
+    <script src="/components/jquery/jquery.js"></script>
+  </body>
+</head>
