@@ -99,8 +99,9 @@ var Listforks = (function(l) {
       var content = value.data;
       var method = value.type;
       var module = value.module;
+      var id = value.id;
 
-      self.client.call(module, method, null, activeViewModel.getContainer, content); 
+      self.client.call(module, method, id, activeViewModel.getContainer, content); 
     });
 
     /**

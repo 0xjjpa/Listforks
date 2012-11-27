@@ -15,11 +15,13 @@ var Listforks = (function(l) {
   l.accountViewModel = function() {
     var self = {};
 
-    self.getContainer = ko.observable({});
+    self.getContainer = ko.observableArray([]);
     
     self.getContainer.subscribe(function(data){
-      console.log(data);
-      window.userAccountId = ko.observable(data.accountId);
+      if(data._hasData) {
+        var accountId = data.account.accountId;
+      }
+      window.userAccountId = ko.observable(accountId);
     })
 
     self.init = function() {

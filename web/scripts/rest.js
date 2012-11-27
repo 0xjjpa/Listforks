@@ -16,8 +16,10 @@ var Listforks = (function(l) {
   l.restfulEngine = function() {
   	var self = {};
   	var registeredMethods = {
-  		get: $.getJSON,
-      post: $.post
+  		get: {dataType: 'json', type: 'GET'},
+      post: {dataType: 'json', type: 'POST'}, 
+      put: {dataType: 'json', type: 'PUT'},
+      delete: {dataType: 'json', type: 'DELETE'}
   	};
   
     var baseUrl = '/app_dev.php/';
@@ -25,7 +27,15 @@ var Listforks = (function(l) {
   	self.response = ko.observable(null);
 
   	self.call = function(module, method, id, container, message) {
-      //var module = module.replace(/-/ig, "/");
+      
+      /*
+      console.log(module);
+      console.log(method);
+      console.log(id);
+      console.log(container);
+      console.log(message);
+      */
+
       var restUrl, containerModule = module;
       restUrl = baseUrl + module;
 
@@ -34,16 +44,19 @@ var Listforks = (function(l) {
         containerModule = module + "-view";
       } 
   		 
-  		var restCall = registeredMethods[method] || $.getJSON;
-      console.log(message);
-  		restCall(restUrl, message, function(data) {
-        console.log(data);
-  			container(data);
-  			self.response({
-  				success: true,
-  				module: containerModule
-  			});
-  		})
+       var restOptions = registeredMethods[method];
+       restOptions.url = restUrl;
+       restOptions.data = message;
+
+       restOptions.success = function(data) {
+        container(data);
+        self.response({
+          success: true,
+          module: containerModule
+        });
+      }
+
+      $.ajax(restOptions);
   	}
 
   	return self;
