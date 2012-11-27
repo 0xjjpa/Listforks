@@ -848,10 +848,11 @@ class ListsController extends Controller
     *
     * @author  Benjamin Akhtary
     *
-    * @param
-    * @return
+    * @param the listId to be removed
+    * @return returns the list that is removed if successful, else get the http error stating the type. notauthorized 403, or not found 404
     *
-    * Sample request and response :  
+    * Sample request and response :  https://skydrive.live.com/?id=B33E7327F5123B4D!2220&cid=b33e7327f5123b4d#!/view.aspx?cid=B33E7327F5123B4D&resid=B33E7327F5123B4D%212220&app=Word
+    *
     *
      */
     public function deleteListAction($id)
@@ -1769,7 +1770,7 @@ class ListsController extends Controller
 
 
 
-
+    
 
     /**
      * @Secure(roles="ROLE_USER")
@@ -1792,6 +1793,8 @@ class ListsController extends Controller
             ->getRepository('ListForksBundle:ForkList')
             ->find($id);
 
+        $response;
+        
         // List does not exist
         if( !$forklist )
         {
@@ -1815,8 +1818,8 @@ class ListsController extends Controller
             if( $forklist->getPrivate() == false || $forklist->getUser()->getId() == $user->getId() )
             {
                 // Get information for current list
-                $id = $forklist->getId();
-                $userId = $forklist->getUser()->getId();
+           //     $id = $forklist->getId();
+           //     $user = $forklist->getUser();
                 $name = $forklist->getName();
                 $description = $forklist->getDescription();
                 $private = $forklist->getPrivate();
@@ -1824,70 +1827,48 @@ class ListsController extends Controller
                 $rating = $forklist->getRating();
                 $items = $forklist->getItems();
 
-                
-                // set current time as the creation time
-                $date = new DateTime('now');
+
+                $date = new \DateTime('now');
                 $createdAt = $date->format('D M d Y H:i:s (T)');
-                // because we are goint to create a list right now, update date is the same
-                $updatedDate = $createdDate;
 
-                // Array to store the location co-ordinates of the current list
-                $locationArray = array( 'latitude' => $location->getLatitude(),
-                                        'longitude' => $location->getLongitude() );
-
-                // Empty array to store the items of the current list
-                $itemsArray = array();
-
-                // Traverse through the items for the current list
-                foreach( $items as $item )
-                {
-                    // Add item to itemArray
-                    $itemsArray[] =  array( 'id' => $item->getId(),
-                                            'description' => $item->getDescription(),
-                                            'order' => $item->getOrderNumber() );
-                }
+                // Create a new location to associate it with the list
+                $newLocation = new Location();
+                $newLocation->setLatitude($location->getLatitude());
+                $newLocation->setLongitude($location->getLongitude());
 
 
                 // --- Create a new list from retrived data ---
                  $forkedForklist = new ForkList();
 
-                 // Create a new location and associate it with the list
-                 $newLocation = new Location();
-                 $newLocation->setLatitude($latitude->getLatitude());
-                 $newLocation->setLongitude($longitude->getLongitude());
-                 $newLocation->setForklist($forkedForklist);
 
-                 // Bind list information to the list
+                 // Bind list information to the forkedlist
                  $forkedForklist->setName($forklist->getName());
                  $forkedForklist->setDescription($forklist->getDescription());
                  $forkedForklist->setPrivate($forklist->getPrivate());
-                 $forkedForklist->setLocation($forklist->getNewLocation());
+                 $forkedForklist->setLocation($newLocation);
                  $forkedForklist->setRating($forklist->getRating());
                  $forkedForklist->setUser($user);
+                 // Set timestamp for list
+                 $forkedForklist->setCreatedAt($createdAt);
+                 $forkedForklist->setUpdatedAt($createdAt);
 
-                 // Create items and associate it with the list
-                 foreach( $items as $item )
-                 {
-                    $newItem = new Item();
-                    $newItem->setDescription($item->getDescription());
-                    $newItem->setComplete(false);
-                    $newItem->setForklist($forkedForklist);
-                    $newItem->setOrderNumber($item->getOrderNumber());
 
-                    $forkedForklist->addItem($newItem);
-                 }
+                 $newLocation->setForklist($forkedForklist);
+
+                // Traverse through the items for the current list add to the forkedlist
+                foreach( $items as $item )
+                {
+                    $tempItem = new Item();
+                    $tempItem->setDescription($item->getDescription());
+                    $tempItem->setOrderNumber($item->getOrderNumber());
+                    $tempItem->setComplete($item->getComplete());
+
+                    $forkedForklist->addItem($tempItem);
+                }
+
 
                  // Associate the new list with the current user
                  $user->addForklist($forkedForklist);
-
-                 // Get current server date and time
-                 $date = new DateTime('now');
-                 $createdAt = $date->format('D M d Y H:i:s (T)');
-                 $updatedAt = $createdAt;
-
-                 // Set timestamp for list
-                 $forkedForklist->setCreatedAt($date);
-                 $forkedForklist->setUpdatedAt($date);
 
                  // Persist changes to DB
                  $em = $this->getDoctrine()->getManager();
@@ -1899,14 +1880,14 @@ class ListsController extends Controller
                 $listArray[] = array( '_hasData' => true,
                                       'createdAt' => $createdAt,
                                       'updatedAt' => $updatedAt,
-                                      'attributes' => array( 'id' => $id,
-                                                             'userId' => $userId,
-                                                             'name' => $name,
-                                                             'description' => $description,
-                                                             'private' => $private,
+                                      'attributes' => array( 'id' => $forkedForklist->getId(),
+                                                             'userId' => $forkedForklist->get,
+                                                             'name' => $forkedForklist->get,
+                                                             'description' => $forkedForklist->get,
+                                                             'private' => $forkedForklist->get,
                                                              'location' => $locationArray,
-                                                             'rating' => $rating,
-                                                             'items' => $itemsArray ));
+                                                             'rating' => $forkedForklist->get,
+                                                             'items' => $forkedForklist->get ));
 
                 // Create a JSON-response with the user's list
                 $response = new Response(json_encode($listArray));
@@ -1930,10 +1911,6 @@ class ListsController extends Controller
 
 
 
-
-
-
-
     /**
      * @Secure(roles="ROLE_USER")
      *
@@ -1941,7 +1918,7 @@ class ListsController extends Controller
     * @author Benjamin Akhtary
     *
     * @param the list id to check if we are watching
-    * @return
+    * @return   ***  WE DECIDE TO IGNORE FOR NOW !   ***
     *
     * Sample request and response :  https://skydrive.live.com/#!/view.aspx?cid=B33E7327F5123B4D&resid=B33E7327F5123B4D%212207&app=Word
     *
@@ -2074,22 +2051,7 @@ class ListsController extends Controller
 
         return $response;
 
-
-
-
-
-
-        
     } // "get_user_watchlist"    [GET] /lists/{id}/watch
-
-
-
-
-
-
-
-
-
 
 
     /**
@@ -2098,10 +2060,10 @@ class ListsController extends Controller
     *
     * @author Benjamin Akhtary
     *
-    * @param
-    * @return
+    * @param list id to be watched
+    * @return if user is already subscribed then nothing, else it will subscribe and start watching
     *
-    * Sample request and response :  https://skydrive.live.com/#!/view.aspx?cid=B33E7327F5123B4D&resid=B33E7327F5123B4D%212210&app=Word
+    * Sample request and response :=>  https://skydrive.live.com/#!/view.aspx?cid=B33E7327F5123B4D&resid=B33E7327F5123B4D%212210&app=Word
     *
      */
     public function postListWatchAction($id)
@@ -2114,9 +2076,8 @@ class ListsController extends Controller
 
 
         // Check if content is empty
-        if( !empty($content) )
-         {
-
+//        if( !empty($content) )
+//         {
                 // Find list in DB using $id
                 $forklist = $this->getDoctrine()
                     ->getRepository('ListForksBundle:ForkList')
@@ -2157,33 +2118,71 @@ class ListsController extends Controller
                     // List is public or user is list owner => user can subscribe ( watch)
                     if( $forklist->getPrivate() == false || $forklist->getUser()->getId() == $user->getId() )
                     {
-                         
-                        $subscription = new Subscription();
-                        $subscription->setForklist($forklist);
-                        $subscription->setUser($user);
 
-                        // Associate subscription with list
-                        $forklist->addSubscription($subscription);
+
+/*
+                        $enm = $this->getDoctrine()->getManager();
+                        // even if user does a SQL injection, the results is filtered only based on lists that he has access to in the cod to follow.
+                        $q = $enm->createQuery("select u from ListForks\Bundle\Entity\Subscription u where u.user =  ".$user->getId()." OR u.forklist = ".$forklist->getId());
+                        $existingSubscription = $q->getResult();
+  */
+  
+                            
+                           $subscriptions = $this->getDoctrine()
+                                ->getRepository('ListForksBundle:Subscription')
+                                ->findByUser($user);  
+
+                            $alreadyexists = false;
+                            $existingSubscription = NULL;
+
+                            foreach ($subscriptions as $subs)
+                            {
+                                if ( $subs->getForklist()->getId() == $forklist->getId())
+                                {
+                                    $existingSubscription = $subs;
+                                    $alreadyexists = true;
+                                    break;
+                                }
+                            }
                         
-                        // we have to check if subscription already exists ? so we dont double insert ?
-                        // or use SQL integrity check. 
+                            // we have to check if subscription already exists ? so we dont double insert ?
+                            // or use SQL integrity check. 
 
+                            if ( $alreadyexists == true  )
+                            {
+                                // Add list to listArray
+                                $listArray[] = array( '_hasData' => true,
+                                                      'attributes' => array( 'id' =>  $subs->getId(), // $existingSubscription[0]->getId(),
+                                                                             'status' => "subscribed" ));
+                            }
+                            /// its a new subscription
+                            else
+                            {
+                                $subscription = new Subscription();
+                                $subscription->setForklist($forklist);
+                                $subscription->setUser($user);
 
+                                // Associate subscription with list
+                                $forklist->addSubscription($subscription);
+                                
+                                // save the user subscription
+                                $em = $this->getDoctrine()->getManager();
+                                $em->persist($subscription);
+                                $em->flush();
 
-                        // save the user subscription
-                        $em = $this->getDoctrine()->getManager();
-                        $em->persist($subscription);
-                        $em->flush();
+                                // Add list to listArray
+                                $listArray[] = array( '_hasData' => true,
+                                                      'attributes' => array( 'id' => $subscription->getId(),
+                                                                             'status' => "subscribed" ));
+                            }
+                            
 
-
-                        // Add list to listArray
-                        $listArray[] = array( '_hasData' => true,
-                                              'attributes' => array( 'id' => $subscription->getId(),
-                                                                     'status' => "subscribed" ));
+                            
 
                     
-                        // Create a JSON-response with the user's list
-                        $response = new Response(json_encode($listArray));
+                            // Create a JSON-response with the user's list
+                            $response = new Response(json_encode($listArray));                            
+                        
 
                     }
                     // unauthorized access - user not logged in
@@ -2199,8 +2198,8 @@ class ListsController extends Controller
 
              }
  
-        }
-
+//        }
+/*
         // the request content is empty
         else{
             
@@ -2210,7 +2209,7 @@ class ListsController extends Controller
                                   'message' => 'We could not create your list.')));
 
         }
-
+*/
         // Set response headers
         $response->headers->set('Content-Type', 'application/json');
 
@@ -2220,32 +2219,20 @@ class ListsController extends Controller
 
 
 
-
-
-
-
-
-
-
-
-
-
 /**
      * @Secure(roles="ROLE_USER")
      *
     *
     * @author Benjamin Akhtary
     *
-    * @param
-    * @return
+    * @param  send a listId for whcih to unwatch
+    * @return if user is watchhing the list currently it will unwatch. otherwise none.
     *
-    * Sample request and response :  https://skydrive.live.com/#!/view.aspx?cid=B33E7327F5123B4D&resid=B33E7327F5123B4D%212211&app=Word
+    * Sample request and response :=> https://skydrive.live.com/#!/view.aspx?cid=B33E7327F5123B4D&resid=B33E7327F5123B4D%212211&app=Word
     *
      */
     public function deleteListWatchAction($id)
     {
-
-        
 
          // Find list in DB using $id
         $forklist = $this->getDoctrine()
@@ -2270,8 +2257,6 @@ class ListsController extends Controller
                 ->getRepository('ListForksBundle:User')
                 ->findOneByAccount($account);
 
-
-
                 $subscriptions = $user->getSubscriptions();
                 $em = $this->getDoctrine()->getManager();
 
@@ -2285,33 +2270,20 @@ class ListsController extends Controller
 
                 $em->flush();
 
-
                 // set the return values to 
-                $responseArray[] =  array(  
-                                         'id' => $id,
-                                         'subscription' => "unSubscribed" );
+                $responseArray[] =  array(  '_hasData' => true,
+                                            'message' => "unSubscribed" );
                 
-
-
                 // Create a JSON-response with the user's list
                 $response = new Response(json_encode($responseArray));
-            }
-
-            
-        
-
-                        
+            }   
                   
         // Set response headers
         $response->headers->set('Content-Type', 'application/json');
 
         return $response;
 
-
     } // "delete_user_watchedlist"    [DELETE] /lists/{id}/watch
-
-
-
 
 
 
@@ -2323,10 +2295,10 @@ class ListsController extends Controller
     * @author  Benjamin Akhtary
     *
     * @param listId for which the rating to be retrived
-    * @return Id Retrived if user has permission to access the list ( public or owner )
+    * @return Id Retrived if user has permission to access the list ( public or owner ), return the rating of the list as a json object
     *
-    * Sample request and response :  https://skydrive.live.com/#!/view.aspx?cid=B33E7327F5123B4D&resid=B33E7327F5123B4D%212190&app=Word
-    *
+    * Sample request and response :=>  https://skydrive.live.com/#!/view.aspx?cid=B33E7327F5123B4D&resid=B33E7327F5123B4D%212190&app=Word
+    * 
      */
     public function getListRateAction($id)
     {
@@ -2400,14 +2372,14 @@ class ListsController extends Controller
     *
     * @author Benjamin Akhtary
     *
-    * @param
-    * @return
+    * @param the list id to be edited, and the rating throgh request object
+    * @return the list with a new value
     *  
     * Sample request and response :  https://skydrive.live.com/#!/view.aspx?cid=B33E7327F5123B4D&resid=B33E7327F5123B4D%212214&app=Word
     *
      */
     // !! !! !! to be fixed. can not read the value from request parameter.
-    public function postListRateAction($id)
+    public function putListRateAction($id)
     {
 
         // Get current request
@@ -2567,7 +2539,7 @@ class ListsController extends Controller
         $response->headers->set('Content-Type', 'application/json');
 
         return $response;
-    } // "new_user_rating"    [POST] /lists/{id}/rate
+    } // "new_user_rating"    [PUT] /lists/{id}/rate
 
 
 

@@ -66,8 +66,8 @@ class UsersController extends Controller
     *
     * @author Benjamin Akhtary
     *
-    * @param the list id to check if we are watching
-    * @return
+    * @param given the id of a use
+    * @return all the lists the user is subscribed if the requester has permission to view those lists.
     *
     * Sample request and response :  https://skydrive.live.com/?cid=B33E7327F5123B4D&id=B33E7327F5123B4D%212188#!/view.aspx?cid=B33E7327F5123B4D&resid=B33E7327F5123B4D%212189&app=Word
     *
