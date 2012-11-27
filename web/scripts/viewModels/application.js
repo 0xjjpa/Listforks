@@ -15,12 +15,30 @@ var Listforks = (function(l) {
   l.GUIEngine = function() {
   	var self = {};
 
-    self.showModule = function(module) {
+    var showModule = function(module) {
       $("#"+module).show();
     }
 
-    self.hideLoading = function() {
+    var hideLoading = function() {
       $("#loading-holder").fadeOut();
+    }
+
+    var showLoading = function() {
+      $("#loading-holder").fadeIn();
+    }
+
+    var hideModules = function() {
+      $(".module").fadeOut();
+    }
+
+    self.startRequest = function() {
+      hideModules();
+      showLoading();
+    }
+
+    self.endRequest = function(module) {
+      showModule(module);
+      hideLoading();
     }
     
   	self.init = function() {

@@ -24,19 +24,18 @@ var Listforks = (function(l) {
       accounts: "accountViewModel"
     };
 
-    var loadModule = function(module, method, applyBindings) {
+    var loadModule = function(module, method, id, applyBindings) {
       var viewModelName = modules[module];
       var activeViewModel = new l[viewModelName](); 
 
       var container = activeViewModel.getContainer; 
-      self.client.call(module, method, container); 
+      self.client.call(module, method, id, container); 
       if(applyBindings) ko.applyBindings(activeViewModel, document.getElementById(module));
     }
 
     self.onResponse = function(response) {
       if(response.success) {
-        self.application.showModule(response.module);
-        self.application.hideLoading();
+        self.application.endRequest(response.module);
       }
     }
 
@@ -57,14 +56,29 @@ var Listforks = (function(l) {
     self.routing = $.sammy(function() {
 
       this.get('#:module', function () {
+        self.application.startRequest();
+
         var module = this.params.module; 
         var $module = $('#'+module);
         
         $module.load(viewsUrl+module+viewsExtension, function() {
-          loadModule(module, "get", true);
-        });
-          
-      })
+          loadModule(module, "get", null, true);
+        }); 
+      });
+
+      this.get('#:module/:id', function() {
+        self.application.startRequest();
+
+        var module = this.params.module;
+        var id = this.params.id;
+
+        var viewModule = module+"-view";
+        var $module = $('#'+viewModule);
+
+        $module.load(viewsUrl+viewModule+viewsExtension, function() {
+          loadModule(module, "get", id, true);
+        })
+      });
 
       // Base URL
       this.get('', function () { 

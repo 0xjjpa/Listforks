@@ -23,8 +23,16 @@ var Listforks = (function(l) {
   	//var baseUrl = 'http://localhost:3501/mocks/';
   	self.response = ko.observable(null);
 
-  	self.call = function(module, method, container) {
-  		var restUrl = baseUrl + module;
+  	self.call = function(module, method, id, container) {
+      //var module = module.replace(/-/ig, "/");
+      var restUrl, containerModule = module;
+      restUrl = baseUrl + module;
+      
+      if(id) {
+        restUrl += "/" + id;
+        containerModule = module + "-view";
+      } 
+  		 
   		var restCall = registeredMethods[method] || $.getJSON;
 
   		restCall(restUrl, {}, function(data) {
@@ -32,7 +40,7 @@ var Listforks = (function(l) {
   			container(data);
   			self.response({
   				success: true,
-  				module: module
+  				module: containerModule
   			});
   		})
   	}

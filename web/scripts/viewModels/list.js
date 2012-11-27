@@ -90,9 +90,10 @@ var Listforks = (function(l) {
       console.log(ko.toJS(list));
     }
 
-    self.editList = function() {
+    self.editList = function(list) {
       goTo("editList");
       subGoTo("editListItem");
+      //location.hash = list.id();
     }
 
     self.editListItem = function(listItem) {
