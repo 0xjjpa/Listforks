@@ -67,6 +67,12 @@ class User
      */
     private $preferences;
 
+    /**
+     *
+     * @ORM\OneToMany(targetEntity="Rating", mappedBy="user", cascade={"persist", "remove"})
+     */
+    private $ratings;
+
 
     /**
      * Get id
@@ -281,5 +287,38 @@ class User
     public function getPreferences()
     {
         return $this->preferences;
+    }
+
+    /**
+     * Add ratings
+     *
+     * @param \ListForks\Bundle\Entity\Rating $ratings
+     * @return User
+     */
+    public function addRating(\ListForks\Bundle\Entity\Rating $ratings)
+    {
+        $this->ratings[] = $ratings;
+    
+        return $this;
+    }
+
+    /**
+     * Remove ratings
+     *
+     * @param \ListForks\Bundle\Entity\Rating $ratings
+     */
+    public function removeRating(\ListForks\Bundle\Entity\Rating $ratings)
+    {
+        $this->ratings->removeElement($ratings);
+    }
+
+    /**
+     * Get ratings
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getRatings()
+    {
+        return $this->ratings;
     }
 }

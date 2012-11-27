@@ -5,8 +5,10 @@ namespace ListForks\Bundle\Controller;
 use ListForks\Bundle\Entity\ForkList;
 use ListForks\Bundle\Entity\User;
 use ListForks\Bundle\Entity\Item;
+use ListForks\Bundle\Entity\Rating;
 use ListForks\Bundle\Entity\Location;
 use ListForks\Bundle\Entity\Subscription;
+use ListForks\Bundle\Model\Helpers;
 
 use ListForks\Bundle\Form\Type\AccountType;
 use ListForks\Bundle\Form\Type\UserType;
@@ -23,26 +25,6 @@ use JMS\SecurityExtraBundle\Annotation\Secure;
 class UsersController extends Controller
 {
 	
-    /**
-     * @Secure(roles="ROLE_USER")
-     *
-    *
-    *
-    * @param
-    * @return
-    *
-    *
-     */
-	public function optionsUsersAction()
-    {        
-
-        return new Response('[OPTIONS] /users');
-
-    //    return new Response('[OPTIONS] /users');
-
-    } // "options_lists" [OPTIONS] /users
-
-
     /*
     * @Secure(roles="ROLE_USER")
     *
@@ -137,7 +119,7 @@ class UsersController extends Controller
                                                                      'description' => $forklist->getDescription(),
                                                                      'private' => $forklist->getPrivate(),
                                                                      'location' => $locationArray,
-                                                                     'rating' => $forklist->getRating(),
+                                                                     'rating' => $this->getRating($forklist),
                                                                      'items' => $itemsArray,
                                                                      'createdAt' => $forklist->getCreatedAt(),
                                                                      'updatedAt' => $forklist->getUpdatedAt()
@@ -190,5 +172,67 @@ class UsersController extends Controller
         
     } // "get_user_forklists"    [GET] /users/{id}/forklists
 
+
+
+        // ******************* HELPERS METHODS **********************
+
+    public function getRating($forklist)
+    {
+        $allRrating = $this->getDoctrine()
+            ->getRepository('ListForksBundle:Rating')
+             ->findByForklist($forklist);
+        
+             $count = 0;
+             $sumRatings = 0;
+             $rating = 0;
+
+             foreach ( $allRrating as $rating)
+             {
+                 $sumRatings = $sumRatings + $rating->getRating();
+                 $count = $count + 1;
+             }
+
+             
+             if ( $count != 0)
+             {
+                 $rating = round( $sumRatings / $count );
+             }
+
+        return $rating;
+    }
+
+
+    public function setRating($forklist, $user, $rate)
+    {
+
+        $rating = new Rating();
+        $rating->setUser($user);
+        $rating->setForklist($forklist);
+        $rating->setRating($rate);
+
+        $allRrating = $this->getDoctrine()
+            ->getRepository('ListForksBundle:Rating')
+             ->findByForklist($forklist);
+        
+             $alreadyRated = FALSE;
+
+             foreach ( $allRrating as $rating)
+             {
+                 if ( $rating->getUser()->getId() == $user->getId() )
+                 {
+                     $alreadyRated = TRUE;
+                 }
+             }
+
+             if ( !$alreadyRated)
+             {
+                 // Persist changes to DB
+                 $em = $this->getDoctrine()->getManager();
+                 $em->persist($rating);
+                 $em->flush();
+             }
+
+             return;
+    }
 
 }
