@@ -1824,12 +1824,15 @@ class ListsController extends Controller
                 $rating = $forklist->getRating();
                 $items = $forklist->getItems();
 
+                /*
                 
                 // set current time as the creation time
-                $date = new DateTime('now');
+                $date = new \DateTime('now');
                 $createdAt = $date->format('D M d Y H:i:s (T)');
                 // because we are goint to create a list right now, update date is the same
                 $updatedDate = $createdDate;
+
+                */
 
                 // Array to store the location co-ordinates of the current list
                 $locationArray = array( 'latitude' => $location->getLatitude(),
@@ -1853,15 +1856,15 @@ class ListsController extends Controller
 
                  // Create a new location and associate it with the list
                  $newLocation = new Location();
-                 $newLocation->setLatitude($latitude->getLatitude());
-                 $newLocation->setLongitude($longitude->getLongitude());
+                 $newLocation->setLatitude($location->getLatitude());
+                 $newLocation->setLongitude($location->getLongitude());
                  $newLocation->setForklist($forkedForklist);
 
                  // Bind list information to the list
                  $forkedForklist->setName($forklist->getName());
                  $forkedForklist->setDescription($forklist->getDescription());
                  $forkedForklist->setPrivate($forklist->getPrivate());
-                 $forkedForklist->setLocation($forklist->getNewLocation());
+                 $forkedForklist->setLocation($newLocation);
                  $forkedForklist->setRating($forklist->getRating());
                  $forkedForklist->setUser($user);
 
@@ -1881,7 +1884,7 @@ class ListsController extends Controller
                  $user->addForklist($forkedForklist);
 
                  // Get current server date and time
-                 $date = new DateTime('now');
+                 $date = new \DateTime('now');
                  $createdAt = $date->format('D M d Y H:i:s (T)');
                  $updatedAt = $createdAt;
 
@@ -1896,17 +1899,17 @@ class ListsController extends Controller
 
 
                 // Add list to listArray
-                $listArray[] = array( '_hasData' => true,
-                                      'createdAt' => $createdAt,
-                                      'updatedAt' => $updatedAt,
-                                      'attributes' => array( 'id' => $id,
-                                                             'userId' => $userId,
-                                                             'name' => $name,
-                                                             'description' => $description,
-                                                             'private' => $private,
-                                                             'location' => $locationArray,
-                                                             'rating' => $rating,
-                                                             'items' => $itemsArray ));
+                $listArray = array( '_hasData' => true,
+                                    'createdAt' => $createdAt,
+                                    'updatedAt' => $updatedAt,
+                                    'attributes' => array( 'id' => $forkedForklist->getId(),
+                                                           'userId' => $userId,
+                                                           'name' => $name,
+                                                           'description' => $description,
+                                                           'private' => $private,
+                                                           'location' => $locationArray,
+                                                           'rating' => $rating,
+                                                           'items' => $itemsArray ));
 
                 // Create a JSON-response with the user's list
                 $response = new Response(json_encode($listArray));
@@ -2177,9 +2180,9 @@ class ListsController extends Controller
 
 
                         // Add list to listArray
-                        $listArray[] = array( '_hasData' => true,
-                                              'attributes' => array( 'id' => $subscription->getId(),
-                                                                     'status' => "subscribed" ));
+                        $listArray = array( '_hasData' => true,
+                                            'attributes' => array( 'subscriptionId' => $subscription->getId(),
+                                                                   'status' => "subscribed" ));
 
                     
                         // Create a JSON-response with the user's list
@@ -2287,9 +2290,9 @@ class ListsController extends Controller
 
 
                 // set the return values to 
-                $responseArray[] =  array(  
-                                         'id' => $id,
-                                         'subscription' => "unSubscribed" );
+                $responseArray =  array('userId' => $user->getId(),  
+                                        'listId' => $id,
+                                        'subscription' => "unSubscribed");
                 
 
 
@@ -2363,9 +2366,9 @@ class ListsController extends Controller
                 $rating = $forklist->getRating();
 
                 // Add list id and rating to listArray
-                $listArray[] = array( '_hasData' => true,
-                                      'id' => $id,
-                                      'rating' => $rating );
+                $listArray = array( '_hasData' => true,
+                                    'id' => $id,
+                                    'rating' => $rating );
 
                 // Create a JSON-response with the user's list
                 $response = new Response(json_encode($listArray));
