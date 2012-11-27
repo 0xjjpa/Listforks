@@ -26,29 +26,37 @@ class ListListener
 			// List is public
 			if( $entity->getPrivate() == false )
 			{
+				// Get subscriptions for updated list
+				$subscriptions = $entity->getSubscriptions();
 
-				if( $args->hasChangedField('description') )
+				// Notify subscribed users
+				foreach( $subscriptions as $subscription )
 				{
-					$items = $entity->getItems();
+					// Get user preferences
+					$preferences = $subscription->getUser()->getPreferences();
 
-					$itemsString = "";
+					foreach( $preferences as $preference )
+					{	
+						// Find preference for e-mail notifications
+						if( $preference->getName() == 'notifyEmail' )
+						{
+							if( $preference->getFlag() == true )
+							{
+								$userEmail = $subscription->getUser()->getAccount()->getEmail();
 
-					foreach( $items as $item )
-					{
-						$itemsString = $itemsString.$item->getOrderNumber().". ".$item->getDescription()."\n";
+								$message = \Swift_Message::newInstance()
+									->setSubject('ListForks.com: List Update Notification')
+									->setFrom('notification@listforks.com')
+									->setTo($userEmail)
+									->setBody("Notification of Change:\n\n" 
+										."List Name: ".$entity->getName()."\n\n"
+										."Description: ".$entity->getDescription()."\n\n"
+										."Vist the list: "."http://listforks.com/app_dev.php/#lists/".$entity->getId());
+
+								$mailer->send($message);
+							}
+						}
 					}
-
-					$message = \Swift_Message::newInstance()
-						->setSubject('ListForks.com: List Update Notification')
-						->setFrom('notification@listforks.com')
-						->setTo('raymond@listforks.com')
-						->setBody("Notification of Change:\n\n" 
-							."List Name: ".$entity->getName()."\n\n"
-							."Description: ".$entity->getDescription()."\n\n"
-							."Items:\n\n".$itemsString."\n\n"
-							."Vist the list: "."http://massive-malia.pagodabox.com/app_dev.php/lists/".$entity->getId());
-
-					$mailer->send($message);
 				}
 
 			}
@@ -68,12 +76,12 @@ class ListListener
 						foreach( $subscriptions as $subscription )
 						{
 							// Get e-mail address of subscribed user
-							// $userEmail = $subscription->getUser()->getAccount()->getEmail();
+							$userEmail = $subscription->getUser()->getAccount()->getEmail();
 
 							$message = \Swift_Message::newInstance()
 								->setSubject('ListForks.com: List Update Notification')
 								->setFrom('notification@listforks.com')
-								->setTo('raymond@listforks.com')
+								->setTo($userEmail)
 								->setBody(
 									'The list '.$entity->getName().' has been set to private by the list owner. As a result, you will no longer
 									receive update notifications for this list.');

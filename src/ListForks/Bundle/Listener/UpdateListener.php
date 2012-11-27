@@ -16,10 +16,10 @@ class UpdateListener
 		if( $entity instanceof Account )
 		{
 			$message = \Swift_Message::newInstance()
-				->setSubject('Account Update Notification Test')
+				->setSubject('ListForks.com: Account Creation Notification')
 				->setFrom('notification@listforks.com')
 				->setTo('raymond@listforks.com')
-				->setBody($entity->getUsername());
+				->setBody('A new user: '.$entity->getUsername().' has joined ListForks.com!');
 
 			$transport = \Swift_SmtpTransport::newInstance('smtp.gmail.com', 465, "ssl")
 				->setUsername('notification@listforks.com')
