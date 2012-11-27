@@ -34,10 +34,14 @@ var Listforks = (function(l) {
         containerModule = module + "-view";
       } 
   		 
-  		var restCall = registeredMethods[method] || $.getJSON;
-      console.log(message);
+       console.log(module);
+       console.log(method);
+       console.log(id);
+       console.log(container);
+       console.log(message);
+  		var restCall = registeredMethods[method];
+      
   		restCall(restUrl, message, function(data) {
-        console.log(data);
   			container(data);
   			self.response({
   				success: true,

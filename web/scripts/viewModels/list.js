@@ -111,18 +111,22 @@ var Listforks = (function(l) {
       var rawList = ko.toJS(list);
       var id = rawList.id;
 
+      var message = {};
+            
+      if(id >= 1) { //PUT
+        message.type = "put";
+      } else { //NEW ITEM
+        message.type = "post";
+        delete rawList.id;
+      }
+
       var restfulData = {
         userId: window.userAccountId(),
         list: rawList
       };
 
-      var message = {data: restfulData, module: "lists"};
-      
-      if(id >= 1) { //PUT
-        message.type = "put";
-      } else { //NEW ITEM
-        message.type = "post";
-      }
+      message.data = restfulData;
+      message.module = "lists";
 
       queue(message);
 
