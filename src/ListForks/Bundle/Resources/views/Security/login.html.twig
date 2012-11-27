@@ -16,11 +16,11 @@
         <li><a href="login.html">Log in</a></li>
       </ul>
       <div class="loginholder">	
-        <form class="loginform">
+        <form class="loginform" action="../accounts/login_check" method="post">
           <label for="name">Username</label>
-          <input type="text" name="name">
+          <input type="text" name="_username">
           <label for="password">Password</label>
-          <input type="password" name="password">
+          <input type="password" name="_password">
           <button class="loginform">Log in</button>
         </form>
       </div>
