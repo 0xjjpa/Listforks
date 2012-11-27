@@ -556,14 +556,15 @@ class ListsController extends Controller
                     // Check if userId from request matches the userId associated with the current account
                     if( $user->getId() == $updateUserId )
                     {
-                        $updateListId = $updateListArray['listId'];
+                        // Get list attributes from update request
+                        $attributesArray = $updateListArray['attributes'];
+
+                        $updateListId = $attributesArray['listId'];
 
                         // Ensure that listId from request matches the listId for the list retrieved from the DB
                         if( $forklist->getId() == $updateListId )
                         {
-                            // Get list attributes from update request
-                            $attributesArray = $updateListArray['attributes'];
-
+                            
                             // Get specific list attribute info from update request
                             $updateName = $attributesArray['name'];
                             $updateDescription = $attributesArray['description'];
