@@ -215,8 +215,8 @@ class ListsController extends Controller
                  // Location is not set
                  else
                  {
-                    $filterLatitude = -1;
-                    $filterLongitude = -1;
+                    $filterLatitude = 0;
+                    $filterLongitude = 0;
                  }
 
                  // Create a new location and associate it with the list
