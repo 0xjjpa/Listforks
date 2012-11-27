@@ -32,10 +32,10 @@ class UsersController extends Controller
     *
     * @author Benjamin Akhtary
     *
-    * @param 
-    * @return 
+    * @param None  GET
+    * @return list of all the users, + count of their list that logged in user has access to
     * 
-    * sample Request & Response : 
+    * sample Request & Response :=> https://skydrive.live.com/#!/view.aspx?cid=B33E7327F5123B4D&resid=B33E7327F5123B4D%212248&app=Word
     */
     public function getUsersAction()
     {
@@ -130,7 +130,7 @@ class UsersController extends Controller
 
 
 
-    }// "get_all-user_all-subscribed-lists"    [GET] /subscriptions
+    }// "get_all-users"    [GET] /users
 
 
 
@@ -139,15 +139,107 @@ class UsersController extends Controller
     *
     * @author Benjamin Akhtary
     *
-    * @param 
-    * @return 
+    * @param give a user id
+    * @return retrn the information for that user including fname, lname, number of 
     * 
-    * sample Request & Response : 
+    * sample Request & Response :   NOT FINISHED ! NOT REQUIRED NOW
     */
     public function getUserAction($id)
     {
 
-    } // "get_user_all-subscribed-lists"    [GET] /subscriptions
+        
+         // Get current account
+        $account = $this->get('security.context')->getToken()->getUser();
+
+        // Find user in DB using account
+        $userLoggedIn = $this->getDoctrine()
+            ->getRepository('ListForksBundle:User')
+            ->findOneByAccount($account);
+
+
+        $usersArray = array();
+
+        if ( $userLoggedIn)
+        {
+            
+            $allUsers = $this->getDoctrine()
+                ->getRepository('ListForksBundle:User')
+                ->findAll();
+
+
+            
+            foreach( $allUsers as $user )
+            {
+
+                $numPublicList = 0;
+
+                $usersList = $this->getDoctrine()
+                    ->getRepository('ListForksBundle:ForkList')
+                    ->findByUser($user);
+                
+                foreach ( $usersList as $list)
+                {
+
+                    if( $list->getPrivate() == false || $list->getUser()->getId() == $userLoggedIn->getId() )
+                    {
+                        $numPublicList = $numPublicList + 1 ;
+                    }
+                    
+                }
+
+                
+                
+
+
+                  // Add list to listArray
+                  $userArray = array(  'userId' => $user->getId(),
+                                         'firstName' => $user->getFirstName(),
+                                         'lastName' => $user->getLastName(),
+                                         'countList' => $numPublicList
+                                       );
+                  
+                  $singledata = array( '_hasData' => true,
+                                       'attributes' => $userArray );
+
+
+                  array_push($usersArray, $singledata );
+            }
+
+        }
+
+        $responseArray = array();
+
+        $response;
+         // if there is atleast 1 subscription retrived from above
+         if (count($usersArray) > 0 ){
+              // Create a JSON-response with the user's
+              $response = new Response(json_encode($usersArray));
+
+
+         }
+         else
+         {
+              $singledata = array( '_hasData' => false,
+                                       'attributes' => array() ); 
+              // Create a JSON-response with the user's
+              $response = new Response(json_encode($usersArray));
+              // set error code 403  for login but not exists.
+              $response->setStatusCode(403);
+         }
+        
+         
+
+
+         // Set response headers
+        $response->headers->set('Content-Type', 'application/json');
+
+        return $response;
+
+
+
+
+
+    } // "get_user_by_id"    [GET] /user/1
 
 
 
@@ -282,6 +374,141 @@ class UsersController extends Controller
 
         
     } // "get_user_forklists"    [GET] /users/{id}/forklists
+
+
+
+            /**
+     * @Secure(roles="ROLE_USER")
+     *
+    *
+    * @author Benjamin Akhtary
+    *
+    * @param given the id of a user
+    * @return all the lists the user has
+    *
+    * Sample request and response :=>  
+    *
+     */
+    public function getUsersListsAction($id)
+    {
+
+        // Find list in DB using $id
+        $userToGetLists = $this->getDoctrine()
+            ->getRepository('ListForksBundle:User')
+            ->find($id);
+
+        // Get current account
+        $account = $this->get('security.context')->getToken()->getUser();
+
+        // Find user in DB using account
+        $userLoggedIn = $this->getDoctrine()
+            ->getRepository('ListForksBundle:User')
+             ->findOneByAccount($account);
+
+         $allLists = $this->getDoctrine()
+              ->getRepository('ListForksBundle:ForkList')
+              ->findByUser($userToGetLists);
+
+        if ( $allLists )
+        {
+                
+                // to store the result retrived from database
+                $listsArray = array();
+
+                foreach ( $allLists as $list)
+                {
+                    $forklist;
+
+                    // if list is public or the owner is requesting
+                    if( $list->getPrivate() == false || $list->getUser()->getId() == $userLoggedIn->getId() )
+                    {
+                        $forklist = $list;
+                    }
+                    // if the list of public as check above or the requester is the owner, proceed with returing the value
+                    if ($forklist)
+                    {
+                        // Array to store the location co-ordinates of the current list
+                        $locationArray = array( 'latitude' => $forklist->getLocation()->getLatitude(),
+                                       'longitude' => $forklist->getLocation()->getLongitude()
+                                        );
+
+                        // Empty array to store the items of the current list
+                        $itemsArray = array();
+                        $items = $forklist->getItems();
+
+                        // Traverse through the items for the current list
+                        foreach( $items as $item )
+                        {
+                            // Add item to itemArray
+                            $itemArray =  array( 'id' => $item->getId(),
+                                                    'description' => $item->getDescription(),
+                                                    'order' => $item->getOrderNumber() );
+                            array_push($itemsArray, $itemArray );
+                        }
+
+                        
+
+                        // Add list to listArray
+                        $listArray = array( '_hasData' => true,
+                                            "createdAt" => $forklist->getCreatedAt()->format('D M d Y H:i:s (T)') ,
+                                            "updatedAt" => $forklist->getUpdatedAt()->format('D M d Y H:i:s (T)')  ,
+                                              'attributes' => array( 'listId' => $forklist->getId(),
+                                                                     'userId' => $forklist->getUser()->getId(),
+                                                                     'name' => $forklist->getName(),
+                                                                     'description' => $forklist->getDescription(),
+                                                                     'private' => $forklist->getPrivate(),
+                                                              //       'location' => $locationArray,
+                                                                     'rating' => $this->getRating($forklist),
+                                                                     'items' => $itemsArray
+                                                                      ));
+
+
+                        array_push($listsArray, $listArray );
+
+
+                        }
+                    
+                }
+
+                // if there is atleast 1 subscription retrived from above
+                if (count($listsArray) > 0 ){
+                    // Add all lists to the response array
+                    $responseArray[] = array( '_hasData' => true,
+                                          'attributes' => $listsArray );
+                }
+                else
+                {
+                    // Add all lists to the response array
+                    $responseArray[] = array( '_hasData' => fale,
+                                          'attributes' => $listsArray );
+                } 
+
+                // Create a JSON-response with the user's list
+                $response = new Response(json_encode($listsArray));
+
+        }
+
+        // List no subscriptions
+        else
+        {
+            
+            $response = new Response(
+                json_encode(array('_hasData' => false,
+                                  'message' => 'No list found for user id '.$id)));
+
+            // set error code 403  for login but not exists.
+            $response->setStatusCode(403);
+
+        }
+
+        // Set response headers
+        $response->headers->set('Content-Type', 'application/json');
+
+        return $response;
+
+        
+    } // "get_user_lists"    [GET] /user/{id}/lists
+
 
 
 
