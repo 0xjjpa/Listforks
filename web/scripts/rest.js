@@ -16,8 +16,9 @@ var Listforks = (function(l) {
   l.restfulEngine = function() {
   	var self = {};
   	var registeredMethods = {
-  		get: $.getJSON,
-      post: $.post
+  		get: {dataType: 'json', type: 'GET'},
+      post: {dataType: 'json', type: 'POST'}, 
+      put: {dataType: 'json', type: 'PUT'}
   	};
   
     var baseUrl = '/app_dev.php/';
@@ -34,20 +35,19 @@ var Listforks = (function(l) {
         containerModule = module + "-view";
       } 
   		 
-       console.log(module);
-       console.log(method);
-       console.log(id);
-       console.log(container);
-       console.log(message);
-  		var restCall = registeredMethods[method];
-      
-  		restCall(restUrl, message, function(data) {
-  			container(data);
-  			self.response({
-  				success: true,
-  				module: containerModule
-  			});
-  		})
+       var restOptions = registeredMethods[method];
+       restOptions.url = restUrl;
+       restOptions.data = message;
+
+       restOptions.success = function(data) {
+        container(data);
+        self.response({
+          success: true,
+          module: containerModule
+        });
+      }
+
+      $.ajax(restOptions);
   	}
 
   	return self;

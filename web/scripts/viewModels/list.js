@@ -29,7 +29,7 @@ var Listforks = (function(l) {
       self.id = ko.protectedObservable(data.id || -1);
       self.name = ko.protectedObservable(data.name || "List Name");
       self.description = ko.protectedObservable(data.description || "List Description");
-      self.private = ko.protectedObservable(data.private || 0);
+      self.private = ko.protectedObservable(data.private || false);
       self.location = ko.protectedObservable(data.location || {});
       self.rating = ko.protectedObservable(data.rating || 0);
 
@@ -102,11 +102,17 @@ var Listforks = (function(l) {
     }
 
     self.editListItem = function(listItem) {
+
       self.selectedListItem(listItem);
       goTo("editSpecificItem");        
+      perform("commit", self.list);
+      
     }
 
     self.saveList = function(list) {
+      perform("commit", self.list);
+      goTo("displayList");
+
       var queue = ListForksInstance.postQueue;
       var rawList = ko.toJS(list);
       var id = rawList.id;
@@ -115,23 +121,25 @@ var Listforks = (function(l) {
             
       if(id >= 1) { //PUT
         message.type = "put";
+        message.id = id;
       } else { //NEW ITEM
         message.type = "post";
         delete rawList.id;
       }
+
 
       var restfulData = {
         userId: window.userAccountId(),
         list: rawList
       };
 
-      message.data = restfulData;
+      message.data = ko.toJSON(restfulData);
       message.module = "lists";
-
       queue(message);
 
-      goTo("displayList");
-      perform("commit", self.list);
+      //delete self;
+      
+      
     }
 
     self.cancelList = function() {
@@ -183,14 +191,22 @@ var Listforks = (function(l) {
 });
 
   self.add = function() {
-    var list = new ListGUI();
-    list.editList();
-    self.lists.push(list);
+    var newlyAdded =  ko.utils.arrayFilter(self.lists(), function(list) {
+      return list.id() <= 0;
+    })
+
+    console.log(newlyAdded);
+
+    if(newlyAdded.length == 0) {
+      var list = new ListGUI();
+      list.editList();
+      self.lists.push(list);
+    }
   }
 
-  self.remove = function(list) {
+  self.remove = function(list, bypass) {
     var confirm = window.confirm("Are you sure you want to delete this List?");
-    if(confirm) {
+    if(confirm && !bypass) {
       var listId = list.id();
       self.lists.remove(function(list) { return list.id() == listId });
     }

@@ -18,7 +18,6 @@ var Listforks = (function(l) {
     self.getContainer = ko.observableArray([]);
     
     self.getContainer.subscribe(function(data){
-      console.log(data);
       if(data._hasData) {
         var accountId = data.account.accountId;
       }
