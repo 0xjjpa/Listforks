@@ -211,29 +211,41 @@ class ListsController extends Controller
                  $description = $listArray['description'];
                  $private = $listArray['private'];
                  $rating = $listArray['rating'];
-                 
-                 $latitude = $listArray['location']['latitude'];
-                 $longitude = $listArray['location']['longitude'];
 
                  // Sanitize user input
                  $filterName = filter_var( $name, FILTER_SANITIZE_STRING );
                  $filterDescription = filter_var( $description, FILTER_SANITIZE_STRING );
                  $filterRating = filter_var( $rating, FILTER_SANITIZE_NUMBER_INT );
-                 $filterLatitude = filter_var( $latitude, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION );
-                 $filterLongitude = filter_var( $longitude, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION );
-
-                 // Array to store the location co-ordinates of the new list
-                 $filterLocation = array( 'latitude' => $filterLatitude,
-                                          'longitude' => $filterLongitude );
 
                  // Create a new list
                  $forklist = new ForkList();
+
+                 // Check if location field is set
+                 if( !empty($listArray['location']))
+                 {
+                    $latitude = $listArray['location']['latitude'];
+                    $longitude = $listArray['location']['longitude'];
+
+                    $filterLatitude = filter_var( $latitude, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION );
+                    $filterLongitude = filter_var( $longitude, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION );
+
+                 }
+                 // Location is not set
+                 else
+                 {
+                    $filterLatitude = -1;
+                    $filterLongitude = -1;
+                 }
 
                  // Create a new location and associate it with the list
                  $newLocation = new Location();
                  $newLocation->setLatitude($filterLatitude);
                  $newLocation->setLongitude($filterLongitude);
                  $newLocation->setForklist($forklist);
+
+                 // Array to store the location co-ordinates of the new list
+                 $filterLocation = array( 'latitude' => $filterLatitude,
+                                          'longitude' => $filterLongitude );
 
                  // Bind list information to the list
                  $forklist->setName($filterName);
