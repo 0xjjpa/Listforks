@@ -44,8 +44,9 @@ var Listforks = (function(l) {
       return self;
     }
 
-    var ListGUI = function(data) {
+    var ListGUI = function(data, parent) {
       var self = {};
+      self.parent = ko.observable(parent);
       self.list = ko.observable();
       self.id = ko.observable(0);
 
@@ -135,9 +136,10 @@ var Listforks = (function(l) {
 
       message.data = ko.toJSON(restfulData);
       message.module = "lists";
+      self.parent().remove(self, true);
+      
       queue(message);
 
-      //delete self;
       
       
     }
@@ -178,13 +180,13 @@ var Listforks = (function(l) {
     if($.isArray(data)) { // GET []
 
       var lists = ko.utils.arrayMap(data, function(rawList) {
-        return new ListGUI(rawList.attributes);
+        return new ListGUI(rawList.attributes, self);
       });
       self.lists.push.apply(self.lists, lists);
 
     } else { // GET {}  
 
-      self.lists.push(new ListGUI(data.attributes));
+      self.lists.push(new ListGUI(data.attributes, self));
 
     }
 
@@ -194,19 +196,24 @@ var Listforks = (function(l) {
     var newlyAdded =  ko.utils.arrayFilter(self.lists(), function(list) {
       return list.id() <= 0;
     })
-
-    console.log(newlyAdded);
-
     if(newlyAdded.length == 0) {
-      var list = new ListGUI();
+      var list = new ListGUI({}, self);
       list.editList();
       self.lists.push(list);
+    } else {
+      alert("You already created a new list. Please fill it's contents.");
     }
   }
 
   self.remove = function(list, bypass) {
-    var confirm = window.confirm("Are you sure you want to delete this List?");
-    if(confirm && !bypass) {
+    var confirm;
+    if(!bypass) {
+      confirm = window.confirm("Are you sure you want to delete this List?");  
+    } else {
+      confirm = 1;
+    }
+    
+    if(confirm) {
       var listId = list.id();
       self.lists.remove(function(list) { return list.id() == listId });
     }
