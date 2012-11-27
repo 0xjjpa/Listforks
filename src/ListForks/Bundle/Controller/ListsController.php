@@ -244,8 +244,7 @@ class ListsController extends Controller
                  }
 
                  $forklist->setLocation($newLocation);
-            //     $this->setRating($forklist, $user, $filterRating);
-               //  $forklist->setRating($filterRating);
+            
                  $forklist->setUser($user);
 
                  // Check if items field is set
@@ -593,7 +592,8 @@ class ListsController extends Controller
                             
                             if( $rating != $filterRating )
                             {
-                                $this->setRating($forklist, $user, $filterRating);
+                                // we set it after we flush the results.
+                             //   $this->setRating($forklist, $user, $filterRating);
                              //   $forklist->setRating($filterRating);
                                 $rating = $this->getRating($forklist);
                             }
@@ -768,6 +768,14 @@ class ListsController extends Controller
 
                             // Persist update changes to DB
                             $em->flush();
+
+
+                            if( $rating != $filterRating )
+                            {
+                             //   $this->setRating($forklist, $user, $filterRating);
+                             //   $forklist->setRating($filterRating);
+                                $rating = $this->getRating($forklist);
+                            }
 
                             // Empty array to store the items of the current list
                             $itemsArray = array();
@@ -1817,15 +1825,6 @@ class ListsController extends Controller
                 $forkedForklist = clone $forklist;
                 $forkedForklist->setUser($user);
 
-/*
-                $name = $forklist->getName();
-                $description = $forklist->getDescription();
-                $private = $forklist->getPrivate();
-                $location = $forklist->getLocation();
-                $rating = $this->getRating($forklist);
-                $items = $forklist->getItems();
-*/
-
                 // Array to store the location co-ordinates of the current list
                 $locationArray = array( 'latitude' => $forkedForklist->getLocation()->getLatitude(),
                                         'longitude' => $forkedForklist->getLocation()->getLongitude() );
@@ -1838,60 +1837,7 @@ class ListsController extends Controller
                 $forkedForklist->setCreatedAt($date);
                 $forkedForklist->setUpdatedAt($date);
 
-                /*
-
-                // Create a new location to associate it with the list
-                $newLocation = new Location();
-                $newLocation->setLatitude($location->getLatitude());
-                $newLocation->setLongitude($location->getLongitude());
-
-                */
-/*
-                // --- Create a new list from retrived data ---
-                 $forkedForklist = new ForkList();
-
-
-                 // Create a new location and associate it with the list
-                 $newLocation = new Location();
-                 $newLocation->setLatitude($location->getLatitude());
-                 $newLocation->setLongitude($location->getLongitude());
-                 $newLocation->setForklist($forkedForklist);
-
-
-                 // Bind list information to the forkedlist
-                 $forkedForklist->setName($forklist->getName());
-                 $forkedForklist->setDescription($forklist->getDescription());
-                 $forkedForklist->setPrivate($forklist->getPrivate());
-                 $forkedForklist->setLocation($newLocation);
-
-                 // se rating to 0 for the new list
-                 $this->setRating($forklist, $user, 0 );
-              //   $forkedForklist->setRating($this->getRating($forklist));
-                 $forkedForklist->setUser($user);
-                 // Set timestamp for list
-                 $forkedForklist->setCreatedAt($createdAt);
-                 $forkedForklist->setUpdatedAt($createdAt);
-
-
-                 $newLocation->setForklist($forkedForklist);
-
-                // Traverse through the items for the current list add to the forkedlist
-                foreach( $items as $item )
-                {
-                    $tempItem = new Item();
-                    $tempItem->setDescription($item->getDescription());
-                    $tempItem->setOrderNumber($item->getOrderNumber());
-                    $tempItem->setComplete($item->getComplete());
-
-                    $forkedForklist->addItem($tempItem);
-                }
-
-                 // Get current server date and time
-                 $date = new \DateTime('now');
-                 $createdAt = $date->format('D M d Y H:i:s (T)');
-                 $updatedAt = $createdAt;
-*/
-
+  
 
                  // Associate the new list with the current user
                  $user->addForklist($forkedForklist);
@@ -1900,22 +1846,6 @@ class ListsController extends Controller
                  $em = $this->getDoctrine()->getManager();
                  $em->persist($forkedForklist);
                  $em->flush();
-
-/*
-                // Add list to listArray
-                $listArray[] = array( '_hasData' => true,
-                                      'createdAt' => $createdAt,
-                                      'updatedAt' => $updatedAt,
-                                      'attributes' => array( 'id' => $forkedForklist->getId(),
-                                                             'userId' => $forkedForklist->get,
-                                                             'name' => $forkedForklist->get,
-                                                             'description' => $forkedForklist->get,
-                                                             'private' => $forkedForklist->get,
-                                                             'location' => $locationArray,
-                                                             'rating' => $forkedForklist->get,
-                                                             'items' => $forkedForklist->get ));
-*/
-
 
                 $listArray = array( '_hasData' => true,
                                     'createdAt' => $createdAt,
@@ -2519,7 +2449,7 @@ class ListsController extends Controller
                 // List is public or user is list owner
                 if( $forklist->getPrivate() == false || $forklist->getUser()->getId() == $user->getId() )
                 {
-                    $this->setRating($forklist, $user, $rating);
+                    
                  //   $forklist->setRating($rating);
 
                     // Get information for current list
@@ -2563,7 +2493,7 @@ class ListsController extends Controller
                     $em = $this->getDoctrine()->getManager();
                     $em->persist($forklist);
                     $em->flush();
-
+                    $this->setRating($forklist, $user, $rating);
 
 
                     
