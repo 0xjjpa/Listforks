@@ -50,6 +50,9 @@ var Listforks = (function(l) {
 
        restOptions.success = function(data) {
         if(method !== 'delete') {
+          if(!$.isArray(data)) {
+            data.moduleCalled = containerModule;
+          }
           container(data);  
         }
         self.response({

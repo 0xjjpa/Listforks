@@ -36,11 +36,11 @@
     <div id="lists" style="display: none" class="container module"></div>
     <div id="lists-view" style="display: none" class="container module"></div>
     <div id="users" style="display: none" class="container module"></div>
-    <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
     <script src="/components/jquery/jquery.js"></script>
     <script src="/components/bootstrap-js/bootstrap.min.js"></script>
     <script src="/components/sammy/lib/min/sammy-latest.min.js">       </script>
     <script src="/components/knockout.js/knockout.js">               </script>
+    <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
     <!-- build:js scripts/scripts.js         -->
     <script src="/scripts/bindings.js"> </script>
     <script src="/scripts/rest.js"> </script>
@@ -49,11 +49,7 @@
     <script src="/scripts/viewModels/account.js">       </script>
     <script src="/scripts/viewModels/application.js">       </script>
     <script src="/scripts/app.js"></script>
-    <script>
-      $(document).ready(function(){
-          window.ListForksInstance = Listforks.application();    
-      });
-    </script>
+    <script>window.ListForksInstance = Listforks.application();    </script>
     <!-- endbuild -->
   </body>
 </html>

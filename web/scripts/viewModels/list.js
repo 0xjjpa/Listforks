@@ -137,7 +137,7 @@ var Listforks = (function(l) {
 			var queue = ListForksInstance.postQueue;
 			var rawList = ko.toJS(self.list);
 			delete rawList.filteredItems;
-			console.log(rawList);
+			
 			var id = rawList.id;
 
 			var message = {};
@@ -202,6 +202,7 @@ var Listforks = (function(l) {
 
 	self.getContainer = ko.observableArray([]);  
 	self.hasGeolocation = ko.observable();
+	self.canDrawMap = ko.observable(false);
 	self.lists = ko.observableArray([]);
 	self.list = ko.observable();
 
@@ -216,6 +217,12 @@ var Listforks = (function(l) {
 
 		} else { // GET {}  
 
+		if(data.moduleCalled === "lists") {
+			self.canDrawMap(false);
+		} else {
+			self.canDrawMap(true);
+		}
+
 		var list = new ListGUI(data.attributes, self);
 		self.list(list)
 		self.lists.push(list);
@@ -226,6 +233,7 @@ var Listforks = (function(l) {
 
 	self.list.subscribe(function(guiList) {
 		var rawList = guiList.list();
+		console.log(rawList);
 		if(rawList.location() && rawList.location().latitude != 0 && rawList.location().longitude != 0) {
 			self.hasGeolocation(true);
 
@@ -233,12 +241,14 @@ var Listforks = (function(l) {
 			var lat = rawList.location().latitude;
 			var lng = rawList.location().longitude;
 
-			var message = {};
-			message.method = self.drawMap;
-			message.context = self;
-			message.args = [lat, lng];
-			console.log(message.args);
-			queue(message);
+			if(self.canDrawMap()) {
+				var message = {};
+				message.method = self.drawMap;
+				message.context = self;
+				message.args = [lat, lng];
+				queue(message);	
+			}
+			
 
 		} else {
 			self.hasGeolocation(false);
@@ -251,24 +261,19 @@ var Listforks = (function(l) {
 			mapcanvas.style.height = '200px';
 			mapcanvas.style.width = '100%';
 
-			var mapContainer = document.getElementById('google-map-container');
-			if(mapContainer.length) {
-				mapContainer.appendChild(mapcanvas);
-				var latlng = new google.maps.LatLng(lat, lng);
-				var options = {
-					zoom: 15,
-					center: latlng,
-					mapTypeControl: false,
-					navigationControlOptions: {style: google.maps.NavigationControlStyle.SMALL},
-					mapTypeId: google.maps.MapTypeId.ROADMAP
-				};
+			document.getElementById('google-map-container').appendChild(mapcanvas);
 
-				var map = new google.maps.Map(document.getElementById("google-map"), options);
-				var marker = new google.maps.Marker({position: latlng, map: map, title: "Located here"});
-			}
-				
+			var latlng = new google.maps.LatLng(lat, lng);
+			var options = {
+				zoom: 15,
+				center: latlng,
+				mapTypeControl: false,
+				navigationControlOptions: {style: google.maps.NavigationControlStyle.SMALL},
+				mapTypeId: google.maps.MapTypeId.ROADMAP
+			};
 
-			
+			var map = new google.maps.Map(document.getElementById("google-map"), options);
+			var marker = new google.maps.Marker({position: latlng, map: map, title: "Located here"});
 	}
 
 	self.loadGeolocation = function() {

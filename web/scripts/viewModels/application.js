@@ -64,8 +64,12 @@ var Listforks = (function(l) {
     }
 
     self.endRequest = function(module) {
-      showModule(module, window.disquesFunction);
-      //showModule(module);
+      if(module === "lists-view") {
+        showModule(module, window.disquesFunction);  
+      } else {
+        showModule(module);  
+      }
+      
       //console.log(DISQUS);
       hideLoading();
       //console.log("ALL LOADED!");
